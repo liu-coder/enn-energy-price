@@ -45,6 +45,7 @@ public class BasePageDto implements Serializable {
             pageSize = MAX_SIZE;
         }
         return pageSize;
+
     }
 
     public void setPageSize(Integer pageSize) {
