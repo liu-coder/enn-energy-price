@@ -10,14 +10,13 @@ import java.io.Serializable;
 /**
  * @author ：chenchangtong
  * @date ：Created 2021/11/2 10:15
- * @description：快乐工作每一天
+ * @description：快乐工作每一天 ce
  */
 @ApiModel("分页基类")
 public class BasePageDto implements Serializable {
     public static final int DEFAULT_PAGE = 1;
     public static final int DEFAULT_SIZE = 10;
     public static final int MAX_SIZE = 1000;
-
 
     @ApiModelProperty(value = "查询第几页,默认从1开始")
     private Integer pageNum = DEFAULT_PAGE;
