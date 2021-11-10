@@ -18,6 +18,7 @@ public class BasePageDto implements Serializable {
     public static final int DEFAULT_SIZE = 10;
     public static final int MAX_SIZE = 1000;
 
+
     @ApiModelProperty(value = "查询第几页,默认从1开始")
     private Integer pageNum = DEFAULT_PAGE;
     @ApiModelProperty(value = "每页记录数，默认10条")
@@ -45,8 +46,6 @@ public class BasePageDto implements Serializable {
             pageSize = MAX_SIZE;
         }
         return pageSize;
-
-
     }
 
     public void setPageSize(Integer pageSize) {
