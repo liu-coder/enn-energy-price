@@ -77,7 +77,7 @@ public class ElectricityPriceService {
                 electricityPriceVersionList = findDateIntersection(electricityPriceVersionBO, electricityPriceVersionList);
 
                 //版本号小于任意一个版本
-                if (null == electricityPriceVersionList) {
+                if (CollectionUtil.isEmpty(electricityPriceVersionList)) {
                     return;
                 }
 
