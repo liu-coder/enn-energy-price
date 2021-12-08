@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
  * @version : 1.0 2021/11/29 10:11
  * @since : 1.0
  **/
+
 @Service
 public class ElectricityPriceVersionService {
 
