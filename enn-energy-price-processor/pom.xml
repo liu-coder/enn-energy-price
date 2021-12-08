@@ -16,10 +16,10 @@
     <dependencies>
         <!-- Project Dependencies -->
 
-        <dependency>
-            <groupId>top.rdfa.framework</groupId>
-            <artifactId>rdfa-mq-rocketmq</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>top.rdfa.framework</groupId>-->
+<!--            <artifactId>rdfa-mq-rocketmq</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>top.rdfa</groupId>
             <artifactId>rdfa-timer-client</artifactId>
@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>com.enn.energy.price</groupId>
-            <artifactId>enn-energy-price-core-service</artifactId>
+            <artifactId>enn-energy-price-biz-service</artifactId>
         </dependency>
         <dependency>
             <groupId>top.rdfa.framework</groupId>

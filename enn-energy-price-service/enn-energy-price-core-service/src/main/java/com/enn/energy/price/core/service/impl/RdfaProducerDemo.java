@@ -1,11 +1,12 @@
 package com.enn.energy.price.core.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.mq.RdfaMqClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import top.rdfa.framework.mq.message.RdfaMqResult;
+
 import javax.annotation.Resource;
 
 

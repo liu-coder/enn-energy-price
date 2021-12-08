@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC
+        "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="simple" targetRuntime="MyBatis3" defaultModelType="flat">
+        <!--        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin"/>-->
+        <plugin type="com.itfsw.mybatis.generator.plugins.BatchInsertPlugin"/>
+        <!--        <plugin type="org.mybatis.generator.plugins.MySQLLimitPlugin"/>-->
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://10.39.201.254:3306/db_price?tinyInt1isBit=false&amp;useUnicode=true&amp;characterEncoding=utf8"
+                        userId="db_price_rw" password="!=WC^oGayb$=1bay6bEy7l)KM+jk"/>
+
+        <javaModelGenerator targetPackage="com.enn.energy.price.dal.po.mbg" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <!-- 从数据库返回的值被清理前后的空格 -->
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!--        <javaModelGenerator targetPackage="com.enn.sale.md.order.dal.po.mbg" targetProject="src/main/java"/>-->
+        <sqlMapGenerator targetPackage="com.enn.energy.price.dal.mapper.mbg" targetProject="src/main/resources"/>
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.enn.energy.price.dal.mapper.mbg"
+                             targetProject="src/main/java"/>
+
+        <!-- 要生成对应表配置 -->
+        <!-- table 标签参数说明：
+            alias：为数据表设置的别名，如果设置了alias，那么生成的所有的SELECT SQL语句中，列名会变成：alias_actualColumnName；
+            domainObjectName：生成的domain类的名字，如果不设置，直接使用表名作为domain类的名字；可以设置为somepck.domainName，那么会自动把domainName类再放到somepck包里面；
+            enableSelectByPrimaryKey enableSelectByPrimaryKey（默认true）：指定是否生成按照主键查询对象的语句（就是getById或get）；
+            enableCountByExample（默认true）：MyBatis3Simple为false，指定是否生成动态查询总条数语句（用于分页的总条数查询）；
+            enableUpdateByExample（默认true）：MyBatis3Simple为false，指定是否生成动态修改语句（只修改对象中不为空的属性）；
+         -->
+
+        <table tableName="electricity_price_version" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <!-- false 不使用数据表column名，而使用驼峰命名 -->
+            <property name="useActualColumnNames" value="false"/>
+            <!-- 自增主键列 -->
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+
+<!--        <table tableName="electricity_price_rule" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false">-->
+<!--            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="false"/>-->
+<!--            &lt;!&ndash; 自增主键列 &ndash;&gt;-->
+<!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
+<!--        </table>-->
+
+<!--        <table tableName="electricity_price_detail" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false">-->
+<!--            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="false"/>-->
+<!--            &lt;!&ndash; 自增主键列 &ndash;&gt;-->
+<!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
+<!--        </table>-->
+
+        <table tableName="electricity_price_equipment" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            <!-- false 不使用数据表column名，而使用驼峰命名 -->
+            <property name="useActualColumnNames" value="false"/>
+            <!-- 自增主键列 -->
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>
+
+<!--        <table tableName="electricity_price_dictionary" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false">-->
+<!--            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="false"/>-->
+<!--            &lt;!&ndash; 自增主键列 &ndash;&gt;-->
+<!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
+<!--        </table>-->
+<!--        <table tableName="electricity_price_season" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false">-->
+<!--            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;-->
+<!--            <property name="useActualColumnNames" value="false"/>-->
+<!--            &lt;!&ndash; 自增主键列 &ndash;&gt;-->
+<!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
+<!--        </table>-->
+    </context>
+</generatorConfiguration>

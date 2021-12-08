@@ -1,5 +1,6 @@
 package com.enn.energy.price.core.service.impl;
 
+
 import com.enn.energy.price.core.service.IRdfaOssDemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -49,15 +49,15 @@
     </repositories>
 
     <modules>
-            <module>enn-energy-price-web</module>
-            <module>enn-energy-price-common</module>
-            <module>enn-energy-price-dal</module>
-            <module>enn-energy-price-integration</module>
-            <module>enn-energy-price-processor</module>
-            <module>enn-energy-price-facade</module>
-            <module>enn-energy-price-starter</module>
-            <module>enn-energy-price-service</module>
-            <module>enn-energy-price-client</module>
+        <module>enn-energy-price-web</module>
+        <module>enn-energy-price-common</module>
+        <module>enn-energy-price-dal</module>
+        <module>enn-energy-price-integration</module>
+        <module>enn-energy-price-processor</module>
+        <module>enn-energy-price-facade</module>
+        <module>enn-energy-price-starter</module>
+        <module>enn-energy-price-service</module>
+        <module>enn-energy-price-client</module>
     </modules>
 
     <dependencies>
@@ -132,6 +132,12 @@
                 <version>${rdfa.framework.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <!--                <exclusions>-->
+                <!--                    <exclusion>-->
+                <!--                        <groupId>top.rdfa.framework</groupId>-->
+                <!--                        <artifactId>rdfa-doc</artifactId>-->
+                <!--                    </exclusion>-->
+                <!--                </exclusions>-->
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -149,7 +155,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory"/>
-                    <argLine> -javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar</argLine>
+                    <argLine>
+                        -javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar
+                    </argLine>
                 </configuration>
             </plugin>
 

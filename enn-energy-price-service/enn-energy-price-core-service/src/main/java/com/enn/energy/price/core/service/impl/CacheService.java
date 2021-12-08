@@ -3,8 +3,15 @@ package com.enn.energy.price.core.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.BoundHashOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.cache.api.CacheClient;
+
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class CacheService {
@@ -13,6 +20,11 @@ public class CacheService {
 
     @Autowired
     public CacheClient cacheClient;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Value("${rdfa.redis.app-prefix}")
+    private String appPrefix;
 
     public <T> void setData(String key, String funcPrefix, T value) {
         logger.info("That app setting the cache info includes key is {}, funcPrefix is {}, value is {}.", key, funcPrefix, value.toString());
@@ -25,5 +37,41 @@ public class CacheService {
         return value;
     }
 
+    public Set<String> getHKeys(String key, String funcPrefix){
+        BoundHashOperations<String, String, Object> operations = redisTemplate.boundHashOps(appPrefix + ":" + funcPrefix + ":" + key);
+        Set<String> keys = operations.keys();
+        return keys;
+    }
 
+    public Set<String> getHKeysWithPattern(String key, String funcPrefix,String pattern){
+        BoundHashOperations<String, String, Object> operations = redisTemplate.boundHashOps(appPrefix + ":" + funcPrefix + ":" + key);
+        Set<String> keys = operations.keys();
+        Iterator<String> iterator = keys.iterator();
+        while (iterator.hasNext()){
+            if (!iterator.next().startsWith(pattern)){
+                iterator.remove();
+            }
+        }
+        return keys;
+    }
+
+    public <T> T getHashData(String key, String funcPrefix,String hKey) {
+        T value = (T) this.cacheClient.hGet(key, funcPrefix,hKey);
+//        logger.info("The getting cache info includes key is {}, funcPrefix is {}, which result is {}. ", key, funcPrefix, value.toString());
+        return value;
+    }
+
+    public <HV> void hPut(String key, String funcPrefix, String hashKey, HV value) {
+        cacheClient.hPut(key,funcPrefix,hashKey,value);
+    }
+
+    public <HV> void hPutWithTimeOut(String key, String funcPrefix, String hashKey, HV value,Long expireTime) {
+        cacheClient.hPut(key,funcPrefix,hashKey,value);
+        redisTemplate.expire(appPrefix + ":" + funcPrefix + ":" + key,expireTime, TimeUnit.SECONDS);
+    }
+
+    public <T> void hdelHashKey(String key, String funcPrefix,Object... hashKeys) {
+        logger.info("That app setting the cache info includes key is {}, funcPrefix is {}, hashKey is {}.", key, funcPrefix, hashKeys);
+        this.cacheClient.hDelete(key,funcPrefix,hashKeys);
+    }
 }

@@ -1,0 +1,34 @@
+package com.enn.energy.price.client.service;
+
+
+import com.enn.energy.price.client.dto.request.ElectricityPriceDictionaryDTO;
+import com.enn.energy.price.common.request.ElectricityPriceDictionarySelectDTO;
+import com.enn.energy.price.common.response.ElectricityPriceDictionarySelectRespDTO;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.web.bind.annotation.PostMapping;
+import top.rdfa.framework.biz.ro.RdfaResult;
+
+public interface ElectricityPriceDictionaryConstantService {
+
+    /**
+     * 创建
+     * @param priceDictionaryDTO
+     * @return
+     */
+    @ApiOperation("创建新常量")
+    @PostMapping("/price/saveDictionary")
+    public RdfaResult insertDictionary(ElectricityPriceDictionaryDTO priceDictionaryDTO);
+    /**
+     * 查询
+     * @param priceDictionaryDTO
+     * @return
+     */
+    public RdfaResult<ElectricityPriceDictionarySelectRespDTO> findDictionary(ElectricityPriceDictionarySelectDTO priceDictionaryDTO);
+
+    /**
+     * 编辑常量字典
+     * @param priceDictionaryDTO
+     * @return
+     */
+    public RdfaResult editDictionary(ElectricityPriceDictionarySelectDTO priceDictionaryDTO);
+}

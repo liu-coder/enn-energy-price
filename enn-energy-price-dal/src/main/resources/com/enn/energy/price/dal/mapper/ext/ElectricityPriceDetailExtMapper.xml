@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.ElectricityPriceDetailExtMapper">
+    <resultMap id="BaseResultMap" type="com.enn.energy.price.dal.po.mbg.ElectricityPriceDetail">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="detail_id" jdbcType="VARCHAR" property="detailId"/>
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId"/>
+        <result column="season_id" jdbcType="VARCHAR" property="seasonId"/>
+        <result column="version_id" jdbcType="VARCHAR" property="versionId"/>
+        <result column="periods" jdbcType="VARCHAR" property="periods"/>
+        <result column="start_time" jdbcType="VARCHAR" property="startTime"/>
+        <result column="end_time" jdbcType="VARCHAR" property="endTime"/>
+        <result column="step" jdbcType="VARCHAR" property="step"/>
+        <result column="start_step" jdbcType="VARCHAR" property="startStep"/>
+        <result column="end_step" jdbcType="VARCHAR" property="endStep"/>
+        <result column="price" jdbcType="VARCHAR" property="price"/>
+        <result column="state" jdbcType="INTEGER" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, detail_id, rule_id,season_id, version_id, periods, start_time, end_time, step, start_step, end_step,
+    price, state, create_time, update_time
+    </sql>
+
+    <insert id="batchAddElectricityPriceDetail" parameterType="java.util.List">
+        insert into electricity_price_detail (detail_id, rule_id, season_id, version_id, periods,
+        start_time, end_time, step,
+        start_step, end_step, price,
+        state, create_time, update_time
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.detailId,jdbcType=VARCHAR}, #{item.ruleId,jdbcType=VARCHAR}, #{item.seasonId,jdbcType=VARCHAR},
+            #{item.versionId,jdbcType=VARCHAR},#{item.periods,jdbcType=VARCHAR},
+            #{item.startTime,jdbcType=VARCHAR}, #{item.endTime,jdbcType=VARCHAR}, #{item.step,jdbcType=VARCHAR},
+            #{item.startStep,jdbcType=VARCHAR}, #{item.endStep,jdbcType=VARCHAR}, #{item.price,jdbcType=VARCHAR},
+            #{item.state,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectPriceDetailsByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select detail_id, rule_id,season_id, version_id, periods, start_time, end_time, step, start_step, end_step,
+               price, state, create_time, update_time
+        from electricity_price_detail
+        where version_id = #{versionId,jdbcType=VARCHAR}
+        and state = 0
+    </select>
+
+
+    <sql id="Select_By_Map">
+        <where>
+            <if test="ruleId != null">
+                and rule_id = #{ruleId}
+            </if>
+            <if test="seasonId != null">
+                and season_id = #{seasonId}
+            </if>
+            <if test="versionId != null">
+                and version_id = #{versionId}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectDetailByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceDetail">
+        select
+        <include refid="Base_Column_List"/>
+        from electricity_price_detail
+        <include refid="Select_By_Map"/>
+    </select>
+
+    <update id="batchUpdateByRuleIds" parameterType="java.util.List">
+        update electricity_price_detail
+        <set>
+            state=1
+        </set>
+        where rule_id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.ruleId,jdbcType=VARCHAR}
+        </foreach>
+    </update>
+</mapper>
