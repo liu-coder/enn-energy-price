@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.enn.energy.price</groupId>
+        <artifactId>enn-energy-price</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>enn-energy-price-starter</artifactId>
+    <packaging>jar</packaging>
+    <name>enn-energy-price-starter</name>
+
+    <dependencies>
+        <!-- Project Dependencies -->
+        <dependency>
+            <groupId>top.rdfa.framework</groupId>
+            <artifactId>rdfa-starter-boot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.enn.energy.price</groupId>
+            <artifactId>enn-energy-price-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.enn.energy.price</groupId>
+            <artifactId>enn-energy-price-facade</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.enn.energy.price</groupId>
+            <artifactId>enn-energy-price-processor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.enn.energy.price</groupId>
+            <artifactId>enn-energy-price-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>top.rdfa.framework</groupId>
+            <artifactId>rdfa-log-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <artifactId>rdfa-cfg-ucm2</artifactId>
+            <groupId>top.rdfa.framework</groupId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <finalName>enn-energy-price</finalName>
+    </build>
+</project>

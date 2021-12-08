@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.enn.energy.price</groupId>
+    <artifactId>enn-energy-price</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>enn-energy-price</name>
+
+    <parent>
+        <groupId>top.rdfa.framework</groupId>
+        <artifactId>rdfa-dependencies-bom</artifactId>
+        <version>1.7.1-RELEASE</version>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>1.8</java.version>
+
+        <rdfa.framework.version>1.7.1-RELEASE</rdfa.framework.version>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://nexus.enncloud.cn/repository/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <url>http://nexus.enncloud.cn/repository/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://nexus.enncloud.cn/repository/releases/</url>
+        </repository>
+        <repository>
+            <id>maven-snapshots</id>
+            <url>http://nexus.enncloud.cn/repository/snapshots/</url>
+        </repository>
+    </repositories>
+
+    <modules>
+            <module>enn-energy-price-web</module>
+            <module>enn-energy-price-common</module>
+            <module>enn-energy-price-dal</module>
+            <module>enn-energy-price-integration</module>
+            <module>enn-energy-price-processor</module>
+            <module>enn-energy-price-facade</module>
+            <module>enn-energy-price-starter</module>
+            <module>enn-energy-price-service</module>
+            <module>enn-energy-price-client</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>top.rdfa.framework</groupId>
+            <artifactId>rdfa-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-dal</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-integration</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-processor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-facade</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-core-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.enn.energy.price</groupId>
+                <artifactId>enn-energy-price-biz-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- rdfa framework -->
+            <dependency>
+                <groupId>top.rdfa.framework</groupId>
+                <artifactId>rdfa-bom</artifactId>
+                <version>${rdfa.framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <!-- add TestableMock plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkNode implementation="org.apache.maven.plugin.surefire.extensions.SurefireForkNodeFactory"/>
+                    <argLine> -javaagent:${settings.localRepository}/com/alibaba/testable/testable-agent/${testable.version}/testable-agent-${testable.version}.jar</argLine>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+
+    </build>
+
+</project>
