@@ -36,10 +36,10 @@ public class ElectricityPriceEquipmentDTO implements Serializable {
      */
     private String tenant;
 
-    /**
-     * 系统编码
-     */
-    @ApiModelProperty(value = "系统编码")
-   // @NotBlank(message = "系统编码必填")
-    private String systemCode;
+//    /**
+//     * 系统编码
+//     */
+//    @ApiModelProperty(value = "系统编码")
+//    @NotBlank(message = "系统编码必填")
+//    private String systemCode;
 }
