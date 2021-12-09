@@ -27,6 +27,10 @@
             <groupId>com.enn.energy.price</groupId>
             <artifactId>enn-energy-price-integration</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.enn.energy.price</groupId>
+            <artifactId>enn-energy-price-client</artifactId>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>top.rdfa.framework</groupId>-->
 <!--            <artifactId>rdfa-test</artifactId>-->

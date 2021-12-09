@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.enn.energy.price.client.dto.request.EletricityUnifiedReqDto;
 import com.enn.energy.price.client.dto.response.ElectricityPriceUnifiedDetailRespDto;
 
+import io.swagger.annotations.ApiOperation;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
 
@@ -24,8 +25,10 @@ public class ElectricityController {
      * @return
      */
     @PostMapping("/price/queryElectricity")
+    @ApiOperation("统一电价接口，统一自定义电价，目录电价查询")
     public  RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(@RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto){
         
+    	
     	return null;
     }
 
