@@ -142,7 +142,7 @@ public class ElectricityPriceService {
         List<ElectricityPriceDetail> allElectricityPriceDetailList = new ArrayList<>();
 
         Map<String, List<ElectricityPriceDetailCache>> fieldValueCache = new HashMap<>();
-        String cacheKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        String cacheKey = electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
 
         for (ElectricityPriceRuleBO electricityPriceRuleBO : electricityPriceVersionBO.getElectricityPriceRuleBOList()) {
 
@@ -166,8 +166,8 @@ public class ElectricityPriceService {
                 electricityPriceSeason.setState(0);
                 allElectricityPriceSeasonList.add(electricityPriceSeason);
 
-                String versionSeasonField = electricityPriceVersion.getVersionId() + "#" + PriceDateUtils.dayDateToStr(electricityPriceVersion.getStartDate()) + "#" + PriceDateUtils.dayDateToStr(electricityPriceVersion.getEndDate())
-                        + "#" + electricityPriceSeason.getSeaStartDate() + "#" + electricityPriceSeason.getSeaEndDate() + "#" + electricityPriceSeason.getPricingMethod();
+                String versionSeasonField = electricityPriceVersion.getVersionId() + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(electricityPriceVersion.getStartDate()) + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(electricityPriceVersion.getEndDate())
+                        + CommonConstant.VALUE_SPERATOR + electricityPriceSeason.getSeaStartDate() + CommonConstant.VALUE_SPERATOR + electricityPriceSeason.getSeaEndDate() + CommonConstant.VALUE_SPERATOR + electricityPriceSeason.getPricingMethod();
 
                 List<ElectricityPriceDetailCache> electricityPriceDetailCacheList = new ArrayList<>();
                 List<ElectricityPriceDetail> electricityPriceDetailList = PriceCollectionUtils.convertEntity(electricityPriceSeasonBO.getElectricityPriceDetailBOList(), ElectricityPriceDetail.class);
@@ -212,7 +212,7 @@ public class ElectricityPriceService {
      */
     private void addDateIntersectionVersion(ElectricityPriceVersionBO electricityPriceVersionBO, List<ElectricityPriceVersion> electricityPriceVersionList) {
 
-        String cacheKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        String cacheKey = electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
         Set<Object> hKeys = priceCacheClientImpl.hashKeys(cacheKey, CommonConstant.ELECTRICITY_PRICE);
 
         //保存当前设备下所有的价格缓存数据
@@ -239,7 +239,7 @@ public class ElectricityPriceService {
 
         for (ElectricityPriceVersion electricityPriceVersion : electricityPriceVersionList) {
 
-            String partOldField = electricityPriceVersion.getVersionId() + "#" + PriceDateUtils.dayDateToStr(electricityPriceVersion.getStartDate()) + "#" +
+            String partOldField = electricityPriceVersion.getVersionId() + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(electricityPriceVersion.getStartDate()) + CommonConstant.VALUE_SPERATOR +
                     PriceDateUtils.dayDateToStr(electricityPriceVersion.getEndDate());
 
             List<String> fullOldFieldList = new ArrayList<>();
@@ -270,9 +270,9 @@ public class ElectricityPriceService {
 
 
                     for (String fullOldField : fullOldFieldList) {
-                        String[] fieldsArray = fullOldField.split("#");
-                        String newField = additionalElectricityPriceVersion.getVersionId() + "#" + PriceDateUtils.dayDateToStr(additionalElectricityPriceVersion.getStartDate()) + "#" +
-                                PriceDateUtils.dayDateToStr(additionalElectricityPriceVersion.getEndDate()) + "#" + fieldsArray[3] + "#" + fieldsArray[4] + "#" + fieldsArray[5];
+                        String[] fieldsArray = fullOldField.split(CommonConstant.VALUE_SPERATOR);
+                        String newField = additionalElectricityPriceVersion.getVersionId() + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(additionalElectricityPriceVersion.getStartDate()) + CommonConstant.VALUE_SPERATOR +
+                                PriceDateUtils.dayDateToStr(additionalElectricityPriceVersion.getEndDate()) + CommonConstant.VALUE_SPERATOR + fieldsArray[3] + CommonConstant.VALUE_SPERATOR + fieldsArray[4] + CommonConstant.VALUE_SPERATOR + fieldsArray[5];
                         additionalPriceVersionCache.put(newField, fieldValue.get(fullOldField));
                     }
 
@@ -321,9 +321,9 @@ public class ElectricityPriceService {
         for (ElectricityPriceVersion electricityPriceVersion : needAddOldCacheList) {
             if (electricityPriceVersion.getState() != null && electricityPriceVersion.getState() == 0) {
                 for (String fullOldField : versionOldField.get(electricityPriceVersion)) {
-                    String[] fieldsArray = fullOldField.split("#");
-                    String newField = electricityPriceVersion.getVersionId() + "#" + PriceDateUtils.dayDateToStr(electricityPriceVersion.getStartDate()) + "#" +
-                            PriceDateUtils.dayDateToStr(electricityPriceVersion.getEndDate()) + "#" + fieldsArray[3] + "#" + fieldsArray[4] + "#" + fieldsArray[5];
+                    String[] fieldsArray = fullOldField.split(CommonConstant.VALUE_SPERATOR);
+                    String newField = electricityPriceVersion.getVersionId() + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(electricityPriceVersion.getStartDate()) + CommonConstant.VALUE_SPERATOR +
+                            PriceDateUtils.dayDateToStr(electricityPriceVersion.getEndDate()) + CommonConstant.VALUE_SPERATOR + fieldsArray[3] + CommonConstant.VALUE_SPERATOR + fieldsArray[4] + CommonConstant.VALUE_SPERATOR + fieldsArray[5];
                     priceCacheClientImpl.hPut(cacheKey, CommonConstant.ELECTRICITY_PRICE, newField, fieldValue.get(fullOldField));
                     fieldValue.remove(fullOldField);
                 }
@@ -405,7 +405,7 @@ public class ElectricityPriceService {
         //通过versionId获取所有已绑定的设备
         List<ElectricityPriceEquipmentBO> equipmentBOS = electricityPriceEquipmentService.selectEquByCondition(versionId);
         for (ElectricityPriceEquipmentBO item : equipmentBOS){
-            String key = item.getSystemCode() + CommonConstant.KEY_SPERATOR + item.getEquipmentId();
+            String key = item.getEquipmentId();
             Set<String> hKeys = cacheService.getHKeysWithPattern(key, CommonConstant.ELECTRICITY_PRICE,versionId + "#");
             hKeys.forEach(hkey -> cacheService.hdelHashKey(key,CommonConstant.ELECTRICITY_PRICE,hkey));//删除包含 versionId 的 hashKey
         }
@@ -444,7 +444,7 @@ public class ElectricityPriceService {
             newElectricityPriceVersion.setUpdateTime(new Date());
 
 
-            String cacheKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+            String cacheKey = electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
             Set<Object> hKeys = priceCacheClientImpl.hashKeys(cacheKey, CommonConstant.ELECTRICITY_PRICE);
 
             //保存当前设备下当前版本的所有的价格缓存数据
@@ -462,9 +462,9 @@ public class ElectricityPriceService {
             electricityPriceVersionService.updatePriceVersion(newElectricityPriceVersion);
             //新增缓存
             fieldValue.forEach((field, value) -> {
-                String[] fields = field.split("#");
-                String newField = fields[0] + "#" + fields[1] + "#" +
-                        PriceDateUtils.dayDateToStr(new Date()) + "#" + fields[3] + "#" + fields[4] + "#" + fields[5];
+                String[] fields = field.split(CommonConstant.VALUE_SPERATOR);
+                String newField = fields[0] + CommonConstant.VALUE_SPERATOR + fields[1] + CommonConstant.VALUE_SPERATOR +
+                        PriceDateUtils.dayDateToStr(new Date()) + CommonConstant.VALUE_SPERATOR + fields[3] + CommonConstant.VALUE_SPERATOR + fields[4] + CommonConstant.VALUE_SPERATOR + fields[5];
 
                 priceCacheClientImpl.hPut(cacheKey, CommonConstant.ELECTRICITY_PRICE, newField, value);
             });
