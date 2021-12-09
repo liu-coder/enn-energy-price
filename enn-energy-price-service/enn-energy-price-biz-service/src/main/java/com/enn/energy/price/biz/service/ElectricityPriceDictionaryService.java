@@ -2,8 +2,6 @@ package com.enn.energy.price.biz.service;
 
 
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
-import com.enn.energy.price.common.request.ElectricityPriceDictionarySelectDTO;
-import com.enn.energy.price.common.response.ElectricityPriceDictionarySelectRespDTO;
 import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.dal.mapper.ext.ExtElectricityPriceDictionaryMapper;
 import com.enn.energy.price.dal.mapper.mbg.ElectricityPriceDictionaryMapper;
@@ -62,29 +60,26 @@ public class ElectricityPriceDictionaryService{
         List<ElectricityPriceDictionary> dictionaries = extElectricityPriceDictionaryMapper.selectDictionaryByCondition(map);
         return dictionaries.size() == 0 ? null : dictionaries.get(0);
     }
-    public ElectricityPriceDictionarySelectRespDTO selectDictionary(ElectricityPriceDictionarySelectDTO dto) {
+    public List<ElectricityPriceDictionaryBO> selectDictionary(ElectricityPriceDictionaryBO bo) {
         Map<String,Object> map = new HashMap<>();
-        map.put("id",dto.getId());
-        map.put("code",dto.getCode());
-        map.put("type",dto.getType());
-        map.put("name",dto.getName());
-        map.put("state",dto.getState());
-        map.put("typeDesc",dto.getTypeDesc());
+        map.put("id",bo.getId());
+        map.put("code",bo.getCode());
+        map.put("type",bo.getType());
+        map.put("name",bo.getName());
+        map.put("state",bo.getState());
+        map.put("typeDesc",bo.getTypeDesc());
         List<ElectricityPriceDictionary> electricityPriceDictionaries = extElectricityPriceDictionaryMapper.selectDictionaryByCondition(map);
-        List<ElectricityPriceDictionarySelectRespDTO.ElectricityPriceDictionarySelectItemResp> dictionaries = BeanUtil.mapList(electricityPriceDictionaries,
-                ElectricityPriceDictionarySelectRespDTO.ElectricityPriceDictionarySelectItemResp.class);
-        ElectricityPriceDictionarySelectRespDTO respDTO = new ElectricityPriceDictionarySelectRespDTO();
-        respDTO.setItems(dictionaries);
-        return respDTO;
+        List<ElectricityPriceDictionaryBO> dictionaryBOList = BeanUtil.mapList(electricityPriceDictionaries, ElectricityPriceDictionaryBO.class);
+        return dictionaryBOList;
     }
 
-    public int editDictionary(ElectricityPriceDictionarySelectDTO priceDictionaryDTO) {
+    public int editDictionary(ElectricityPriceDictionaryBO bo) {
         ElectricityPriceDictionary record = new ElectricityPriceDictionary();
-        record.setCode(priceDictionaryDTO.getCode());
-        record.setName(priceDictionaryDTO.getName());
-        record.setType(priceDictionaryDTO.getType());
-        record.setState(priceDictionaryDTO.getState());
-        record.setId(priceDictionaryDTO.getId());
+        record.setCode(bo.getCode());
+        record.setName(bo.getName());
+        record.setType(bo.getType());
+        record.setState(bo.getState());
+        record.setId(bo.getId());
         record.setUpdateTime(new Date());
         int result = extElectricityPriceDictionaryMapper.updateSelectiveById(record);
         return result;

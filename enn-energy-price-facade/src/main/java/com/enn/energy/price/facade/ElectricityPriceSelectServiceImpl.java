@@ -1,16 +1,12 @@
 package com.enn.energy.price.facade;
 
-import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDetailReqDTO;
-import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
+import com.enn.energy.price.client.dto.response.*;
+import com.enn.energy.price.client.dto.request.*;
 import com.enn.energy.price.client.service.ElectricityPriceSelectService;
 import com.enn.energy.price.core.service.impl.CacheService;
 import com.enn.energy.price.biz.service.*;
 import com.enn.energy.price.biz.service.bo.*;
 import com.enn.energy.price.common.constants.CommonConstant;
-import com.enn.energy.price.common.request.ElectricityPriceValueReqDTO;
-import com.enn.energy.price.common.response.ElectricityPriceValueDetailRespDTO;
-import com.enn.energy.price.common.response.ElectricityPriceVersionDetailRespDTO;
-import com.enn.energy.price.common.response.ElectricityPriceVersionsRespDTO;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -111,7 +107,7 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
     @Override
     public RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(@Validated @RequestBody ElectricityPriceValueReqDTO requestDto) {
         //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库
-        String key = requestDto.getSystemCode() + CommonConstant.KEY_SPERATOR + requestDto.getEquipmentId();
+        String key = requestDto.getEquipmentId();
         ElectricityPriceValueDetailRespDTO resp = getDataFromRedis(key,requestDto);
         if (resp != null){
             log.info("get data from redis !");
@@ -359,7 +355,7 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
                                List<ElectricityPriceDetailBO> detailBos){
         try{
             //封装 hash value值,放入 redis 缓存
-            String key = requestDto.getSystemCode() + CommonConstant.KEY_SPERATOR + requestDto.getEquipmentId();
+            String key = requestDto.getEquipmentId();
             String hashKey = new StringBuilder(versionBo.getVersionId()).append(HASH_KEY_SEPARATOR_SPILT).append(sf_dd.get().format(versionBo.getStartDate()))
                     .append(HASH_KEY_SEPARATOR_SPILT).append(sf_dd.get().format(versionBo.getEndDate())).append(HASH_KEY_SEPARATOR_SPILT)
                     .append(seasonBO.getSeaStartDate()).append(HASH_KEY_SEPARATOR_SPILT).append(seasonBO.getSeaEndDate()).append(HASH_KEY_SEPARATOR_SPILT)

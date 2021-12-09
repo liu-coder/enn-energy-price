@@ -1,4 +1,4 @@
-package com.enn.energy.price.common.response;
+package com.enn.energy.price.client.dto.response;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

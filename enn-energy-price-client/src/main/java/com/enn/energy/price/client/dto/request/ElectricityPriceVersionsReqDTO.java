@@ -1,6 +1,5 @@
 package com.enn.energy.price.client.dto.request;
 
-import com.enn.energy.price.common.BasePageDto;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

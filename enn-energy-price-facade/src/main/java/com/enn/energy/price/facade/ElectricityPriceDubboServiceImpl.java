@@ -8,7 +8,6 @@ import com.enn.energy.price.biz.service.ElectricityPriceService;
 import com.enn.energy.price.biz.service.bo.*;
 import com.enn.energy.price.common.enums.ResponseCode;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
-import com.enn.energy.price.common.request.ElectricityPriceVersionDelDTO;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

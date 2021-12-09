@@ -1,9 +1,8 @@
-package com.enn.energy.price.common.response;
+package com.enn.energy.price.client.dto.response;
 
 import lombok.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.List;
 
 /**

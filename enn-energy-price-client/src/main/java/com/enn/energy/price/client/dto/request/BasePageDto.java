@@ -1,4 +1,4 @@
-package com.enn.energy.price.common;
+package com.enn.energy.price.client.dto.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

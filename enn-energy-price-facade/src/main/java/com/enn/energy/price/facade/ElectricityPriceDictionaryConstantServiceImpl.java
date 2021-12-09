@@ -6,8 +6,9 @@ import com.enn.energy.price.client.service.ElectricityPriceDictionaryConstantSer
 
 import com.enn.energy.price.biz.service.ElectricityPriceDictionaryService;
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
-import com.enn.energy.price.common.request.ElectricityPriceDictionarySelectDTO;
-import com.enn.energy.price.common.response.ElectricityPriceDictionarySelectRespDTO;
+import com.enn.energy.price.client.dto.response.*;
+import com.enn.energy.price.client.dto.request.*;
+import com.enn.energy.price.common.utils.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
+
+import java.util.List;
 
 /**
  * @author ：chenchangtong
@@ -48,15 +51,20 @@ public class ElectricityPriceDictionaryConstantServiceImpl implements Electricit
     @PostMapping("/findDictionary")
     @Override
     public RdfaResult<ElectricityPriceDictionarySelectRespDTO> findDictionary(@RequestBody ElectricityPriceDictionarySelectDTO priceDictionaryDTO) {
-
-        ElectricityPriceDictionarySelectRespDTO respDTOS = electricityPriceDictionaryService.selectDictionary(priceDictionaryDTO);
-        return RdfaResult.success(respDTOS);
+        ElectricityPriceDictionaryBO bo = BeanUtil.map(priceDictionaryDTO,ElectricityPriceDictionaryBO.class);
+        List<ElectricityPriceDictionaryBO> priceDictionaryBOS = electricityPriceDictionaryService.selectDictionary(bo);
+        List<ElectricityPriceDictionarySelectRespDTO.ElectricityPriceDictionarySelectItemResp> dictionaries = BeanUtil.mapList(priceDictionaryBOS,
+                ElectricityPriceDictionarySelectRespDTO.ElectricityPriceDictionarySelectItemResp.class);
+        ElectricityPriceDictionarySelectRespDTO respDTO = new ElectricityPriceDictionarySelectRespDTO();
+        respDTO.setItems(dictionaries);
+        return RdfaResult.success(respDTO);
     }
 
     @PostMapping("/editDictionary")
     @Override
     public RdfaResult editDictionary(@RequestBody ElectricityPriceDictionarySelectDTO priceDictionaryDTO) {
-        int result = electricityPriceDictionaryService.editDictionary(priceDictionaryDTO);
+        ElectricityPriceDictionaryBO bo = BeanUtil.map(priceDictionaryDTO,ElectricityPriceDictionaryBO.class);
+        int result = electricityPriceDictionaryService.editDictionary(bo);
         return result > 0 ? RdfaResult.success(""):RdfaResult.fail("E2001","更新失败");
     }
 

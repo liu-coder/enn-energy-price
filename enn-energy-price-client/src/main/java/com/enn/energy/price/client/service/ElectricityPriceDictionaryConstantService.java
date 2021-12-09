@@ -1,9 +1,8 @@
 package com.enn.energy.price.client.service;
 
 
-import com.enn.energy.price.client.dto.request.ElectricityPriceDictionaryDTO;
-import com.enn.energy.price.common.request.ElectricityPriceDictionarySelectDTO;
-import com.enn.energy.price.common.response.ElectricityPriceDictionarySelectRespDTO;
+import com.enn.energy.price.client.dto.response.*;
+import com.enn.energy.price.client.dto.request.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.rdfa.framework.biz.ro.RdfaResult;

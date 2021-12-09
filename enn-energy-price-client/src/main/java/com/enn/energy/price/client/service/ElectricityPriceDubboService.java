@@ -1,7 +1,7 @@
 package com.enn.energy.price.client.service;
 
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDTO;
-import com.enn.energy.price.common.request.ElectricityPriceVersionDelDTO;
+import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDelDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.rdfa.framework.biz.ro.RdfaResult;

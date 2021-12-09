@@ -1,9 +1,8 @@
-package com.enn.energy.price.common.request;
+package com.enn.energy.price.client.dto.request;
 
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author ：chenchangtong

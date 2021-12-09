@@ -1,11 +1,11 @@
 package com.enn.energy.price.client.service;
 
+import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
-import com.enn.energy.price.common.request.ElectricityPriceValueReqDTO;
-import com.enn.energy.price.common.response.ElectricityPriceValueDetailRespDTO;
-import com.enn.energy.price.common.response.ElectricityPriceVersionDetailRespDTO;
-import com.enn.energy.price.common.response.ElectricityPriceVersionsRespDTO;
+import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
+import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
+import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
