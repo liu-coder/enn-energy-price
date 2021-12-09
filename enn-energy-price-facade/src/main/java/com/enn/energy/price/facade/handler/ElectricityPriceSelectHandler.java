@@ -1,5 +1,7 @@
 package com.enn.energy.price.facade.handler;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.enn.energy.price.biz.service.*;
 import com.enn.energy.price.biz.service.bo.*;
 import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
@@ -22,16 +24,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
+import top.rdfa.framework.cache.api.CacheClient;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import top.rdfa.framework.exception.RdfaException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
@@ -91,8 +91,8 @@ public class ElectricityPriceSelectHandler {
     private ElectricityPriceSeasonService electricityPriceSeasonService;
     @Autowired // 统一封装 redis 操作
     private CacheService cacheService;
-    //    @Autowired
-//    private CacheClient cacheClient;
+    @Autowired
+    private CacheClient cacheClient;
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
 //    @Autowired
@@ -172,7 +172,7 @@ public class ElectricityPriceSelectHandler {
                 if (PriceDateUtils.beforeOrEqual(split[1],requestDto.getEffectiveTime()) &&
                         PriceDateUtils.afterOrEqual(split[2],requestDto.getEffectiveTime()) &&
                         PriceDateUtils.beforeOrEqual(split[3],activeMonthDay) && PriceDateUtils.afterOrEqual(split[4],activeMonthDay)){
-                    List<ElectricityPriceDetailCache> seasonPrices = (List<ElectricityPriceDetailCache>)cacheService.getHashData(key, CommonConstant.ELECTRICITY_PRICE, hkey);
+                    List<ElectricityPriceDetailCache> seasonPrices = cacheService.getListHashData(key,CommonConstant.ELECTRICITY_PRICE,hkey,ElectricityPriceDetailCache.class);
                     if (seasonPrices!=null && seasonPrices.size() > 0){
                         respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
@@ -249,7 +249,7 @@ public class ElectricityPriceSelectHandler {
             //根据规则ID、季节ID确定电价详情
             List<ElectricityPriceDetailBO> detailBos = electricityPriceDetailService.selectDetailByCondition(electricityPriceVersionBo.getVersionId(),ruleId,electricityPriceSeasonBO.getSeasonId());
             ElectricityPriceValueDetailRespDTO convert = convert(electricityPriceRuleBo,electricityPriceSeasonBO, detailBos);
-            putRedisValue(requestDto,electricityPriceVersionBo,electricityPriceSeasonBO,detailBos);
+            putRedisValue(key,requestDto,electricityPriceVersionBo,electricityPriceSeasonBO,detailBos);
             removeThreadLocal();
             return RdfaResult.success(convert);
         } catch(LockFailException e){
@@ -260,12 +260,11 @@ public class ElectricityPriceSelectHandler {
         }
     }
 
-    private void putRedisValue(ElectricityPriceValueReqDTO requestDto,ElectricityPriceVersionBO versionBo,
+    private void putRedisValue(String key,ElectricityPriceValueReqDTO requestDto,ElectricityPriceVersionBO versionBo,
                                ElectricityPriceSeasonBO seasonBO ,
                                List<ElectricityPriceDetailBO> detailBos){
         try{
             //封装 hash value值,放入 redis 缓存
-            String key = requestDto.getEquipmentId();
             String hashKey = new StringBuilder(versionBo.getVersionId()).append(HASH_KEY_SEPARATOR_SPILT).append(sf_dd.get().format(versionBo.getStartDate()))
                     .append(HASH_KEY_SEPARATOR_SPILT).append(sf_dd.get().format(versionBo.getEndDate())).append(HASH_KEY_SEPARATOR_SPILT)
                     .append(seasonBO.getSeaStartDate()).append(HASH_KEY_SEPARATOR_SPILT).append(seasonBO.getSeaEndDate()).append(HASH_KEY_SEPARATOR_SPILT)
@@ -276,7 +275,7 @@ public class ElectricityPriceSelectHandler {
                     return ElectricityPriceDetailCache.builder().price(detailBO.getPrice()).startTime(detailBO.getStartTime()).
                             endTime(detailBO.getEndTime()).step(detailBO.getStep()).startStep(detailBO.getStartStep()).endStep(detailBO.getEndStep()).build();
                 }).collect(Collectors.toList());
-                cacheService.hPutWithTimeOut(key,CommonConstant.ELECTRICITY_PRICE,hashKey,seasonPrices,getExpireSeconds(expireBase,randomNum));
+                cacheService.hPutWithTimeOut(key,CommonConstant.ELECTRICITY_PRICE,hashKey,JSONObject.toJSONString(seasonPrices),getExpireSeconds(expireBase,randomNum));
             }
         }catch (Exception e){
             log.error("redis缓存异常 {}",e.getMessage());
