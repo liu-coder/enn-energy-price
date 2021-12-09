@@ -386,7 +386,7 @@ public class ElectricityPriceService {
      * @param versionId
      */
     @Transactional(rollbackFor = Exception.class)
-    public RdfaResult delElectricityPrice(String versionId, boolean isCommon) {
+    public RdfaResult delElectricityPrice(String versionId,String equipmentId, boolean isCommon) {
         //获取已有版本电价，不存在，则抛出不存在异常，校验当前的版本是否生效，生效，则报不可用删除
         ElectricityPriceVersion electricityPriceVersion = electricityPriceVersionService.selectByVersionId(versionId);
         if (ObjectUtils.isEmpty(electricityPriceVersion)) { //ObjectUtils
@@ -445,7 +445,7 @@ public class ElectricityPriceService {
         //当前修改的版本是未来的版本
         if (electricityPriceVersion.getStartDate().compareTo(new Date()) > 0) {
             //删除老的
-            delElectricityPrice(electricityPriceVersionBO.getVersionId(), true);
+            delElectricityPrice(electricityPriceVersionBO.getVersionId(),"", true);
 
         } else {
             ElectricityPriceVersion newElectricityPriceVersion = new ElectricityPriceVersion();

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.enn.energy.price.integration.cim.dto.CimPriceReq;
 import com.enn.energy.price.integration.participant.dto.ParticipantResponse;
 
-@FeignClient(name="CimApiClient",contextId = "CimApiClient",path="/etsp", url = "${cim.api.server.url}")
+//@FeignClient(name="CimApiClient",contextId = "CimApiClient",path="/etsp", url = "${cim.api.server.url}")
 @RequestMapping(headers = "X-GW-AccessKey=${participant.gateway.accessKey}")
 public interface CimApiClient {
 
