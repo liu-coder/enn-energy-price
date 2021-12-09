@@ -1,5 +1,6 @@
 package com.enn.energy.price.core.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import top.rdfa.framework.cache.api.CacheClient;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -59,6 +61,11 @@ public class CacheService {
         T value = (T) this.cacheClient.hGet(key, funcPrefix,hKey);
 //        logger.info("The getting cache info includes key is {}, funcPrefix is {}, which result is {}. ", key, funcPrefix, value.toString());
         return value;
+    }
+
+    public <T> List<T> getListHashData(String key, String funcPrefix, String hKey, Class<T> clazz) {
+        String value = this.cacheClient.hGet(key, funcPrefix,hKey);
+        return JSON.parseArray(value,clazz);
     }
 
     public <HV> void hPut(String key, String funcPrefix, String hashKey, HV value) {
