@@ -90,7 +90,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     public RdfaResult<String> delElectricityPrice(@Validated @RequestBody ElectricityPriceVersionDelDTO delDTO) {
         RdfaResult result = null;
         try {
-            result = electricityPriceService.delElectricityPrice(delDTO.getVersionId(),delDTO.getEquipmentId(), false);
+            result = electricityPriceService.delElectricityPrice(delDTO.getVersionId(), false);
         } catch (Exception e) {
             log.error("delete version has error , {} ", e.getMessage());
             return RdfaResult.fail("E30003", "delete version has error");
@@ -110,7 +110,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Override
     public RdfaResult<String> delElectricityPriceForCommon(@RequestBody ElectricityPriceVersionDelDTO delDTO) {
         try {
-            electricityPriceService.delElectricityPrice(delDTO.getVersionId(),delDTO.getEquipmentId(), true);
+            electricityPriceService.delElectricityPrice(delDTO.getVersionId(), true);
         } catch (Exception e) {
             log.error("delete version has error , {} ", e.getMessage());
             return RdfaResult.fail("E30003", "delete version has error");
