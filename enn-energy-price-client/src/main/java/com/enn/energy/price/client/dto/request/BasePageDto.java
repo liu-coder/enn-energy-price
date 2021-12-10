@@ -32,7 +32,7 @@ public class BasePageDto implements Serializable {
         return pageNum;
     }
 
-
+    //设置页码
     public void setPageNum(Integer pageNum) {
         this.pageNum = pageNum;
     }
@@ -45,6 +45,7 @@ public class BasePageDto implements Serializable {
             pageSize = MAX_SIZE;
         }
         return pageSize;
+
 
     }
 
