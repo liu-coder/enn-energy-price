@@ -24,26 +24,40 @@ public class ElectricityPriceUnifiedService {
 	@Resource(name="customPriceService")
 	PriceStrategyService customPriceService;
 	
-//	@Resource(name="customPriceService")
-//	PriceStrategyService customPriceService;
-//	
-//	@Resource(name="customPriceService")
-//	PriceStrategyService customPriceService;
+	
+	@Resource(name="cimPriceService")
+	PriceStrategyService cimPriceService;
+	
+	@Resource(name="meteringCustomPriceService")
+	PriceStrategyService meteringCustomPriceService;
+
 	
 	Map<PriceType, PriceStrategyService> priceStrategyServiceMap;
 	
 	@PostConstruct
 	public void init() {
 		priceStrategyServiceMap.put(PriceType.custom, customPriceService);
+		priceStrategyServiceMap.put(PriceType.catalogue, cimPriceService);
+		priceStrategyServiceMap.put(PriceType.meteringCustom, meteringCustomPriceService);
 	}
 	
 	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryUnifiedPrice(EletricityUnifiedReqDto eletricityUnifiedReqDto){
 		PriceType priceType = PriceType.valueOf(eletricityUnifiedReqDto.getPriceType());
 
 		PriceStrategyService service = priceStrategyServiceMap.get(priceType);
-		
-		return service.queryPrice(eletricityUnifiedReqDto);
-		
+		if(service != null) {
+			return service.queryPrice(eletricityUnifiedReqDto);
+		}
+
+		return nullResult();
+	}
+	
+	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> nullResult(){
+		RdfaResult<ElectricityPriceUnifiedDetailRespDto> rdfaResult = new RdfaResult<>();
+		rdfaResult.setCode("404");
+		rdfaResult.setSuccess(false);
+		rdfaResult.setMessage("");
+		return rdfaResult;
 	}
 	
 }
