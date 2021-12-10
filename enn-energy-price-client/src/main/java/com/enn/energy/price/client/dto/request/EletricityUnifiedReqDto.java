@@ -22,26 +22,20 @@ public class EletricityUnifiedReqDto {
 	/**
 	 * 电价类型
 	 */
-	private String type;
+	@ApiModelProperty("电价类型, 1(自定义电价),2(目录电价),3单一电价(自定义电价)")
+	@NotBlank(message = "priceType不能为空")
+	private Integer priceType;
 	
-	/**
-	 * 企业编码
-	 */
-	private String systemCode;
+    @ApiModelProperty("租户id。在V1.1过度版本中传systemCode")
+    @NotBlank(message = "租户id不能为空")
+	private String tenantId;
 	
-	/**
-	 * 设备id,设备协同中的cimId
-	 */
-    @NotBlank(message = "设备ID不能为空")
-    private String equipmentId;
+    @ApiModelProperty("设备id。在V1.1过度版本中传deviceCode ")
+    @NotBlank(message = "有效时间不能为空")
+	private String deviceNumber;
 	
-	/**
-	 * 查询日期,格式：
-	 */
-    @ApiModelProperty(value = "查询日期", example = "2021-11-19", required = true)
-    @NotNull(message = "查询日期必填")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Future(message = "查询日期必须大于等于今天")
-	private String date;
+    @ApiModelProperty("有效时间 yyyy-MM-dd")
+    @NotBlank(message = "有效时间不能为空")
+	private String effectiveTime;
+
 }
