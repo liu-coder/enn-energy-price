@@ -1,6 +1,7 @@
 package com.enn.energy.price.dal.mapper.ext;
 
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface ElectricityPriceEquipmentExtMapper {
     void updatePriceEquipmentState(String versionId);
 
     List<ElectricityPriceEquipment> selectEquByConditionOrderByUpdateTime(Map<String, Object> map);
+
+    ElectricityPriceEquVersionView selectEquVersionRecentOneValidByCondition(Map<String,Object> map);
 }
