@@ -248,6 +248,9 @@ public class ElectricityPriceSelectHandler {
             }
             //根据规则ID、季节ID确定电价详情
             List<ElectricityPriceDetailBO> detailBos = electricityPriceDetailService.selectDetailByCondition(electricityPriceVersionBo.getVersionId(),ruleId,electricityPriceSeasonBO.getSeasonId());
+            if (detailBos.size() == 0){
+                return RdfaResult.fail("E20005","未获取到详细数据");
+            }
             ElectricityPriceValueDetailRespDTO convert = convert(electricityPriceRuleBo,electricityPriceSeasonBO, detailBos);
             putRedisValue(key,requestDto,electricityPriceVersionBo,electricityPriceSeasonBO,detailBos);
             removeThreadLocal();
@@ -275,7 +278,9 @@ public class ElectricityPriceSelectHandler {
                     return ElectricityPriceDetailCache.builder().price(detailBO.getPrice()).startTime(detailBO.getStartTime()).
                             endTime(detailBO.getEndTime()).step(detailBO.getStep()).startStep(detailBO.getStartStep()).endStep(detailBO.getEndStep()).build();
                 }).collect(Collectors.toList());
-                cacheService.hPutWithTimeOut(key,CommonConstant.ELECTRICITY_PRICE,hashKey,JSONObject.toJSONString(seasonPrices),getExpireSeconds(expireBase,randomNum));
+                if (seasonPrices.size() > 0){
+                    cacheService.hPutWithTimeOut(key,CommonConstant.ELECTRICITY_PRICE,hashKey,JSONObject.toJSONString(seasonPrices),getExpireSeconds(expireBase,randomNum));
+                }
             }
         }catch (Exception e){
             log.error("redis缓存异常 {}",e.getMessage());

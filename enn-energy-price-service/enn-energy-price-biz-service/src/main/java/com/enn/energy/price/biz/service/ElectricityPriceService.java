@@ -410,18 +410,17 @@ public class ElectricityPriceService {
         //修改上一个版本的结束时间
         ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
         updateVersion.setVersionId(versionView.getVersionId());
-        updateVersion.setEndDate(versionView.getEndDate());
+        updateVersion.setEndDate(electricityPriceVersion.getEndDate());
         electricityPriceVersionService.updatePriceVersion(updateVersion);
-        removeRedisPriceVersionData(versionId);//清除缓存
+        removeRedisPriceVersionData(equipmentId,systemCode,versionView.getVersionId(),versionId);//清除缓存
         return RdfaResult.success("");
     }
 
-    private void removeRedisPriceVersionData(String versionId) {
+    private void removeRedisPriceVersionData(String equipmentId,String systemCode,String... versionIds) {
         //通过versionId获取所有已绑定的设备
-        List<ElectricityPriceEquipmentBO> equipmentBOS = electricityPriceEquipmentService.selectEquByCondition(versionId);
-        for (ElectricityPriceEquipmentBO item : equipmentBOS) {
-            String key = item.getEquipmentId();
-            Set<String> hKeys = cacheService.getHKeysWithPattern(key, CommonConstant.ELECTRICITY_PRICE, versionId + "#");
+        String key = systemCode + "_" +equipmentId;
+        for (int i = 0; i < versionIds.length; i++) {
+            Set<String> hKeys = cacheService.getHKeysWithPattern(key, CommonConstant.ELECTRICITY_PRICE, versionIds[i] + "#");
             hKeys.forEach(hkey -> cacheService.hdelHashKey(key, CommonConstant.ELECTRICITY_PRICE, hkey));//删除包含 versionId 的 hashKey
         }
     }

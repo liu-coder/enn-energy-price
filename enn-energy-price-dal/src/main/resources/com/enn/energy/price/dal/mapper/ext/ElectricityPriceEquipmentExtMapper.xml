@@ -102,7 +102,7 @@
         from electricity_price_equipment equ left join electricity_price_version ver
                                                        on equ.version_id = ver.version_id
         where equ.equipment_id = #{equipmentId} and (#{systemCode} is null or equ.system_code = #{systemCode})
-          and ver.start_date &lt;= #{activeTime} order by ver.start_date desc limit 1
+          and ver.start_date &lt; #{activeTime} order by ver.start_date desc limit 1
     </select>
 
     <update id="updatePriceEquipmentState" parameterType="java.lang.String">
