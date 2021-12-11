@@ -47,11 +47,13 @@
         </where>
     </sql>
 
-    <select id="selectByEquipmentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectElectricityPriceEquipment" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment"
+            resultMap="BaseResultMap">
         select rule_id,
                version_id
         from electricity_price_equipment
-        where equipment_id = #{equipmentId,jdbcType=VARCHAR}
+        where system_code = #{systemCode,jdbcType=VARCHAR}
+          and equipment_id = #{equipmentId,jdbcType=VARCHAR}
           and state = 0
     </select>
     <select id="selectEquByCondition" resultMap="BaseResultMap">
@@ -96,7 +98,8 @@
 
     <update id="updatePriceEquipmentState" parameterType="java.lang.String">
         update electricity_price_equipment
-        set state = 1
+        set state = 1,
+        update_time = NOW()
         where version_id = #{versionId,jdbcType=VARCHAR}
     </update>
 </mapper>

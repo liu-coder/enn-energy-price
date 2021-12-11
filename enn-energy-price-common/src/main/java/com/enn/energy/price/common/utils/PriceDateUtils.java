@@ -70,6 +70,23 @@ public class PriceDateUtils {
     }
 
     /**
+     * 字符串转换日期
+     *
+     * @param date
+     * @return
+     */
+    public static Date strToDayDate(String date) {
+        if (date == null) {
+            return null;
+        }
+        try {
+           return dayDataFormat.parse(date);
+        } catch (ParseException e) {
+            throw new PriceException(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(),"获取指定格式日期的数据格式异常");
+        }
+    }
+
+    /**
      * 获取指定的日期
      * @param date
      * @return
@@ -79,7 +96,7 @@ public class PriceDateUtils {
         try {
             return dayDataFormat.parse(date);
         } catch (ParseException e) {
-            throw new PriceException(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(),"获取指定日期的数据格式异常");
+            throw new PriceException(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(),"获取指定格式日期的数据格式异常");
         }
     }
 

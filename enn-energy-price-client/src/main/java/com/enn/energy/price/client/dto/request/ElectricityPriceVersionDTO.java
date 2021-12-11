@@ -35,9 +35,8 @@ public class ElectricityPriceVersionDTO implements Serializable {
     /**
      * 电价版本名称
      */
-    @ApiModelProperty(value = "电价版本名称", example = "20211119183620123,当前毫秒数", required = true)
+    @ApiModelProperty(value = "电价版本名称", required = true)
     @NotBlank(message = "电价版本名称必填")
-    @Pattern(regexp = "^\\d{17}$", message = "电价版本名称必须是毫秒格式(20211119183620123)的时间戳")
     private String versionName;
 
     /**
@@ -128,10 +127,10 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
 //    @ApiModelProperty(value = "失效日期", example = "2021-11-19", required = true)
 //    @NotNull(message = "失效日期必填")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-//    @Future(message = "失效日期必须大于今天")
-    private Date endDate;
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+////    @Future(message = "失效日期必须大于今天")
+//    private Date endDate;
 
     /**
      * 电价类型,0:目录电价;1:自定义电价

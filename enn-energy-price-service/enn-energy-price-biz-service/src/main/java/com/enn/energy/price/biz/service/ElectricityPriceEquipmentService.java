@@ -30,14 +30,15 @@ public class ElectricityPriceEquipmentService {
     private ElectricityPriceEquipmentExtMapper electricityPriceEquipmentExtMapper;
 
     /**
-     * 根据设备id查询设备绑定的价格版本
-     * @param equipmentId
+     * 根据设备id和系统code查询设备绑定的所有价格版本
+     * @param electricityPriceEquipment
      * @return
      */
-    public List<ElectricityPriceEquipment> selectByEquipmentId(String equipmentId) {
+    public List<ElectricityPriceEquipment> selectElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment) {
 
-        return electricityPriceEquipmentExtMapper.selectByEquipmentId(equipmentId);
+        return electricityPriceEquipmentExtMapper.selectElectricityPriceEquipment(electricityPriceEquipment);
     }
+
 
     /**
      * 批量添加设备价格

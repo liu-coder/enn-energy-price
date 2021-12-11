@@ -16,7 +16,7 @@ import java.util.Map;
 @Mapper
 public interface ElectricityPriceEquipmentExtMapper {
 
-    List<ElectricityPriceEquipment> selectByEquipmentId(String equipmentId);
+    List<ElectricityPriceEquipment> selectElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
 
     void batchAddElectricityPriceEquipment(List<ElectricityPriceEquipment> electricityPriceEquipmentList);
 
