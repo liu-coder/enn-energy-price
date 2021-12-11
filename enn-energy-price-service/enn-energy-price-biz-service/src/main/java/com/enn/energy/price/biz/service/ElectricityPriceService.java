@@ -14,6 +14,7 @@ import com.enn.energy.price.common.utils.PriceCollectionUtils;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import com.enn.energy.price.common.utils.SnowFlake;
 import com.enn.energy.price.dal.po.mbg.*;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -386,7 +387,7 @@ public class ElectricityPriceService {
      * @param versionId
      */
     @Transactional(rollbackFor = Exception.class)
-    public RdfaResult delElectricityPrice(String versionId, boolean isCommon) {
+    public RdfaResult delElectricityPrice(String versionId,String equipmentId,String systemCode, boolean isCommon) {
         //获取已有版本电价，不存在，则抛出不存在异常，校验当前的版本是否生效，生效，则报不可用删除
         ElectricityPriceVersion electricityPriceVersion = electricityPriceVersionService.selectByVersionId(versionId);
         if (ObjectUtils.isEmpty(electricityPriceVersion)) { //ObjectUtils
@@ -405,7 +406,12 @@ public class ElectricityPriceService {
         electricityPriceDetailService.deleteDetailsByVersionId(versionId);//价格明细 TODO 根据 versionId 修改详情
         electricityPriceSeasonService.updateSeasonStateByVersionId(versionId);//删除季节
         //更新删除版本的上一个版本的结束时间
-
+        ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, electricityPriceVersion.getStartDate());
+        //修改上一个版本的结束时间
+        ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
+        updateVersion.setVersionId(versionView.getVersionId());
+        updateVersion.setEndDate(versionView.getEndDate());
+        electricityPriceVersionService.updatePriceVersion(updateVersion);
         removeRedisPriceVersionData(versionId);//清除缓存
         return RdfaResult.success("");
     }
@@ -443,7 +449,7 @@ public class ElectricityPriceService {
         //当前修改的版本是未来的版本
         if (electricityPriceVersion.getStartDate().compareTo(new Date()) > 0) {
             //删除老的
-            delElectricityPrice(electricityPriceVersionBO.getVersionId(), true);
+            delElectricityPrice(electricityPriceVersionBO.getVersionId(), "","",true);
 
         } else {
             ElectricityPriceVersion newElectricityPriceVersion = new ElectricityPriceVersion();

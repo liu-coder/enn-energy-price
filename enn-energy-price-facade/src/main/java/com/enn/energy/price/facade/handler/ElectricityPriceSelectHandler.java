@@ -102,7 +102,7 @@ public class ElectricityPriceSelectHandler {
 
     public RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(@Validated @RequestBody ElectricityPriceValueReqDTO requestDto){
         //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库
-        String key = requestDto.getEquipmentId();
+        String key = requestDto.getSystemCode() + "_" + requestDto.getEquipmentId();
         ElectricityPriceValueDetailRespDTO resp = getDataFromRedis(key,requestDto);
         if (resp != null){
             log.info("get data from redis !");

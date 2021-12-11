@@ -5,11 +5,13 @@ import com.enn.energy.price.biz.service.bo.ElectricityPriceEquipmentBO;
 import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.dal.mapper.ext.ElectricityPriceEquipmentExtMapper;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.exception.RdfaException;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,5 +115,15 @@ public class ElectricityPriceEquipmentService {
      */
     public void updatePriceEquipmentState(String versionId) {
         electricityPriceEquipmentExtMapper.updatePriceEquipmentState(versionId);
+    }
+
+    public ElectricityPriceEquVersionView selectEquVersionRecentOneValidByCondition(String equipmentId, String systemCode, Date activeTime) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("equipmentId",equipmentId);
+        map.put("state",0);
+        map.put("systemCode",systemCode);
+        map.put("activeTime",activeTime);
+        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentExtMapper.selectEquVersionRecentOneValidByCondition(map);
+        return equVersionView;
     }
 }
