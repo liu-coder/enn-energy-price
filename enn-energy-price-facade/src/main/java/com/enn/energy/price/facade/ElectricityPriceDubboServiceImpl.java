@@ -2,7 +2,6 @@ package com.enn.energy.price.facade;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import com.enn.energy.price.biz.service.ElectricityPriceServiceNew;
 import com.enn.energy.price.client.dto.request.*;
 import com.enn.energy.price.client.service.ElectricityPriceDubboService;
 import com.enn.energy.price.biz.service.ElectricityPriceService;
@@ -45,9 +44,6 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Autowired
     private ElectricityPriceService electricityPriceService;
 
-    @Autowired
-    private ElectricityPriceServiceNew electricityPriceServiceNew;
-
     @Override
     @PostMapping(value = "/addElectricityPrice")
     public RdfaResult<String> addElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
@@ -60,7 +56,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
         convertBO(electricityPriceVersionDTO, electricityPriceVersionBO);
-        electricityPriceServiceNew.addElectricityPrice(electricityPriceVersionBO, null);
+        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, null);
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
@@ -80,7 +76,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
         convertBO(electricityPriceVersionDTO, electricityPriceVersionBO);
-        electricityPriceServiceNew.updateElectricityPrice(electricityPriceVersionBO);
+        electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
