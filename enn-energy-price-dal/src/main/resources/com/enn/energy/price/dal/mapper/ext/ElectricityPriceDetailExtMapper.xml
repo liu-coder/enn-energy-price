@@ -83,4 +83,12 @@
             #{item.ruleId,jdbcType=VARCHAR}
         </foreach>
     </update>
+
+    <update id="deleteDetailsByVersionId" parameterType="java.lang.String">
+        update electricity_price_detail
+        <set>
+            state=1
+        </set>
+        where version_id = #{versionId} and state = 0
+    </update>
 </mapper>

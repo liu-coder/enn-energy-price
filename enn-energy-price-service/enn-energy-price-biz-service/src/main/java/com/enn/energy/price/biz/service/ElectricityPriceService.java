@@ -397,12 +397,12 @@ public class ElectricityPriceService {
             return RdfaResult.fail("E30002", "this version is in effect and cannot be deleted ");
         }
         //通过versionId 查询ruleid
-        List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(versionId);
+//        List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(versionId);
         //关联的规则  版本设备的绑定关系 版本删除
         electricityPriceVersionService.updatePriceVersionState(versionId);//删除版本
         electricityPriceRuleService.updatePriceRuleState(versionId);//删除规则
         electricityPriceEquipmentService.updatePriceEquipmentState(versionId);//删除设备
-        electricityPriceDetailService.batchUpdateByRuleIds(ruleBos);//价格明细 TODO 根据 versionId 修改详情
+        electricityPriceDetailService.deleteDetailsByVersionId(versionId);//价格明细 TODO 根据 versionId 修改详情
         electricityPriceSeasonService.updateSeasonStateByVersionId(versionId);//删除季节
         //更新删除版本的上一个版本的结束时间
 
