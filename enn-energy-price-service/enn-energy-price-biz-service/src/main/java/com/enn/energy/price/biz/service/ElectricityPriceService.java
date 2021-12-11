@@ -392,22 +392,21 @@ public class ElectricityPriceService {
         if (ObjectUtils.isEmpty(electricityPriceVersion)) { //ObjectUtils
             return RdfaResult.success("");
         }
-
         //校验版本是否生效，
         if (!isCommon && isVaLid(electricityPriceVersion)) {
             return RdfaResult.fail("E30002", "this version is in effect and cannot be deleted ");
         }
-        //清除缓存
-        removeRedisPriceVersionData(versionId);
         //通过versionId 查询ruleid
         List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(versionId);
-        electricityPriceVersion.setState(CommonConstant.DELETED);
         //关联的规则  版本设备的绑定关系 版本删除
         electricityPriceVersionService.updatePriceVersionState(versionId);//删除版本
         electricityPriceRuleService.updatePriceRuleState(versionId);//删除规则
         electricityPriceEquipmentService.updatePriceEquipmentState(versionId);//删除设备
-        electricityPriceDetailService.batchUpdateByRuleIds(ruleBos);//价格明细
+        electricityPriceDetailService.batchUpdateByRuleIds(ruleBos);//价格明细 TODO 根据 versionId 修改详情
         electricityPriceSeasonService.updateSeasonStateByVersionId(versionId);//删除季节
+        //更新删除版本的上一个版本的结束时间
+
+        removeRedisPriceVersionData(versionId);//清除缓存
         return RdfaResult.success("");
     }
 
@@ -424,8 +423,7 @@ public class ElectricityPriceService {
     private boolean isVaLid(ElectricityPriceVersion electricityPriceVersion) {
         //版本生效判定 ： 当前时间 >= 版本生效时间
         Date currentDate = new Date();
-        return electricityPriceVersion.getState() != CommonConstant.VALID
-                || currentDate.compareTo(electricityPriceVersion.getStartDate()) >= 0;
+        return currentDate.compareTo(electricityPriceVersion.getStartDate()) >= 0;
     }
 
 
