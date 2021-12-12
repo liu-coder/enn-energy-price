@@ -19,7 +19,7 @@ import java.util.List;
  * http://metering-prepaid.test.fnwintranet.com/doc.html  /prepaid/price/queryCustomElectricPrice
  * 需要去uac拿ticket鉴权，或者固定的123456
  **/
-@FeignClient(name="MeteringPriceClient",contextId = "MeteringPriceClient",path="/prepaid", url = "${metering.api.server.url}")
+//@FeignClient(name="MeteringPriceClient",contextId = "MeteringPriceClient",path="/prepaid", url = "${metering.api.server.url}")
 @RequestMapping(headers = "ticket=123456")
 public interface MeteringPriceClient {
 
