@@ -92,7 +92,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     public RdfaResult<String> delElectricityPrice(@Validated @RequestBody ElectricityPriceVersionDelDTO delDTO) {
         RdfaResult result = null;
         try {
-            result = electricityPriceService.delElectricityPrice(delDTO.getVersionId(),delDTO.getEquipmentId(),delDTO.getSystemCode(), false);
+            result = electricityPriceService.delElectricityPrice(delDTO.getVersionId(), delDTO.getEquipmentId(), delDTO.getSystemCode(), false);
         } catch (Exception e) {
             log.error("delete version has error , {} ", e.getMessage());
             return RdfaResult.fail("E30003", "delete version has error");
@@ -112,7 +112,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Override
     public RdfaResult<String> delElectricityPriceForCommon(@RequestBody ElectricityPriceVersionDelDTO delDTO) {
         try {
-            electricityPriceService.delElectricityPrice(delDTO.getVersionId(),delDTO.getEquipmentId(),delDTO.getSystemCode(), true);
+            electricityPriceService.delElectricityPrice(delDTO.getVersionId(), delDTO.getEquipmentId(), delDTO.getSystemCode(), true);
         } catch (Exception e) {
             log.error("delete version has error , {} ", e.getMessage());
             return RdfaResult.fail("E30003", "delete version has error");
@@ -141,18 +141,9 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             for (int i = 0; i < electricityPriceSeasonDTOList.size() - 1; i++) {
 
                 try {
-                    if ("02-28".equals(electricityPriceSeasonDTOList.get(i).getSeaStartDate())) {
-                        return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本季节开始时间不允许设置:2月28日");
-                    }
-
-                    if ("02-28".equals(electricityPriceSeasonDTOList.get(i).getSeaEndDate()) || "02-29".equals(electricityPriceSeasonDTOList.get(i).getSeaEndDate())) {
-                        return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本季节结束时间不允许设置:2月28日、2月29日");
-                    }
-
                     if (!PriceDateUtils.addDateByday(format.parse(electricityPriceSeasonDTOList.get(i).getSeaEndDate()), 1).equals(format.parse(electricityPriceSeasonDTOList.get(i + 1).getSeaStartDate()))) {
                         return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本季节覆盖全年的日期格式不对");
                     }
-
 
                 } catch (ParseException e) {
                     return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本的季节日期格式错误");
@@ -175,17 +166,13 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                     }
 
                     for (int j = 0; j < electricityPriceDetailDTOList.size() - 1; j++) {
-                        if (electricityPriceDetailDTOList.get(j).getEndTime().equals(electricityPriceDetailDTOList.get(j + 1).getStartTime())) {
+                        if (!electricityPriceDetailDTOList.get(j).getEndTime().equals(electricityPriceDetailDTOList.get(j + 1).getStartTime())) {
                             return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格明细覆盖全天的时间格式不对");
                         }
-
                     }
                 }
             }
-
         }
-
-        // electricityPriceVersionDTO.setEndDate(PriceDateUtils.getDesignatedDayDate("2099-12-31"));
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
@@ -224,17 +211,19 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     }
 
-//    public static void main(String[] args) {
-//        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-//        try {
-//
+    public static void main(String[] args) {
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+        //format.format();
+        format.setLenient(false);
+        try {
+
 //            "04:52:00".compareTo("00:00:00");
 //            "02-22".compareTo("02-21");
-//            format.parse("02-20");
-//            PriceDateUtils.addDateByday(format.parse("02-20"), 1).equals(format.parse("02-21"));
-//            //format.setLenient(false);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//    }
+            format.parse("02-28");
+            PriceDateUtils.addDateByday(format.parse("02-20"), 1).equals(format.parse("02-21"));
+            //format.setLenient(false);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
 }
