@@ -312,11 +312,16 @@ public class ElectricityPriceService {
         //更新删除版本的上一个版本的结束时间
         ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, versionBO.getStartDate());
         //修改上一个版本的结束时间
-        ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
-        updateVersion.setVersionId(versionView.getVersionId());
-        updateVersion.setEndDate(versionBO.getEndDate());
-        electricityPriceVersionService.updatePriceVersion(updateVersion);
-        removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
+        if (!ObjectUtils.isEmpty(versionBO)){//存在上一个版本
+            ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
+            updateVersion.setVersionId(versionView.getVersionId());
+            updateVersion.setEndDate(versionBO.getEndDate());
+            electricityPriceVersionService.updatePriceVersion(updateVersion);
+            removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
+        }else {
+            removeRedisPriceVersionData(equipmentId, systemCode, versionId);//清除缓存
+        }
+
         return RdfaResult.success("");
     }
 
