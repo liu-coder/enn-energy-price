@@ -294,12 +294,12 @@ public class ElectricityPriceService {
     @Transactional(rollbackFor = Exception.class)
     public RdfaResult delElectricityPrice(String versionId, String equipmentId, String systemCode, boolean isCommon) {
         //获取已有版本电价，不存在，则抛出不存在异常，校验当前的版本是否生效，生效，则报不可用删除
-        ElectricityPriceVersion electricityPriceVersion = electricityPriceVersionService.selectByVersionId(versionId);
-        if (ObjectUtils.isEmpty(electricityPriceVersion)) { //ObjectUtils
-            return RdfaResult.success("");
+        ElectricityPriceVersionBO versionBO = electricityPriceVersionService.selectEquVersionsByCondition(equipmentId,systemCode,versionId);
+        if (ObjectUtils.isEmpty(versionBO)) { //ObjectUtils
+            return RdfaResult.fail("E30001","未找到要删除的版本，请效验传入的参数");
         }
         //校验版本是否生效，
-        if (!isCommon && isVaLid(electricityPriceVersion)) {
+        if (!isCommon && isVaLid(versionBO)) {
             return RdfaResult.fail("E30002", "this version is in effect and cannot be deleted ");
         }
         //通过versionId 查询ruleid
@@ -311,11 +311,11 @@ public class ElectricityPriceService {
         electricityPriceDetailService.deleteDetailsByVersionId(versionId);//价格明细 TODO 根据 versionId 修改详情
         electricityPriceSeasonService.updateSeasonStateByVersionId(versionId);//删除季节
         //更新删除版本的上一个版本的结束时间
-        ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, electricityPriceVersion.getStartDate());
+        ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, versionBO.getStartDate());
         //修改上一个版本的结束时间
         ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
         updateVersion.setVersionId(versionView.getVersionId());
-        updateVersion.setEndDate(electricityPriceVersion.getEndDate());
+        updateVersion.setEndDate(versionBO.getEndDate());
         electricityPriceVersionService.updatePriceVersion(updateVersion);
         removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
         return RdfaResult.success("");
@@ -330,10 +330,10 @@ public class ElectricityPriceService {
         }
     }
 
-    private boolean isVaLid(ElectricityPriceVersion electricityPriceVersion) {
+    private boolean isVaLid(ElectricityPriceVersionBO versionBO) {
         //版本生效判定 ： 当前时间 >= 版本生效时间
         Date currentDate = new Date();
-        return currentDate.compareTo(electricityPriceVersion.getStartDate()) >= 0;
+        return currentDate.compareTo(versionBO.getStartDate()) >= 0;
     }
 
 }
