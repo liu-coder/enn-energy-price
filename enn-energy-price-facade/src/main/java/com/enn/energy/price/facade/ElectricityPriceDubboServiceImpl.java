@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -136,12 +137,14 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "日期未覆盖全年");
             }
 
-            SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String year = String.format("%tY", electricityPriceVersionDTO.getStartDate());
+
             format.setLenient(false);
             for (int i = 0; i < electricityPriceSeasonDTOList.size() - 1; i++) {
 
                 try {
-                    if (!PriceDateUtils.addDateByday(format.parse(electricityPriceSeasonDTOList.get(i).getSeaEndDate()), 1).equals(format.parse(electricityPriceSeasonDTOList.get(i + 1).getSeaStartDate()))) {
+                    if (!PriceDateUtils.addDateByday(format.parse(year + "-" + electricityPriceSeasonDTOList.get(i).getSeaEndDate()), 1).equals(format.parse(year + "-" + electricityPriceSeasonDTOList.get(i + 1).getSeaStartDate()))) {
                         return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本季节覆盖全年的日期格式不对");
                     }
 
@@ -151,7 +154,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             }
 
             //校验明细时间
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             timeFormat.setLenient(false);
 
             for (int i = 0; i < electricityPriceSeasonDTOList.size(); i++) {
@@ -161,7 +164,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     Collections.sort(electricityPriceDetailDTOList);
 
-                    if (!"00:00:00".equals(electricityPriceDetailDTOList.get(0).getStartTime()) || !"24:00:00".equals(electricityPriceDetailDTOList.get(electricityPriceDetailDTOList.size() - 1).getEndTime())) {
+                    if (!"00:00".equals(electricityPriceDetailDTOList.get(0).getStartTime()) || !"24:00".equals(electricityPriceDetailDTOList.get(electricityPriceDetailDTOList.size() - 1).getEndTime())) {
                         return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格明细时间未覆盖全天");
                     }
 
@@ -216,6 +219,10 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         //format.format();
         format.setLenient(false);
         try {
+
+
+            String year = String.format("%tY", new Date());
+
 
 //            "04:52:00".compareTo("00:00:00");
 //            "02-22".compareTo("02-21");
