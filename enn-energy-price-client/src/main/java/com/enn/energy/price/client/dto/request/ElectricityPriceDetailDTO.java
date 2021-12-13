@@ -33,14 +33,14 @@ public class ElectricityPriceDetailDTO implements Serializable,Comparable<Electr
     /**
      * 时段开始时间
      */
-    @ApiModelProperty(value = "开始时间", example = "11:00:00，到小时")
+    @ApiModelProperty(value = "开始时间", example = "11:00，到小时")
     //@NotBlank(message = "明细开始时间必填")
     private String startTime;
 
     /**
      * 时段结束时间
      */
-    @ApiModelProperty(value = "结束时间", example = "11:00:00，到小时")
+    @ApiModelProperty(value = "结束时间", example = "11:00，到小时")
    // @NotBlank(message = "明细结束时间必填")
     private String endTime;
 
