@@ -9,7 +9,7 @@ import com.enn.energy.price.integration.cim.dto.CimPriceResp;
 import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
 
 @FeignClient(name="CimApiClient",contextId = "CimApiClient",path="/etsp", url = "${cim.api.server.url}")
-@RequestMapping(headers = "X-GW-AccessKey=${participant.gateway.accessKey}")
+@RequestMapping()
 public interface CimApiClient {
 
 	/**

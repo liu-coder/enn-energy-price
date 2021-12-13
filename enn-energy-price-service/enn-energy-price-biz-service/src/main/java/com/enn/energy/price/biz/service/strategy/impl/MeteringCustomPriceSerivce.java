@@ -17,7 +17,7 @@ import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceRespDto;
 
 import top.rdfa.framework.biz.ro.RdfaResult;
 
-@Service("meteringCustomPriceSerivce")
+@Service("meteringCustomPriceService")
 public class MeteringCustomPriceSerivce implements PriceStrategyService {
 
 	@Autowired
