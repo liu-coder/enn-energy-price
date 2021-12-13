@@ -154,7 +154,16 @@ public class ElectricityPriceService {
                     versionIdList.add(oldElectricityPriceEquipment.getVersionId());
             }
 
-            electricityPriceVersionList.addAll(PriceCollectionUtils.convertEntity(electricityPriceVersionService.selectByVersionIds(versionIdList), ElectricityPriceVersionBO.class));
+            List<ElectricityPriceVersionBO> electricityPriceVersionBOList = PriceCollectionUtils.convertEntity(electricityPriceVersionService.selectByVersionIds(versionIdList), ElectricityPriceVersionBO.class);
+
+             for(ElectricityPriceVersionBO priceVersionBO : electricityPriceVersionBOList){
+                    if(priceVersionBO.getStartDate().compareTo(electricityPriceVersionBO.getStartDate())==0){
+                        log.error("已存在当前生效日期的价格版本,版本id:{}", priceVersionBO.getVersionId());
+                        throw new PriceException(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(), "已存在当前生效日期的价格版本");
+                    }
+             }
+
+            electricityPriceVersionList.addAll(electricityPriceVersionBOList);
         }
 
         electricityPriceVersionList.add(electricityPriceVersionBO);
@@ -326,116 +335,5 @@ public class ElectricityPriceService {
         Date currentDate = new Date();
         return currentDate.compareTo(electricityPriceVersion.getStartDate()) >= 0;
     }
-
-
-    /**
-     * 更新价格版本
-     *
-     * @param electricityPriceVersionBO
-     */
-//    public void updateElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO) {
-//
-//        ElectricityPriceVersion electricityPriceVersion = electricityPriceVersionService.selectByVersionId(electricityPriceVersionBO.getVersionId());
-//
-//        if (null == electricityPriceVersion) {
-//            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), "当前电价版本不存在");
-//        }
-//
-//        //当前修改的版本是未来的版本
-//        if (electricityPriceVersion.getStartDate().compareTo(new Date()) > 0) {
-//            //删除老的
-//            delElectricityPrice(electricityPriceVersionBO.getVersionId(), true);
-//
-//        } else {
-//            ElectricityPriceVersion newElectricityPriceVersion = new ElectricityPriceVersion();
-//            newElectricityPriceVersion.setVersionId(electricityPriceVersionBO.getVersionId());
-//            newElectricityPriceVersion.setEndDate(new Date());
-//            newElectricityPriceVersion.setUpdateTime(new Date());
-//
-//
-//            String cacheKey = electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
-//            Set<Object> hKeys = priceCacheClientImpl.hashKeys(cacheKey, CommonConstant.ELECTRICITY_PRICE);
-//
-//            //保存当前设备下当前版本的所有的价格缓存数据
-//            Map<String, String> fieldValue = new HashMap<>();
-//            for (Object hKey : hKeys) {
-//                if (StringUtils.startsWith((String) hKey, electricityPriceVersionBO.getVersionId())) {
-//                    fieldValue.put((String) hKey, priceCacheClientImpl.hGet(cacheKey, CommonConstant.ELECTRICITY_PRICE, hKey));
-//                }
-//            }
-//
-//            //删除老缓存
-//            fieldValue.forEach((field, value) -> priceCacheClientImpl.hDelete(cacheKey, CommonConstant.ELECTRICITY_PRICE, field));
-//
-//            //更新老版本的结束时间
-//            electricityPriceVersionService.updatePriceVersion(newElectricityPriceVersion);
-//            //新增缓存
-//            fieldValue.forEach((field, value) -> {
-//                String[] fields = field.split(CommonConstant.VALUE_SPERATOR);
-//                String newField = fields[0] + CommonConstant.VALUE_SPERATOR + fields[1] + CommonConstant.VALUE_SPERATOR +
-//                        PriceDateUtils.dayDateToStr(new Date()) + CommonConstant.VALUE_SPERATOR + fields[3] + CommonConstant.VALUE_SPERATOR + fields[4] + CommonConstant.VALUE_SPERATOR + fields[5];
-//
-//                priceCacheClientImpl.hPut(cacheKey, CommonConstant.ELECTRICITY_PRICE, newField, value);
-//            });
-//
-//            electricityPriceVersionBO.setStartDate(electricityPriceVersionBO.getStartDate().compareTo(new Date()) > 0 ? electricityPriceVersionBO.getStartDate() : PriceDateUtils.addDateByday(new Date(), 1));
-//        }
-//
-//        electricityPriceVersionBO.setLastVersionId(electricityPriceVersionBO.getVersionId());
-//        addElectricityPrice(electricityPriceVersionBO);
-//    }
-//
-//    public void updateElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO) {
-//
-//        ElectricityPriceVersion electricityPriceVersion = electricityPriceVersionService.selectByVersionId(electricityPriceVersionBO.getVersionId());
-//
-//        if (null == electricityPriceVersion) {
-//            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), "当前电价版本不存在");
-//        }
-//
-//        //当前修改的版本是未来的版本
-//        if (electricityPriceVersion.getStartDate().compareTo(new Date()) > 0) {
-//            //删除老的
-//            delElectricityPrice(electricityPriceVersionBO.getVersionId(), "","",true);
-//
-//        } else {
-//            ElectricityPriceVersion newElectricityPriceVersion = new ElectricityPriceVersion();
-//            newElectricityPriceVersion.setVersionId(electricityPriceVersionBO.getVersionId());
-//            newElectricityPriceVersion.setEndDate(new Date());
-//            newElectricityPriceVersion.setUpdateTime(new Date());
-//
-//
-//            String cacheKey = electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
-//            Set<Object> hKeys = priceCacheClientImpl.hashKeys(cacheKey, CommonConstant.ELECTRICITY_PRICE);
-//
-//            //保存当前设备下当前版本的所有的价格缓存数据
-//            Map<String, String> fieldValue = new HashMap<>();
-//            for (Object hKey : hKeys) {
-//                if (StringUtils.startsWith((String) hKey, electricityPriceVersionBO.getVersionId())) {
-//                    fieldValue.put((String) hKey, priceCacheClientImpl.hGet(cacheKey, CommonConstant.ELECTRICITY_PRICE, hKey));
-//                }
-//            }
-//
-//            //删除老缓存
-//            fieldValue.forEach((field, value) -> priceCacheClientImpl.hDelete(cacheKey, CommonConstant.ELECTRICITY_PRICE, field));
-//
-//            //更新老版本的结束时间
-//            electricityPriceVersionService.updatePriceVersion(newElectricityPriceVersion);
-//            //新增缓存
-//            fieldValue.forEach((field, value) -> {
-//                String[] fields = field.split(CommonConstant.VALUE_SPERATOR);
-//                String newField = fields[0] + CommonConstant.VALUE_SPERATOR + fields[1] + CommonConstant.VALUE_SPERATOR +
-//                        PriceDateUtils.dayDateToStr(new Date()) + CommonConstant.VALUE_SPERATOR + fields[3] + CommonConstant.VALUE_SPERATOR + fields[4] + CommonConstant.VALUE_SPERATOR + fields[5];
-//
-//                priceCacheClientImpl.hPut(cacheKey, CommonConstant.ELECTRICITY_PRICE, newField, value);
-//            });
-//
-//            electricityPriceVersionBO.setStartDate(electricityPriceVersionBO.getStartDate().compareTo(new Date()) > 0 ? electricityPriceVersionBO.getStartDate() : PriceDateUtils.addDateByday(new Date(), 1));
-//        }
-//
-//        electricityPriceVersionBO.setLastVersionId(electricityPriceVersionBO.getVersionId());
-//        addElectricityPrice(electricityPriceVersionBO);
-//    }
-
 
 }
