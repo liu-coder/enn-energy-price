@@ -32,4 +32,6 @@ public interface ElectricityPriceEquipmentExtMapper {
     List<ElectricityPriceEquipment> selectEquByConditionOrderByUpdateTime(Map<String, Object> map);
 
     ElectricityPriceEquVersionView selectEquVersionRecentOneValidByCondition(Map<String,Object> map);
+
+    ElectricityPriceEquVersionView selectEquVersionLastOneValidByTime(Map<String, Object> map);
 }
