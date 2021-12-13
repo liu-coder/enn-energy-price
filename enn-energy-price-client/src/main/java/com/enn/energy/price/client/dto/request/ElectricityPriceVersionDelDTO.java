@@ -15,6 +15,6 @@ public class ElectricityPriceVersionDelDTO {
     private String versionId;
     @NotBlank(message = "设备ID不能为空")
     private String equipmentId;
-    @NotBlank(message = "cimCode不能为空")
+    @NotBlank(message = "systemCode不能为空")
     private String systemCode;
 }

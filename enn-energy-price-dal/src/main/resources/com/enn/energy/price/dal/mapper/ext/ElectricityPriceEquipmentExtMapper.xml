@@ -103,7 +103,7 @@
         select equ.version_id versionId, equ.rule_id ruleId,ver.start_date startDate,ver.end_date endDate
         from electricity_price_equipment equ left join electricity_price_version ver
                                                        on equ.version_id = ver.version_id
-        where equ.equipment_id = #{equipmentId} and (#{systemCode} is null or equ.system_code = #{systemCode})
+        where equ.equipment_id = #{equipmentId} and (#{systemCode} is null or equ.system_code = #{systemCode}) and ver.state = #{state}
           and ver.start_date &lt; #{activeTime} order by ver.start_date desc limit 1
     </select>
 

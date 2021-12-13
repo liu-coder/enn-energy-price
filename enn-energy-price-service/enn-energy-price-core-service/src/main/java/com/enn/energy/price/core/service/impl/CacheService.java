@@ -50,7 +50,7 @@ public class CacheService {
         Set<String> keys = operations.keys();
         Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext()){
-            if (!iterator.next().startsWith(pattern)){
+            if (!iterator.next().contains(pattern)){
                 iterator.remove();
             }
         }
