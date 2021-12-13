@@ -312,7 +312,7 @@ public class ElectricityPriceService {
         //更新删除版本的上一个版本的结束时间
         ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, versionBO.getStartDate());
         //修改上一个版本的结束时间
-        if (!ObjectUtils.isEmpty(versionBO)){//存在上一个版本
+        if (!ObjectUtils.isEmpty(versionView)){//存在上一个版本
             ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
             updateVersion.setVersionId(versionView.getVersionId());
             updateVersion.setEndDate(versionBO.getEndDate());
