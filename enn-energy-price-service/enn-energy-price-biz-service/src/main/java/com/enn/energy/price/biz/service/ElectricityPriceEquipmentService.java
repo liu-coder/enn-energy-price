@@ -127,4 +127,16 @@ public class ElectricityPriceEquipmentService {
         ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentExtMapper.selectEquVersionRecentOneValidByCondition(map);
         return equVersionView;
     }
+
+
+    public ElectricityPriceEquVersionView selectEquVersionLastOneValidByTime(String equipmentId, String systemCode, Date activeTime) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("equipmentId",equipmentId);
+        map.put("state",0);
+        map.put("systemCode",systemCode);
+        map.put("activeTime",activeTime);
+        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentExtMapper.selectEquVersionLastOneValidByTime(map);
+        return equVersionView;
+    }
+
 }
