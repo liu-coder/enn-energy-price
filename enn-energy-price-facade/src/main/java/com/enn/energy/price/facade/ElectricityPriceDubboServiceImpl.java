@@ -63,7 +63,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     @Override
     @PostMapping(value = "/updateElectricityPrice")
-    public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull ElectricityPriceVersionDTO electricityPriceVersionDTO) {
+    public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
 
         //校验DTO
         if (StringUtils.isEmpty(electricityPriceVersionDTO.getVersionId())) {
