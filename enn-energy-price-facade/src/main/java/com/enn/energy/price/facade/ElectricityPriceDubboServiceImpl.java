@@ -126,6 +126,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     private RdfaResult<String> validateDTO(ElectricityPriceVersionDTO electricityPriceVersionDTO) {
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO.getElectricityPriceRuleDTOList();
+        String year = String.format("%tY", electricityPriceVersionDTO.getStartDate());
 
         for (ElectricityPriceRuleDTO electricityPriceRuleDTO : electricityPriceRuleDTOList) {
 
@@ -138,8 +139,6 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             }
 
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            String year = String.format("%tY", electricityPriceVersionDTO.getStartDate());
-
             format.setLenient(false);
             for (int i = 0; i < electricityPriceSeasonDTOList.size() - 1; i++) {
 
@@ -219,11 +218,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         //format.format();
         format.setLenient(false);
         try {
-
-
             String year = String.format("%tY", new Date());
-
-
 //            "04:52:00".compareTo("00:00:00");
 //            "02-22".compareTo("02-21");
             format.parse("02-28");
