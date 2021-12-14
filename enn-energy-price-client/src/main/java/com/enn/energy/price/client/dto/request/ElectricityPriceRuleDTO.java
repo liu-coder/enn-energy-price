@@ -26,7 +26,7 @@ public class ElectricityPriceRuleDTO implements Serializable {
      */
 //    @ApiModelProperty(value = "电价规则id", required = true)
 //    @NotNull(message = "电价规则id必填")
-    private String ruleId;
+ //   private String ruleId;
 
 //    /**
 //     * 电价版本id
@@ -42,7 +42,7 @@ public class ElectricityPriceRuleDTO implements Serializable {
      * 定价策略，0:单一制;1:双部制
      */
     @ApiModelProperty(value = "定价策略", example = "0:单一制;1:双部制", required = true)
-    @NotBlank(message = "时段必填")
+    @NotBlank(message = "定价策略必填")
     private String strategy;
 
     /**

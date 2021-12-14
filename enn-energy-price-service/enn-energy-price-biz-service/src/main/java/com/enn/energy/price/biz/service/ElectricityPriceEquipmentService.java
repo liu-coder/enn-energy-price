@@ -67,9 +67,9 @@ public class ElectricityPriceEquipmentService {
      * @param versionId
      * @return
      */
-    public List<ElectricityPriceEquipment> selectPriceEquipmentsByVersionId(String versionId){
+    public ElectricityPriceEquipment selectPriceEquipmentByVersionId(String versionId){
 
-      return electricityPriceEquipmentExtMapper.selectPriceEquipmentsByVersionId(versionId);
+      return electricityPriceEquipmentExtMapper.selectPriceEquipmentByVersionId(versionId);
     }
 
 
@@ -110,12 +110,21 @@ public class ElectricityPriceEquipmentService {
 
 
     /**
-     * 更新价格规则状态
+     * 更新设备状态
      *
      * @param versionId
      */
     public void updatePriceEquipmentState(String versionId) {
         electricityPriceEquipmentExtMapper.updatePriceEquipmentState(versionId);
+    }
+
+    /**
+     * 更新设备
+     *
+     * @param electricityPriceEquipment
+     */
+    public void updatePriceEquipment(ElectricityPriceEquipment electricityPriceEquipment) {
+        electricityPriceEquipmentExtMapper.updatePriceEquipment(electricityPriceEquipment);
     }
 
     public ElectricityPriceEquVersionView selectEquVersionRecentOneValidByCondition(String equipmentId, String systemCode, Date activeTime) {

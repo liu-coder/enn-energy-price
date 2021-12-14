@@ -2,6 +2,7 @@ package com.enn.energy.price.client.service;
 
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDelDTO;
+import com.enn.energy.price.client.dto.request.ElectricityPriceVersionUpdateDTO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.rdfa.framework.biz.ro.RdfaResult;
@@ -22,7 +23,7 @@ public interface ElectricityPriceDubboService {
 
     @PostMapping(value = "/updateElectricityPrice")
     @ApiOperation("修改电价版本")
-    RdfaResult<String> updateElectricityPrice(ElectricityPriceVersionDTO electricityPriceVersionDTO);
+    RdfaResult<String> updateElectricityPrice(ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO);
 
     @PostMapping(value = "/delElectricityPrice")
     @ApiOperation("删除电价版本")

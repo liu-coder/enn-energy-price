@@ -23,11 +23,13 @@ public interface ElectricityPriceEquipmentExtMapper {
 
     void addElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
 
-    List<ElectricityPriceEquipment> selectPriceEquipmentsByVersionId(String versionId);
+    ElectricityPriceEquipment selectPriceEquipmentByVersionId(String versionId);
 
     List<ElectricityPriceEquipment> selectEquByCondition(Map<String,Object> map);
 
     void updatePriceEquipmentState(String versionId);
+
+    void updatePriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
 
     List<ElectricityPriceEquipment> selectEquByConditionOrderByUpdateTime(Map<String, Object> map);
 

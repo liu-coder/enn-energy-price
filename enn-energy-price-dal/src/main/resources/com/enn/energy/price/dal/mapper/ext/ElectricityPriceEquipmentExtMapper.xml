@@ -91,7 +91,7 @@
                 #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
 
-    <select id="selectPriceEquipmentsByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectPriceEquipmentByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select equipment_id, equipment_name, rule_id, version_id, tenant, system_code, state,
                create_time, update_time
         from electricity_price_equipment
@@ -119,6 +119,20 @@
         update electricity_price_equipment
         set state = 1,
         update_time = NOW()
+        where version_id = #{versionId,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="updatePriceEquipment" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        update electricity_price_equipment
+        <set>
+            <if test="ruleId != null">
+                rule_id = #{ruleId,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
         where version_id = #{versionId,jdbcType=VARCHAR}
     </update>
 </mapper>

@@ -93,23 +93,11 @@
             <if test="enterprise != null">
                 enterprise = #{enterprise,jdbcType=VARCHAR},
             </if>
-            <if test="systemCode != null">
-                system_code = #{systemCode,jdbcType=VARCHAR},
-            </if>
-            <if test="systemName != null">
-                system_name = #{systemName,jdbcType=VARCHAR},
-            </if>
             <if test="storeCode != null">
                 store_code = #{storeCode,jdbcType=VARCHAR},
             </if>
             <if test="storeName != null">
                 store_name = #{storeName,jdbcType=VARCHAR},
-            </if>
-            <if test="equipmentId != null">
-                equipment_id = #{equipmentId,jdbcType=VARCHAR},
-            </if>
-            <if test="equipmentName != null">
-                equipment_name = #{equipmentName,jdbcType=VARCHAR},
             </if>
             <if test="startDate != null">
                 start_date = #{startDate,jdbcType=DATE},
