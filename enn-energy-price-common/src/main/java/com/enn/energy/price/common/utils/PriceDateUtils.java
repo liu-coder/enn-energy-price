@@ -151,12 +151,31 @@ public class PriceDateUtils {
         return compare >= 0 ? true : false;
     }
 
-    public static void main(String[] args) {
+    public static String formatTimeStr(String time){
+        try {
+//            if (time.endsWith("2-29")){//如果为29号，则取上一天的时间
+//                time = time.replace("2-29","2-28");
+//            }
+            sf_dd.get().setLenient(false);
+            String format = sf_dd.get().format(sf_dd.get().parse(time));
+            sf_dd.remove();
+            return format;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    public static void main(String[] args) throws ParseException {
         System.out.println(getNextDayBeginTime(-1));
-        String s1 = "2020-11-01";
-        String s2 = "2020-02-01";
+        String s1 = "2022-01-01";
+        String s2 = "2022-12-01";
+        String s4 = "2022-04-01";
         System.out.println(beforeOrEqual(s1, s2));
-        System.out.println(afterOrEqual(s1, s2));
+        System.out.println(afterOrEqual(s2, s4));
         System.out.println(s1.substring(5));
+        String s3 = "2021-02-29";
+        sf_dd.get().setLenient(false);
+        System.out.println(sf_dd.get().parse(s3));
+        System.out.println(sf_dd.get().format(sf_dd.get().parse(s3)));
     }
 }

@@ -309,7 +309,7 @@ public class ElectricityPriceService {
         }
         //校验版本是否生效，
         if (!isCommon && isVaLid(versionBO)) {
-            return RdfaResult.fail("E30002", "this version is in effect and cannot be deleted ");
+            return RdfaResult.fail("E30002", "This version is already effective and cannot be deleted. Only future versions can be deleted");
         }
         //通过versionId 查询ruleid
 //        List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(versionId);
@@ -322,11 +322,17 @@ public class ElectricityPriceService {
         //更新删除版本的上一个版本的结束时间
         ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, versionBO.getStartDate());
         //修改上一个版本的结束时间
-        ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
-        updateVersion.setVersionId(versionView.getVersionId());
-        updateVersion.setEndDate(versionBO.getEndDate());
-        electricityPriceVersionService.updatePriceVersion(updateVersion);
-        removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
+        if (!ObjectUtils.isEmpty(versionView)){//存在上一个版本
+            ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
+            updateVersion.setVersionId(versionView.getVersionId());
+            updateVersion.setEndDate(versionBO.getEndDate());
+            updateVersion.setUpdateTime(new Date());
+            electricityPriceVersionService.updatePriceVersion(updateVersion);
+            removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
+        }else {
+            removeRedisPriceVersionData(equipmentId, systemCode, versionId);//清除缓存
+        }
+
         return RdfaResult.success("");
     }
 
@@ -342,7 +348,7 @@ public class ElectricityPriceService {
     private boolean isVaLid(ElectricityPriceVersionBO versionBO) {
         //版本生效判定 ： 当前时间 >= 版本生效时间
         Date currentDate = new Date();
-        return currentDate.compareTo(versionBO.getStartDate()) >= 0;
+        return currentDate.compareTo(versionBO.getStartDate()) >= 0 ;
     }
 
 }

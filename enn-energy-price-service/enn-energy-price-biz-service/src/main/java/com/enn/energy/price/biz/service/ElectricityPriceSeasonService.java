@@ -71,6 +71,11 @@ public class ElectricityPriceSeasonService {
         map.put("seaStartDate",sf_mm_dd.get().format(activeTime));
         map.put("seaEndDate",sf_mm_dd.get().format(activeTime));
         List<ElectricityPriceSeason> seasons = electricityPriceSeasonExtMapper.selectSeasonByCondition(map);
+        if (seasons.size() == 0 && sf_mm_dd.get().format(activeTime).equals("02-29")){
+            map.put("seaStartDate","02-28");
+            map.put("seaEndDate","02-28");
+            seasons = electricityPriceSeasonExtMapper.selectSeasonByCondition(map);
+        }
         if (seasons.size() > 1 || seasons.size() == 0){
             throw new RdfaException("季节数据存在异常，请联系技术人员进行排查");
         }

@@ -18,18 +18,24 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.cache.api.CacheClient;
+import top.rdfa.framework.cache.redisson.RedissonConfig;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import top.rdfa.framework.exception.RdfaException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -96,13 +102,24 @@ public class ElectricityPriceSelectHandler {
     private CacheClient cacheClient;
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
+    private RedissonConfig config;
 //    @Autowired
 //    private RedissonClient redissonClient;
     @Autowired
     private RedissonRedDisLock redDisLock;
 
+    /**
+     * 查询电价
+     * @param requestDto
+     * @return
+     */
     public RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(@Validated @RequestBody ElectricityPriceValueReqDTO requestDto){
+        String timeStr = PriceDateUtils.formatTimeStr(requestDto.getEffectiveTime());
+        if (StringUtils.isBlank(timeStr)){
+            return RdfaResult.fail("E20013","时间格式错误");
+        }
         //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库
+        requestDto.setEffectiveTime(timeStr);
         String key = requestDto.getSystemCode() + "_" + requestDto.getEquipmentId();
         ElectricityPriceValueDetailRespDTO resp = getDataFromRedis(key,requestDto);
         if (resp != null){
@@ -167,8 +184,8 @@ public class ElectricityPriceSelectHandler {
         ElectricityPriceValueDetailRespDTO respDTO = null;
         try{ // 2022-07-13#2099-12-31#919898525357514752#04-01#06-30#tp
             Set<String> hKeys = cacheService.getSortHKeys(key, CommonConstant.ELECTRICITY_PRICE);
-            String activeMonthDay = requestDto.getEffectiveTime().substring(5);
             for (String hkey : hKeys){
+                String activeMonthDay = requestDto.getEffectiveTime().substring(5);
                 String[] split = hkey.split(HASH_KEY_SEPARATOR_SPILT);
                 if (PriceDateUtils.beforeOrEqual(split[0],requestDto.getEffectiveTime()) &&//第一个生效时间大于查询时间
                         PriceDateUtils.afterOrEqual(split[1],requestDto.getEffectiveTime()) &&
@@ -185,6 +202,24 @@ public class ElectricityPriceSelectHandler {
                     }
                     break;
                 }
+                if ("02-29".equals(activeMonthDay)){
+                    activeMonthDay = "02-28";
+                    if (PriceDateUtils.beforeOrEqual(split[0],requestDto.getEffectiveTime()) &&//第一个生效时间大于查询时间
+                            PriceDateUtils.afterOrEqual(split[1],requestDto.getEffectiveTime()) &&
+                            PriceDateUtils.beforeOrEqual(split[3],activeMonthDay) && PriceDateUtils.afterOrEqual(split[4],activeMonthDay)){
+                        List<ElectricityPriceDetailCache> seasonPrices = cacheService.getListHashData(key,CommonConstant.ELECTRICITY_PRICE,hkey,ElectricityPriceDetailCache.class);
+                        if (seasonPrices!=null && seasonPrices.size() > 0){
+                            respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
+                            List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
+                                return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(item.getPrice()).
+                                        startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
+                                        endStep(item.getEndStep()).build();
+                            }).collect(Collectors.toList());
+                            respDTO.setPriceDetails(detailList);
+                        }
+                        break;
+                    }
+                }
             }
         }catch (Exception e){
             log.error("get data from redis has error, {} " , e.getMessage());
@@ -195,7 +230,7 @@ public class ElectricityPriceSelectHandler {
     private RdfaResult<ElectricityPriceValueDetailRespDTO> getPriceDetailFromDB(String key ,ElectricityPriceValueReqDTO requestDto){
         String lockKey = key + CommonConstant.KEY_SPERATOR + requestDto.getEffectiveTime();
         Lock lock = null;
-        try {
+        try {//TODO 看门狗机制？？？
             lock = redDisLock.lock(lockKey);
             //重新从redis获取
             ElectricityPriceValueDetailRespDTO respDTO = getDataFromRedis(key,requestDto);
