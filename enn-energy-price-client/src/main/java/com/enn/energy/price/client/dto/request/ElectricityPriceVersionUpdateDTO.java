@@ -31,7 +31,7 @@ public class ElectricityPriceVersionUpdateDTO implements Serializable {
     /**
      * 电价版本id
      */
-    @ApiModelProperty(value = "电价版本", example = "电价版本id")
+    @ApiModelProperty(value = "电价版本", required = true)
     @NotBlank(message = "电价版本id必填")
     private String versionId;
 
