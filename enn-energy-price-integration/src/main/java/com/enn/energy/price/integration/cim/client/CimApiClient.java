@@ -8,8 +8,8 @@ import com.enn.energy.price.integration.cim.dto.CimPriceReq;
 import com.enn.energy.price.integration.cim.dto.CimPriceResp;
 import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
 
-@FeignClient(name="CimApiClient",contextId = "CimApiClient",path="/etsp", url = "${cim.api.server.url}")
-@RequestMapping()
+@FeignClient(name="CimApiClient",contextId = "CimApiClient",path="/etsp", url = "http://electric-service.test.fnwintranet.com")
+@RequestMapping(headers="Content-Type=application/json")
 public interface CimApiClient {
 
 	/**

@@ -25,18 +25,22 @@ public class CimPriceService implements  PriceStrategyService{
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> respDto = null;
 		
 		CimPriceReq cimPriceReq = new CimPriceReq();
-		cimPriceReq.setIdType("01");
-		cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getTenantId());
+
+		cimPriceReq.setIdType("03");
+		cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getDeviceNumber());
 		cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
+		cimPriceReq.setSystemCode(eletricityUnifiedReqDto.getTenantId());
+
+
 		
 		CimResponse<CimPriceResp>  response= CimApiClient.getDayEnergyPrice(cimPriceReq);
 		if(response.getData() != null) {
+
 			respDto = converResp(response);
 		}else {
-			cimPriceReq.setIdType("03");
-			cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getDeviceNumber());
+			cimPriceReq.setIdType("01");
+			cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getTenantId());
 			cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
-			cimPriceReq.setSystemCode(eletricityUnifiedReqDto.getTenantId());
 			response= CimApiClient.getDayEnergyPrice(cimPriceReq);
 			if(response.getData() != null) {
 				respDto = converResp(response);
@@ -46,8 +50,11 @@ public class CimPriceService implements  PriceStrategyService{
 		return respDto;
 	}
 
-	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> converResp(CimResponse<CimPriceResp> response) {
-		// TODO Auto-generated method stub
+	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> converResp(CimResponse<CimPriceResp> cimResponse) {
+		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<>();
+		ElectricityPriceUnifiedDetailRespDto response = new ElectricityPriceUnifiedDetailRespDto();
+		CimPriceResp cimPriceResp = cimResponse.getData();
+//		response.setBaseCapacityPrice(cimPriceResp.getDemandPrice());
 		return null;
 	}
 
@@ -55,7 +62,7 @@ public class CimPriceService implements  PriceStrategyService{
 		CimPriceReq cimPriceReq = new CimPriceReq();
 		cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getTenantId());
 		cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
-		return null;
+		return cimPriceReq;
 	}
 
 }
