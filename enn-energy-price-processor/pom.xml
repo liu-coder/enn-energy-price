@@ -29,10 +29,10 @@
             <groupId>com.enn.energy.price</groupId>
             <artifactId>enn-energy-price-biz-service</artifactId>
         </dependency>
-        <dependency>
-            <groupId>top.rdfa.framework</groupId>
-            <artifactId>rdfa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>top.rdfa.framework</groupId>-->
+<!--            <artifactId>rdfa-test</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
     </dependencies>
 </project>
