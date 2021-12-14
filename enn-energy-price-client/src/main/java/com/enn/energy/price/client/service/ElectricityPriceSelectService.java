@@ -7,6 +7,7 @@ import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespD
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
@@ -16,6 +17,7 @@ import java.text.ParseException;
 /**
  * 价格、版本等相关查询
  */
+@FeignClient(name = "electricityPriceSelectService")
 public interface ElectricityPriceSelectService {
     /**
      * 查询电价
