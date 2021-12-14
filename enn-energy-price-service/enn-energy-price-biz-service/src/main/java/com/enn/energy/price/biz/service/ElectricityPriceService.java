@@ -57,7 +57,7 @@ public class ElectricityPriceService {
     private CacheService cacheService;
 
     @Transactional(rollbackFor = Exception.class)
-    public void addElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, ElectricityPriceVersion updateElectricityPriceVersion) {
+    public void addElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, Boolean isUpdate) {
 
         //绑定类型:设备
         if ("1".equals(electricityPriceVersionBO.getBindType())) {
@@ -89,10 +89,10 @@ public class ElectricityPriceService {
             }
 
             //更新的时候，需要删除老版本缓存
-            if (updateElectricityPriceVersion != null) {
+            if (isUpdate) {
                 for (Object hKey : hKeys) {
                     String[] fileds = ((String) hKey).split(CommonConstant.VALUE_SPERATOR);
-                    if (fileds.length == 6 && fileds[2].equals(updateElectricityPriceVersion.getVersionId())) {
+                    if (fileds.length == 6 && fileds[2].equals(electricityPriceVersionBO.getVersionId())) {
                         fullOldFieldList.add((String) hKey);
                     }
                 }
@@ -109,14 +109,12 @@ public class ElectricityPriceService {
             }
 
             //更新的时候，删除老版本
-            if (updateElectricityPriceVersion != null) {
-                String updateVersionId = updateElectricityPriceVersion.getVersionId();
+            if (isUpdate) {
+                String updateVersionId = electricityPriceVersionBO.getVersionId();
                 electricityPriceVersionService.updatePriceVersion(electricityPriceVersion);
-                //lectricityPriceVersionService.updatePriceVersionState(updateVersionId);
                 electricityPriceRuleService.updatePriceRuleState(updateVersionId);
                 electricityPriceSeasonService.updateSeasonStateByVersionId(updateVersionId);
                 electricityPriceDetailService.deleteDetailsByVersionId(updateVersionId);
-                //  electricityPriceEquipmentService.updatePriceEquipmentState(updateVersionId);
                 electricityPriceEquipmentService.updatePriceEquipment(electricityPriceEquipment);
             } else {
                 //添加版本
@@ -291,7 +289,6 @@ public class ElectricityPriceService {
         ElectricityPriceEquipmentBO electricityPriceEquipmentBO = new ElectricityPriceEquipmentBO();
         electricityPriceEquipmentBO.setEquipmentId(electricityPriceVersion.getEquipmentId());
         electricityPriceVersionBO.setElectricityPriceEquipmentBO(electricityPriceEquipmentBO);
-        addElectricityPrice(electricityPriceVersionBO, electricityPriceVersion);
     }
 
 

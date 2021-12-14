@@ -57,7 +57,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
         convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
-        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, null);
+        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
@@ -74,6 +74,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionUpdateDTO, ElectricityPriceVersionBO.class);
         convertBO(null, electricityPriceVersionUpdateDTO, electricityPriceVersionBO);
         electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
+        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
