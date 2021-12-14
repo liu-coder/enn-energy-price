@@ -299,7 +299,7 @@ public class ElectricityPriceService {
         }
         //校验版本是否生效，
         if (!isCommon && isVaLid(versionBO)) {
-            return RdfaResult.fail("E30002", "this version is in effect and cannot be deleted ");
+            return RdfaResult.fail("E30002", "This version is already effective and cannot be deleted. Only future versions can be deleted");
         }
         //通过versionId 查询ruleid
 //        List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(versionId);
@@ -316,6 +316,7 @@ public class ElectricityPriceService {
             ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
             updateVersion.setVersionId(versionView.getVersionId());
             updateVersion.setEndDate(versionBO.getEndDate());
+            updateVersion.setUpdateTime(new Date());
             electricityPriceVersionService.updatePriceVersion(updateVersion);
             removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
         }else {
@@ -337,7 +338,7 @@ public class ElectricityPriceService {
     private boolean isVaLid(ElectricityPriceVersionBO versionBO) {
         //版本生效判定 ： 当前时间 >= 版本生效时间
         Date currentDate = new Date();
-        return currentDate.compareTo(versionBO.getStartDate()) >= 0;
+        return currentDate.compareTo(versionBO.getStartDate()) >= 0 ;
     }
 
 }
