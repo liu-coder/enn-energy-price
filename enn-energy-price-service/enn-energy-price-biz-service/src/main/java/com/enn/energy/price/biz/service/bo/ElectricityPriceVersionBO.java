@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.bo;
 
+import com.enn.energy.price.client.dto.request.ElectricityPriceSeasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,7 @@ import java.util.List;
 @Slf4j
 @NoArgsConstructor
 @AllArgsConstructor
-public class ElectricityPriceVersionBO implements Serializable {
+public class ElectricityPriceVersionBO implements Serializable, Comparable<ElectricityPriceVersionBO> {
 
 
     private static final long serialVersionUID = 983625301693655951L;
@@ -134,4 +135,14 @@ public class ElectricityPriceVersionBO implements Serializable {
      */
     private String commodityName;
 
+    /**
+     * 更新时间
+     */
+    private Date  updateTime;
+
+    @Override
+    public int compareTo(ElectricityPriceVersionBO o) {
+
+        return this.getStartDate().compareTo(o.getStartDate());
+    }
 }

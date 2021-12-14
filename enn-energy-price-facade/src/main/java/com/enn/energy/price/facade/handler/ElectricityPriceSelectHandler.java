@@ -13,22 +13,30 @@ import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import com.enn.energy.price.core.service.impl.CacheService;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.cache.api.CacheClient;
+import top.rdfa.framework.cache.redisson.RedissonConfig;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import top.rdfa.framework.exception.RdfaException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -95,14 +103,25 @@ public class ElectricityPriceSelectHandler {
     private CacheClient cacheClient;
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
+    private RedissonConfig config;
 //    @Autowired
 //    private RedissonClient redissonClient;
     @Autowired
     private RedissonRedDisLock redDisLock;
 
+    /**
+     * 查询电价
+     * @param requestDto
+     * @return
+     */
     public RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(@Validated @RequestBody ElectricityPriceValueReqDTO requestDto){
+        String timeStr = PriceDateUtils.formatTimeStr(requestDto.getEffectiveTime());
+        if (StringUtils.isBlank(timeStr)){
+            return RdfaResult.fail("E20013","时间格式错误");
+        }
         //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库
-        String key = requestDto.getEquipmentId();
+        requestDto.setEffectiveTime(timeStr);
+        String key = requestDto.getSystemCode() + "_" + requestDto.getEquipmentId();
         ElectricityPriceValueDetailRespDTO resp = getDataFromRedis(key,requestDto);
         if (resp != null){
             log.info("get data from redis !");
@@ -164,23 +183,42 @@ public class ElectricityPriceSelectHandler {
 
     private ElectricityPriceValueDetailRespDTO getDataFromRedis(String key ,ElectricityPriceValueReqDTO requestDto) {
         ElectricityPriceValueDetailRespDTO respDTO = null;
-        try{
-            Set<String> hKeys = cacheService.getHKeys(key, CommonConstant.ELECTRICITY_PRICE);
-            String activeMonthDay = requestDto.getEffectiveTime().substring(5);
+        try{ // 2022-07-13#2099-12-31#919898525357514752#04-01#06-30#tp
+            Set<String> hKeys = cacheService.getSortHKeys(key, CommonConstant.ELECTRICITY_PRICE);
             for (String hkey : hKeys){
+                String activeMonthDay = requestDto.getEffectiveTime().substring(5);
                 String[] split = hkey.split(HASH_KEY_SEPARATOR_SPILT);
-                if (PriceDateUtils.beforeOrEqual(split[1],requestDto.getEffectiveTime()) &&
-                        PriceDateUtils.afterOrEqual(split[2],requestDto.getEffectiveTime()) &&
+                if (PriceDateUtils.beforeOrEqual(split[0],requestDto.getEffectiveTime()) &&//第一个生效时间大于查询时间
+                        PriceDateUtils.afterOrEqual(split[1],requestDto.getEffectiveTime()) &&
                         PriceDateUtils.beforeOrEqual(split[3],activeMonthDay) && PriceDateUtils.afterOrEqual(split[4],activeMonthDay)){
                     List<ElectricityPriceDetailCache> seasonPrices = cacheService.getListHashData(key,CommonConstant.ELECTRICITY_PRICE,hkey,ElectricityPriceDetailCache.class);
                     if (seasonPrices!=null && seasonPrices.size() > 0){
                         respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
-                            return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(item.getPrice()).
+                            return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
                                     startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
                                     endStep(item.getEndStep()).build();
                         }).collect(Collectors.toList());
                         respDTO.setPriceDetails(detailList);
+                    }
+                    break;
+                }
+                if ("02-29".equals(activeMonthDay)){
+                    activeMonthDay = "02-28";
+                    if (PriceDateUtils.beforeOrEqual(split[0],requestDto.getEffectiveTime()) &&//第一个生效时间大于查询时间
+                            PriceDateUtils.afterOrEqual(split[1],requestDto.getEffectiveTime()) &&
+                            PriceDateUtils.beforeOrEqual(split[3],activeMonthDay) && PriceDateUtils.afterOrEqual(split[4],activeMonthDay)){
+                        List<ElectricityPriceDetailCache> seasonPrices = cacheService.getListHashData(key,CommonConstant.ELECTRICITY_PRICE,hkey,ElectricityPriceDetailCache.class);
+                        if (seasonPrices!=null && seasonPrices.size() > 0){
+                            respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
+                            List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
+                                return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
+                                        startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
+                                        endStep(item.getEndStep()).build();
+                            }).collect(Collectors.toList());
+                            respDTO.setPriceDetails(detailList);
+                        }
+                        break;
                     }
                 }
             }
@@ -193,80 +231,64 @@ public class ElectricityPriceSelectHandler {
     private RdfaResult<ElectricityPriceValueDetailRespDTO> getPriceDetailFromDB(String key ,ElectricityPriceValueReqDTO requestDto){
         String lockKey = key + CommonConstant.KEY_SPERATOR + requestDto.getEffectiveTime();
         Lock lock = null;
-        try {
+        try {//TODO 看门狗机制？？？
             lock = redDisLock.lock(lockKey);
             //重新从redis获取
-            ElectricityPriceValueDetailRespDTO dataFromRedis = getDataFromRedis(key,requestDto);
-            if (dataFromRedis != null){
+            ElectricityPriceValueDetailRespDTO respDTO = getDataFromRedis(key,requestDto);
+            if (respDTO != null){
                 log.info("get data from redis !");
-                return RdfaResult.success(dataFromRedis);
+                return RdfaResult.success(respDTO);
             }
             log.info("can not get data from redis,begin select from database");
-            //1、根据设备ID，查询版本ID,提取版本列表ID -> versionIds
-            List<ElectricityPriceEquipmentBO> electricityPriceEquipmentBos = electricityPriceEquipmentService.selectEquByConditionOrderByUpdateTime(
-                    requestDto.getEquipmentId(),requestDto.getSystemCode());
-            if (electricityPriceEquipmentBos.size() == 0){
-                return RdfaResult.fail("E20001","未查到有效的设备数据");
-            }
-            List<String> versionIds = electricityPriceEquipmentBos.stream().map(ElectricityPriceEquipmentBO::getVersionId).collect(Collectors.toList());
-            ElectricityPriceVersionBO electricityPriceVersionBo = null;
+
+            //1、根据设备ID、systemCode、查询日期，确认最近的一个生效日期 < 查询日期 的版本
             Date activeTime = null;
             try {
                 activeTime = sf_dd.get().parse(requestDto.getEffectiveTime());
-                //2、根据版本列表ID、有效时间，确认唯一版本
-                electricityPriceVersionBo = electricityPriceVersionService.selectVersionByCondition(versionIds, activeTime);
-            } catch (RdfaException | ParseException e) {
-                log.error("get unique version data has error, {} ",e.getMessage());
-                if (e instanceof ParseException){
-                    return RdfaResult.fail("E20009","时间格式错误，请输入正确的参数格式 yyyy-MM-dd");
-                }
-                return RdfaResult.fail("E20002","设备绑定的版本数据存在异常，请排查版本的有效时间");
+            } catch (ParseException e) {
+                log.error("时间格式错误 ",e.getMessage());
+                return RdfaResult.fail("E20001","时间参数错误");
             }
-            //提取唯一版本对应的设备表中的规则ID 同一生效时间内：一个设备只能绑定一个规则ID、版本ID，只存在一条有效
-            //TODO 存在问题：一个设备会绑定相同版本的不同规则吗？？？如果存在此种情况，则无法判定生效规则，并且无法判定电价 detail
-            String ruleId = "";
-            for (ElectricityPriceEquipmentBO bo : electricityPriceEquipmentBos){
-                if (bo.getVersionId().equals(electricityPriceVersionBo.getVersionId())){//设备的版本与查询到的唯一的版本的id比较。
-                    ruleId = bo.getRuleId();
-                    break;
-                }
+            ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentService.selectEquVersionLastOneValidByTime(requestDto.getEquipmentId(), requestDto.getSystemCode(),activeTime);
+            if (equVersionView == null){
+                return RdfaResult.fail("E20002","未查到有效的版本数据");
             }
-            ElectricityPriceRuleBO electricityPriceRuleBo = null;
-            if (StringUtils.isNotBlank(ruleId)){
-                electricityPriceRuleBo = electricityPriceRuleService.selectRuleByCondition(ruleId,electricityPriceVersionBo.getVersionId());
-            }
-            if (StringUtils.isBlank(ruleId) || electricityPriceRuleBo == null){
+            ElectricityPriceRuleBO electricityPriceRuleBo = electricityPriceRuleService.selectRuleByCondition(equVersionView.getRuleId(),equVersionView.getVersionId());
+            if (electricityPriceRuleBo == null){
                 return RdfaResult.fail("E20003","未查到电费规则");
             }
             //根据确定的版本ID、规则ID、有效时间确定唯一的季节ID
             ElectricityPriceSeasonBO electricityPriceSeasonBO = null;
             try {
-                electricityPriceSeasonBO = electricityPriceSeasonService.selectSeasonByCondition(electricityPriceVersionBo.getVersionId(), ruleId, activeTime);
+                electricityPriceSeasonBO = electricityPriceSeasonService.selectSeasonByCondition(equVersionView.getVersionId(), equVersionView.getRuleId(), activeTime);
             } catch (RdfaException e) {
                 log.error("查询季节数据遇到异常，请排查, {} ",e.getMessage());
                 return RdfaResult.fail("E20004","季节数据异常");
             }
             //根据规则ID、季节ID确定电价详情
-            List<ElectricityPriceDetailBO> detailBos = electricityPriceDetailService.selectDetailByCondition(electricityPriceVersionBo.getVersionId(),ruleId,electricityPriceSeasonBO.getSeasonId());
-            ElectricityPriceValueDetailRespDTO convert = convert(electricityPriceRuleBo,electricityPriceSeasonBO, detailBos);
-            putRedisValue(key,requestDto,electricityPriceVersionBo,electricityPriceSeasonBO,detailBos);
+            List<ElectricityPriceDetailBO> detailBos = electricityPriceDetailService.selectDetailByCondition(equVersionView.getVersionId(),equVersionView.getRuleId(),electricityPriceSeasonBO.getSeasonId());
+            if (detailBos.size() == 0){
+                return RdfaResult.fail("E20005","未查到电价明细信息，请排查电价详情");
+            }
+            respDTO = convert(electricityPriceRuleBo,electricityPriceSeasonBO, detailBos);
+            putRedisValue(key,equVersionView,electricityPriceSeasonBO,detailBos);
             removeThreadLocal();
-            return RdfaResult.success(convert);
+            return RdfaResult.success(respDTO);
         } catch(LockFailException e){
             log.error(e.getMessage(), e);
-            return RdfaResult.fail("E20010","获取锁失败");
+            return RdfaResult.fail("E20006","获取锁失败");
         } finally{
             redDisLock.unlock(lock);
         }
     }
 
-    private void putRedisValue(String key,ElectricityPriceValueReqDTO requestDto,ElectricityPriceVersionBO versionBo,
+    private void putRedisValue(String key,ElectricityPriceEquVersionView equVersionView,
                                ElectricityPriceSeasonBO seasonBO ,
                                List<ElectricityPriceDetailBO> detailBos){
         try{
             //封装 hash value值,放入 redis 缓存
-            String hashKey = new StringBuilder(versionBo.getVersionId()).append(HASH_KEY_SEPARATOR_SPILT).append(sf_dd.get().format(versionBo.getStartDate()))
-                    .append(HASH_KEY_SEPARATOR_SPILT).append(sf_dd.get().format(versionBo.getEndDate())).append(HASH_KEY_SEPARATOR_SPILT)
+            String hashKey = new StringBuilder(sf_dd.get().format(equVersionView.getStartDate())).append(HASH_KEY_SEPARATOR_SPILT)
+                    .append(sf_dd.get().format(equVersionView.getEndDate())).append(HASH_KEY_SEPARATOR_SPILT).append(equVersionView.getVersionId()).append(HASH_KEY_SEPARATOR_SPILT)
                     .append(seasonBO.getSeaStartDate()).append(HASH_KEY_SEPARATOR_SPILT).append(seasonBO.getSeaEndDate()).append(HASH_KEY_SEPARATOR_SPILT)
                     .append(seasonBO.getPricingMethod()).toString();
             List<ElectricityPriceDetailCache> seasonPrices = cacheService.getHashData(key, CommonConstant.ELECTRICITY_PRICE, hashKey);
@@ -292,8 +314,8 @@ public class ElectricityPriceSelectHandler {
         ElectricityPriceValueDetailRespDTO respDTO = ElectricityPriceValueDetailRespDTO.builder()
                 .strategy(ruleBo.getStrategy())
                 .pricingMethod(seasonBO.getPricingMethod())
-                .baseCapacityPrice(ruleBo.getTransformerCapacityPrice())
-                .maxCapacityPrice(ruleBo.getMaxCapacityPrice()).build();
+                .baseCapacityPrice(StringUtils.isNotBlank(ruleBo.getTransformerCapacityPrice())?new BigDecimal(ruleBo.getTransformerCapacityPrice()):null)
+                .maxCapacityPrice(StringUtils.isNotBlank(ruleBo.getMaxCapacityPrice())?new BigDecimal(ruleBo.getMaxCapacityPrice()):null).build();
         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = new ArrayList<>();
         for (ElectricityPriceDetailBO detailBo : detailBos){
             ElectricityPriceValueDetailRespDTO.PriceDetail detail = new ElectricityPriceValueDetailRespDTO.PriceDetail();
@@ -303,7 +325,7 @@ public class ElectricityPriceSelectHandler {
             detail.setStep(detailBo.getStep());
             detail.setStartStep(detailBo.getStartStep());
             detail.setEndStep(detailBo.getEndStep());
-            detail.setElePrice(detailBo.getPrice());
+            detail.setElePrice(StringUtils.isNotBlank(detailBo.getPrice())?new BigDecimal(detailBo.getPrice()):null);
             detailList.add(detail);
         }
         respDTO.setPriceDetails(detailList);

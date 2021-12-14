@@ -9,6 +9,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
+
 /**
  * @author ：chenchangtong
  * @date ：Created 2021/11/22 10:35
@@ -24,11 +28,12 @@ public class ElectricityPriceValueDetailRespDTO implements Serializable {
 	@ApiModelProperty(value = "定价方式，p:单一电价;tp:分时电价;lp:阶梯电价，根据定义方式获取明细不同的字段")
     private String pricingMethod;
 	@ApiModelProperty(value = "变压器容量基础电价")
-    private String baseCapacityPrice;
+    private BigDecimal baseCapacityPrice;
 	@ApiModelProperty(value = "最大容量基础电价")
-    private String maxCapacityPrice;
+    private BigDecimal maxCapacityPrice;
 
 	@ApiModelProperty(value = "电价明细")
+
     private List<PriceDetail> priceDetails;
     @Data
     @Builder
@@ -48,7 +53,7 @@ public class ElectricityPriceValueDetailRespDTO implements Serializable {
 		@ApiModelProperty(value = "阶梯止码")
         private String endStep;
 		@ApiModelProperty(value = "电价", name = "price")
-        private String elePrice;
+        private BigDecimal elePrice;
 
     }
 }

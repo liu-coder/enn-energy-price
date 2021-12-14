@@ -93,23 +93,11 @@
             <if test="enterprise != null">
                 enterprise = #{enterprise,jdbcType=VARCHAR},
             </if>
-            <if test="systemCode != null">
-                system_code = #{systemCode,jdbcType=VARCHAR},
-            </if>
-            <if test="systemName != null">
-                system_name = #{systemName,jdbcType=VARCHAR},
-            </if>
             <if test="storeCode != null">
                 store_code = #{storeCode,jdbcType=VARCHAR},
             </if>
             <if test="storeName != null">
                 store_name = #{storeName,jdbcType=VARCHAR},
-            </if>
-            <if test="equipmentId != null">
-                equipment_id = #{equipmentId,jdbcType=VARCHAR},
-            </if>
-            <if test="equipmentName != null">
-                equipment_name = #{equipmentName,jdbcType=VARCHAR},
             </if>
             <if test="startDate != null">
                 start_date = #{startDate,jdbcType=DATE},
@@ -223,6 +211,7 @@
         select ver.version_id,ver.version_name,ver.start_date,ver.end_date from electricity_price_version ver
         left join electricity_price_equipment equ on equ.version_id = ver.version_id
         where equ.equipment_id = #{equipmentId} and equ.system_code = #{systemCode} and ver.state = #{state}
+            and (#{versionId} is null or ver.version_id = #{versionId})
         order by ver.start_date desc
     </select>
 

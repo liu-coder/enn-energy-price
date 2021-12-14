@@ -1,6 +1,7 @@
 package com.enn.energy.price.dal.mapper.ext;
 
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,17 +17,23 @@ import java.util.Map;
 @Mapper
 public interface ElectricityPriceEquipmentExtMapper {
 
-    List<ElectricityPriceEquipment> selectByEquipmentId(String equipmentId);
+    List<ElectricityPriceEquipment> selectElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
 
     void batchAddElectricityPriceEquipment(List<ElectricityPriceEquipment> electricityPriceEquipmentList);
 
     void addElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
 
-    List<ElectricityPriceEquipment> selectPriceEquipmentsByVersionId(String versionId);
+    ElectricityPriceEquipment selectPriceEquipmentByVersionId(String versionId);
 
     List<ElectricityPriceEquipment> selectEquByCondition(Map<String,Object> map);
 
     void updatePriceEquipmentState(String versionId);
 
+    void updatePriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
+
     List<ElectricityPriceEquipment> selectEquByConditionOrderByUpdateTime(Map<String, Object> map);
+
+    ElectricityPriceEquVersionView selectEquVersionRecentOneValidByCondition(Map<String,Object> map);
+
+    ElectricityPriceEquVersionView selectEquVersionLastOneValidByTime(Map<String, Object> map);
 }

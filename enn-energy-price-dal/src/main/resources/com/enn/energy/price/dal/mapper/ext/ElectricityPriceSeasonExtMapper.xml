@@ -222,7 +222,8 @@
   </update>
   <update id="updateSeasonStateByVersionId">
     update electricity_price_season
-    set state = 1
+    set state = 1,
+    update_time = NOW()
     where version_id = #{versionId,jdbcType=VARCHAR}
   </update>
 </mapper>

@@ -5,11 +5,13 @@ import com.enn.energy.price.biz.service.bo.ElectricityPriceEquipmentBO;
 import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.dal.mapper.ext.ElectricityPriceEquipmentExtMapper;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.exception.RdfaException;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,14 +32,15 @@ public class ElectricityPriceEquipmentService {
     private ElectricityPriceEquipmentExtMapper electricityPriceEquipmentExtMapper;
 
     /**
-     * 根据设备id查询设备绑定的价格版本
-     * @param equipmentId
+     * 根据设备id和系统code查询设备绑定的所有价格版本
+     * @param electricityPriceEquipment
      * @return
      */
-    public List<ElectricityPriceEquipment> selectByEquipmentId(String equipmentId) {
+    public List<ElectricityPriceEquipment> selectElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment) {
 
-        return electricityPriceEquipmentExtMapper.selectByEquipmentId(equipmentId);
+        return electricityPriceEquipmentExtMapper.selectElectricityPriceEquipment(electricityPriceEquipment);
     }
+
 
     /**
      * 批量添加设备价格
@@ -64,9 +67,9 @@ public class ElectricityPriceEquipmentService {
      * @param versionId
      * @return
      */
-    public List<ElectricityPriceEquipment> selectPriceEquipmentsByVersionId(String versionId){
+    public ElectricityPriceEquipment selectPriceEquipmentByVersionId(String versionId){
 
-      return electricityPriceEquipmentExtMapper.selectPriceEquipmentsByVersionId(versionId);
+      return electricityPriceEquipmentExtMapper.selectPriceEquipmentByVersionId(versionId);
     }
 
 
@@ -107,11 +110,42 @@ public class ElectricityPriceEquipmentService {
 
 
     /**
-     * 更新价格规则状态
+     * 更新设备状态
      *
      * @param versionId
      */
     public void updatePriceEquipmentState(String versionId) {
         electricityPriceEquipmentExtMapper.updatePriceEquipmentState(versionId);
     }
+
+    /**
+     * 更新设备
+     *
+     * @param electricityPriceEquipment
+     */
+    public void updatePriceEquipment(ElectricityPriceEquipment electricityPriceEquipment) {
+        electricityPriceEquipmentExtMapper.updatePriceEquipment(electricityPriceEquipment);
+    }
+
+    public ElectricityPriceEquVersionView selectEquVersionRecentOneValidByCondition(String equipmentId, String systemCode, Date activeTime) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("equipmentId",equipmentId);
+        map.put("state",0);
+        map.put("systemCode",systemCode);
+        map.put("activeTime",activeTime);
+        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentExtMapper.selectEquVersionRecentOneValidByCondition(map);
+        return equVersionView;
+    }
+
+
+    public ElectricityPriceEquVersionView selectEquVersionLastOneValidByTime(String equipmentId, String systemCode, Date activeTime) {
+        Map<String,Object> map = new HashMap<>();
+        map.put("equipmentId",equipmentId);
+        map.put("state",0);
+        map.put("systemCode",systemCode);
+        map.put("activeTime",activeTime);
+        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentExtMapper.selectEquVersionLastOneValidByTime(map);
+        return equVersionView;
+    }
+
 }

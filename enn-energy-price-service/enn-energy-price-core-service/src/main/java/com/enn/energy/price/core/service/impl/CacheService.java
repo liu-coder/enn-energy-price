@@ -10,9 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.cache.api.CacheClient;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -50,7 +48,7 @@ public class CacheService {
         Set<String> keys = operations.keys();
         Iterator<String> iterator = keys.iterator();
         while (iterator.hasNext()){
-            if (!iterator.next().startsWith(pattern)){
+            if (!iterator.next().contains(pattern)){
                 iterator.remove();
             }
         }
@@ -80,5 +78,42 @@ public class CacheService {
     public <T> void hdelHashKey(String key, String funcPrefix,Object... hashKeys) {
         logger.info("That app setting the cache info includes key is {}, funcPrefix is {}, hashKey is {}.", key, funcPrefix, hashKeys);
         this.cacheClient.hDelete(key,funcPrefix,hashKeys);
+    }
+
+    //倒叙排列 hkeys
+    public Set<String> getSortHKeys(String key, String funcPrefix){
+        BoundHashOperations<String, String, Object> operations = redisTemplate.boundHashOps(appPrefix + ":" + funcPrefix + ":" + key);
+        Set<String> keys = operations.keys();
+        Set<String> sortKeys = new TreeSet<>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o2.compareTo(o1);
+            }
+        });
+        sortKeys.addAll(keys);
+        return sortKeys;
+    }
+    public static void main(String[] args) {
+        Set<String> s1 = new HashSet<>();
+        s1.add("2021-01-01");
+        s1.add("2022-01-01");
+        s1.add("2023-01-01");
+        s1.add("2024-01-01");
+        s1.add("2025-05-01");
+        s1.add("2026-07-01");
+        s1.forEach(s -> {
+            System.out.println(s);
+        });
+        Set<String> sortKeys = new TreeSet<>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o2.compareTo(o1);
+            }
+        });
+        sortKeys.addAll(s1);
+        System.out.println("==================");
+        sortKeys.forEach(s -> {
+            System.out.println(s);
+        });
     }
 }

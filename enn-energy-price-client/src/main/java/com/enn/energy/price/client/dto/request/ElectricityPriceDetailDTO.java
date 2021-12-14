@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 /**
@@ -21,7 +22,7 @@ public class ElectricityPriceDetailDTO implements Serializable,Comparable<Electr
     /**
      * 电价明细id
      */
-    private String detailId;
+    //private String detailId;
 
     /**
      * 时段，0:尖;1:峰;2:平;3:谷
@@ -33,14 +34,14 @@ public class ElectricityPriceDetailDTO implements Serializable,Comparable<Electr
     /**
      * 时段开始时间
      */
-    @ApiModelProperty(value = "开始时间", example = "11:00:00，到小时")
+    @ApiModelProperty(value = "开始时间", example = "11:00，到小时")
     //@NotBlank(message = "明细开始时间必填")
     private String startTime;
 
     /**
      * 时段结束时间
      */
-    @ApiModelProperty(value = "结束时间", example = "11:00:00，到小时")
+    @ApiModelProperty(value = "结束时间", example = "11:00，到小时")
    // @NotBlank(message = "明细结束时间必填")
     private String endTime;
 
@@ -64,6 +65,7 @@ public class ElectricityPriceDetailDTO implements Serializable,Comparable<Electr
      */
     @ApiModelProperty(value = "电价", required = true)
     @NotBlank(message = "电价必填")
+    @Pattern(regexp="^([0-9]{1,}[.]?[0-9]*)$", message = "价格必须为数字")
     private String price;
 
     @Override

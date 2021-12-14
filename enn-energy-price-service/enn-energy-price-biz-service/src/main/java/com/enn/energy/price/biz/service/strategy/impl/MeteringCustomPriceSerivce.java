@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.strategy.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		ElectricityPriceUnifiedDetailRespDto response = new ElectricityPriceUnifiedDetailRespDto();
 		MeteringPriceRespDto meteringPriceRespDto = cimRespDto.getData() ;
 		PriceDetail priceDetail = new PriceDetail();
-		priceDetail.setElePrice(meteringPriceRespDto.getPrice());
+		priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
 		priceDetail.setEndTime(meteringPriceRespDto.getTimeShareEndDate());
 		priceDetail.setStartTime(meteringPriceRespDto.getTimeShareStartDate());
 		priceDetail.setPeriods(String.valueOf(Integer.valueOf(meteringPriceRespDto.getTimeShareType()) -1));
@@ -71,3 +72,4 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 	}
 
 }
+

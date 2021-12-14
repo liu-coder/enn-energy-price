@@ -7,7 +7,10 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -21,10 +24,16 @@ import java.util.List;
  * @since : 1.0
  **/
 @Data
-@ApiModel(description = "罗森电价同步入参")
-public class ElectricityPriceVersionDTO implements Serializable {
+@ApiModel(description = "罗森电价修改入参")
+public class ElectricityPriceVersionUpdateDTO implements Serializable {
 
-    private static final long serialVersionUID = 3328648947555819752L;
+    private static final long serialVersionUID = 8627738353845454789L;
+    /**
+     * 电价版本id
+     */
+    @ApiModelProperty(value = "电价版本", required = true)
+    @NotBlank(message = "电价版本id必填")
+    private String versionId;
 
     /**
      * 电价版本名称
@@ -36,75 +45,75 @@ public class ElectricityPriceVersionDTO implements Serializable {
     /**
      * 省编码
      */
-    private String provinceCode;
+  //  private String provinceCode;
 
     /**
      * 省
      */
-    private String province;
+  //  private String province;
 
     /**
      * 市编码
      */
-    private String cityCode;
+  //  private String cityCode;
 
     /**
      * 市
      */
-    private String city;
+ //   private String city;
 
     /**
      * 区、县编码
      */
-    private String districtCode;
+   // private String districtCode;
 
     /**
      * 区、县
      */
-    private String district;
+  //  private String district;
 
     /**
      * 企业
      */
-    @ApiModelProperty(value = "企业", required = true)
-    @NotBlank(message = "企业必填")
-    private String enterprise;
+//    @ApiModelProperty(value = "企业", required = true)
+//    @NotBlank(message = "企业必填")
+//    private String enterprise;
 
     /**
      * 系统编码
      */
-    @ApiModelProperty(value = "系统编码", required = true)
-    @NotBlank(message = "系统编码必填")
-    private String systemCode;
+//    @ApiModelProperty(value = "系统编码", required = true)
+//    @NotBlank(message = "系统编码必填")
+//    private String systemCode;
 
     /**
      * 系统名称
      */
-    @ApiModelProperty(value = "系统名称", required = true)
-    @NotBlank(message = "系统名称必填")
-    private String systemName;
+//    @ApiModelProperty(value = "系统名称", required = true)
+//    @NotBlank(message = "系统名称必填")
+//    private String systemName;
 
     /**
      * 门店编码
      */
-    @ApiModelProperty(value = "门店编码")
-    @NotBlank(message = "门店编码必填")
-    private String storeCode;
+//    @ApiModelProperty(value = "门店编码")
+//    @NotBlank(message = "门店编码必填")
+//    private String storeCode;
 
     /**
      * 门店名称
      */
-    @ApiModelProperty(value = "门店名称")
-    @NotBlank(message = "门店名称必填")
-    private String storeName;
+//    @ApiModelProperty(value = "门店名称")
+//    @NotBlank(message = "门店名称必填")
+//    private String storeName;
 
     /**
      * 设备
      */
-    @ApiModelProperty(value = "设备", required = true)
-    @NotNull(message = "设备信息必填")
-    @Valid
-    private ElectricityPriceEquipmentDTO electricityPriceEquipmentDTO;
+//    @ApiModelProperty(value = "设备", required = true)
+//    @NotNull(message = "设备信息必填")
+//    @Valid
+//    private ElectricityPriceEquipmentDTO electricityPriceEquipmentDTO;
 
     /**
      * 生效日期
@@ -129,9 +138,9 @@ public class ElectricityPriceVersionDTO implements Serializable {
     /**
      * 电价类型,0:目录电价;1:自定义电价
      */
-    @ApiModelProperty(value = "电价类型", example = "0:目录电价;1:自定义电价", required = true)
-    @NotBlank(message = "电价类型必填")
-    private String priceType;
+//    @ApiModelProperty(value = "电价类型", example = "0:目录电价;1:自定义电价", required = true)
+//    @NotBlank(message = "电价类型必填")
+//    private String priceType;
 
     /**
      * 绑定类型
@@ -152,13 +161,13 @@ public class ElectricityPriceVersionDTO implements Serializable {
     /**
      * 商品编码
      */
-    @ApiModelProperty(value = "商品编码")
-    private String commodityCode;
+//    @ApiModelProperty(value = "商品编码")
+//    private String commodityCode;
 
     /**
      * 商品名称
      */
-    @ApiModelProperty(value = "商品名称")
-    private String commodityName;
+//    @ApiModelProperty(value = "商品名称")
+//    private String commodityName;
 
 }

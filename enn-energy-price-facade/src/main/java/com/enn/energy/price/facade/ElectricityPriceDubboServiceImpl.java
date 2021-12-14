@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,6 +41,7 @@ import java.util.List;
 @Slf4j
 @DubboService(version = "1.0.0", protocol = {"dubbo"})
 public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboService {
+
     @Autowired
     private ElectricityPriceService electricityPriceService;
 
@@ -48,33 +50,31 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     public RdfaResult<String> addElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
 
         //校验DTO
-        RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO);
+        RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO, null);
         if (!validateResult.isSuccess()) {
             return validateResult;
         }
 
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
-        convertBO(electricityPriceVersionDTO, electricityPriceVersionBO);
-        electricityPriceService.addElectricityPrice(electricityPriceVersionBO);
+        convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
+        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
     @Override
     @PostMapping(value = "/updateElectricityPrice")
-    public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull ElectricityPriceVersionDTO electricityPriceVersionDTO) {
+    public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
-        //校验DTO
-        if (StringUtils.isEmpty(electricityPriceVersionDTO.getVersionId())) {
-            return RdfaResult.fail(ResponseCode.FAIL.getCode(), "价格版本id不能为空");
-        }
-        RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO);
+
+        RdfaResult<String> validateResult = validateDTO(null, electricityPriceVersionUpdateDTO);
         if (!validateResult.isSuccess()) {
             return validateResult;
         }
 
-        ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
-        convertBO(electricityPriceVersionDTO, electricityPriceVersionBO);
+        ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionUpdateDTO, ElectricityPriceVersionBO.class);
+        convertBO(null, electricityPriceVersionUpdateDTO, electricityPriceVersionBO);
         electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
+        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
@@ -90,7 +90,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     public RdfaResult<String> delElectricityPrice(@Validated @RequestBody ElectricityPriceVersionDelDTO delDTO) {
         RdfaResult result = null;
         try {
-            result = electricityPriceService.delElectricityPrice(delDTO.getVersionId(), false);
+            result = electricityPriceService.delElectricityPrice(delDTO.getVersionId(), delDTO.getEquipmentId(), delDTO.getSystemCode(), false);
         } catch (Exception e) {
             log.error("delete version has error , {} ", e.getMessage());
             return RdfaResult.fail("E30003", "delete version has error");
@@ -110,7 +110,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Override
     public RdfaResult<String> delElectricityPriceForCommon(@RequestBody ElectricityPriceVersionDelDTO delDTO) {
         try {
-            electricityPriceService.delElectricityPrice(delDTO.getVersionId(), true);
+            electricityPriceService.delElectricityPrice(delDTO.getVersionId(), delDTO.getEquipmentId(), delDTO.getSystemCode(), true);
         } catch (Exception e) {
             log.error("delete version has error , {} ", e.getMessage());
             return RdfaResult.fail("E30003", "delete version has error");
@@ -120,13 +120,10 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     }
 
-    private RdfaResult<String> validateDTO(ElectricityPriceVersionDTO electricityPriceVersionDTO) {
+    private RdfaResult<String> validateDTO(ElectricityPriceVersionDTO electricityPriceVersionDTO, ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
-//        if (electricityPriceVersionDTO.getStartDate().compareTo(electricityPriceVersionDTO.getEndDate()) > 0) {
-//            return RdfaResult.fail(ResponseCode.FAIL.getCode(), "生效时间不能大于结束时间");
-//        }
-
-        List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO.getElectricityPriceRuleDTOList();
+        List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
+        String year = String.format("%tY",  electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
 
         for (ElectricityPriceRuleDTO electricityPriceRuleDTO : electricityPriceRuleDTOList) {
 
@@ -138,19 +135,14 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "日期未覆盖全年");
             }
 
-            SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             format.setLenient(false);
             for (int i = 0; i < electricityPriceSeasonDTOList.size() - 1; i++) {
 
                 try {
-                    if ("02-29".equals(electricityPriceSeasonDTOList.get(i).getSeaEndDate())) {
-                        return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本季节结束时间不允许维护:2月29日");
-                    }
-
-                    if (!PriceDateUtils.addDateByday(format.parse(electricityPriceSeasonDTOList.get(i).getSeaEndDate()), 1).equals(format.parse(electricityPriceSeasonDTOList.get(i + 1).getSeaStartDate()))) {
+                    if (!PriceDateUtils.addDateByday(format.parse(year + "-" + electricityPriceSeasonDTOList.get(i).getSeaEndDate()), 1).equals(format.parse(year + "-" + electricityPriceSeasonDTOList.get(i + 1).getSeaStartDate()))) {
                         return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本季节覆盖全年的日期格式不对");
                     }
-
 
                 } catch (ParseException e) {
                     return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格版本的季节日期格式错误");
@@ -158,7 +150,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             }
 
             //校验明细时间
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
             timeFormat.setLenient(false);
 
             for (int i = 0; i < electricityPriceSeasonDTOList.size(); i++) {
@@ -168,38 +160,47 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     Collections.sort(electricityPriceDetailDTOList);
 
-                    if (!"00:00:00".equals(electricityPriceDetailDTOList.get(0).getStartTime()) || !"23:00:00".equals(electricityPriceDetailDTOList.get(electricityPriceDetailDTOList.size() - 1).getEndTime())) {
+                    if (!"00:00".equals(electricityPriceDetailDTOList.get(0).getStartTime()) || !"24:00".equals(electricityPriceDetailDTOList.get(electricityPriceDetailDTOList.size() - 1).getEndTime())) {
                         return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格明细时间未覆盖全天");
                     }
 
                     for (int j = 0; j < electricityPriceDetailDTOList.size() - 1; j++) {
-                        try {
-                            if (!PriceDateUtils.addDateByHour(timeFormat.parse(electricityPriceDetailDTOList.get(j).getEndTime()), 1).equals(timeFormat.parse(electricityPriceDetailDTOList.get(j + 1).getStartTime()))) {
-                                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格明细覆盖全天的时间格式不对");
-                            }
-                        } catch (ParseException e) {
-                            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格明细时间格式错误");
+                        if (!electricityPriceDetailDTOList.get(j).getEndTime().equals(electricityPriceDetailDTOList.get(j + 1).getStartTime())) {
+                            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "价格明细覆盖全天的时间格式不对");
                         }
                     }
                 }
+
+                //单一电价
+                if ("p".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())){
+                    List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
+                    for (int j = 0; j < electricityPriceDetailDTOList.size(); j++) {
+                        electricityPriceDetailDTOList.get(i).setStartTime(null);
+                        electricityPriceDetailDTOList.get(i).setEndTime(null);
+                        electricityPriceDetailDTOList.get(i).setStartStep(null);
+                        electricityPriceDetailDTOList.get(i).setEndStep(null);
+                        electricityPriceDetailDTOList.get(i).setStep(null);
+                    }
+                }
+
+
             }
-
         }
-
-        electricityPriceVersionDTO.setEndDate(PriceDateUtils.getDesignatedDayDate("2099-12-31"));
         return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
     }
 
 
-    private void convertBO(ElectricityPriceVersionDTO electricityPriceVersionDTO, ElectricityPriceVersionBO electricityPriceVersionBO) {
+    private void convertBO(ElectricityPriceVersionDTO electricityPriceVersionDTO, ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO, ElectricityPriceVersionBO electricityPriceVersionBO) {
 
-        ElectricityPriceEquipmentDTO electricityPriceEquipmentDTO = electricityPriceVersionDTO.getElectricityPriceEquipmentDTO();
-        electricityPriceVersionBO.setElectricityPriceEquipmentBO(BeanUtil.toBean(electricityPriceEquipmentDTO, ElectricityPriceEquipmentBO.class));
+        if (null != electricityPriceVersionDTO) {
+            ElectricityPriceEquipmentDTO electricityPriceEquipmentDTO = electricityPriceVersionDTO.getElectricityPriceEquipmentDTO();
+            electricityPriceVersionBO.setElectricityPriceEquipmentBO(BeanUtil.toBean(electricityPriceEquipmentDTO, ElectricityPriceEquipmentBO.class));
+        }
 
-        List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO.getElectricityPriceRuleDTOList();
+        List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
+        //List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO.getElectricityPriceRuleDTOList();
         List<ElectricityPriceRuleBO> electricityPriceRuleBOList = new ArrayList<>();
         electricityPriceVersionBO.setElectricityPriceRuleBOList(electricityPriceRuleBOList);
-
 
         for (ElectricityPriceRuleDTO electricityPriceRuleDTO : electricityPriceRuleDTOList) {
 
@@ -225,17 +226,23 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     }
 
-//    public static void main(String[] args) {
-//        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-//        try {
-//
+    public static void main(String[] args) {
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+        //format.format();
+        format.setLenient(false);
+   //     try {
+  //          String year = String.format("%tY", new Date());
 //            "04:52:00".compareTo("00:00:00");
 //            "02-22".compareTo("02-21");
-//            format.parse("02-20");
+  String  strNum = "123";
+           //   strNum.matches("[1-9] [.]?[0-9]*");
+        System.out.println(strNum.matches("^([0-9]{1,}[.]?[0-9]*)$"));
+
+//            format.parse("02-28");
 //            PriceDateUtils.addDateByday(format.parse("02-20"), 1).equals(format.parse("02-21"));
-//            //format.setLenient(false);
+            //format.setLenient(false);
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
-//    }
+    }
 }

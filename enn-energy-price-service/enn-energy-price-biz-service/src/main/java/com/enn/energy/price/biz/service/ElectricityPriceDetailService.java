@@ -84,4 +84,8 @@ public class ElectricityPriceDetailService {
         List<ElectricityPriceRule> rules = BeanUtil.mapList(ruleBos, ElectricityPriceRule.class);
         electricityPriceDetailExtMapper.batchUpdateByRuleIds(rules);
     }
+
+    public int deleteDetailsByVersionId(String versionId) {
+        return electricityPriceDetailExtMapper.deleteDetailsByVersionId(versionId);
+    }
 }

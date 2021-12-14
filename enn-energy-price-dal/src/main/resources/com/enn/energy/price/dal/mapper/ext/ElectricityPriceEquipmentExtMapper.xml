@@ -30,6 +30,9 @@
             <if test="versionId != null">
                 and version_id = #{versionId}
             </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
         </where>
     </sql>
 
@@ -47,11 +50,13 @@
         </where>
     </sql>
 
-    <select id="selectByEquipmentId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectElectricityPriceEquipment" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment"
+            resultMap="BaseResultMap">
         select rule_id,
                version_id
         from electricity_price_equipment
-        where equipment_id = #{equipmentId,jdbcType=VARCHAR}
+        where system_code = #{systemCode,jdbcType=VARCHAR}
+          and equipment_id = #{equipmentId,jdbcType=VARCHAR}
           and state = 0
     </select>
     <select id="selectEquByCondition" resultMap="BaseResultMap">
@@ -86,17 +91,48 @@
                 #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
 
-    <select id="selectPriceEquipmentsByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectPriceEquipmentByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select equipment_id, equipment_name, rule_id, version_id, tenant, system_code, state,
                create_time, update_time
         from electricity_price_equipment
         where version_id = #{versionId,jdbcType=VARCHAR}
         and state = 0
     </select>
+    <select id="selectEquVersionRecentOneValidByCondition"
+            resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView">
+        select equ.version_id versionId, equ.rule_id ruleId,ver.start_date startDate,ver.end_date endDate
+        from electricity_price_equipment equ left join electricity_price_version ver
+                                                       on equ.version_id = ver.version_id
+        where equ.equipment_id = #{equipmentId} and (#{systemCode} is null or equ.system_code = #{systemCode}) and ver.state = #{state}
+          and ver.start_date &lt; #{activeTime} order by ver.start_date desc limit 1
+    </select>
+    <select id="selectEquVersionLastOneValidByTime"
+            resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView">
+        select equ.version_id versionId, equ.rule_id ruleId,ver.start_date startDate,ver.end_date endDate
+        from electricity_price_equipment equ left join electricity_price_version ver
+                                                       on equ.version_id = ver.version_id
+        where equ.equipment_id = #{equipmentId} and (#{systemCode} is null or equ.system_code = #{systemCode}) and ver.state = #{state}
+          and ver.start_date &lt;= #{activeTime} order by ver.start_date desc limit 1
+    </select>
 
     <update id="updatePriceEquipmentState" parameterType="java.lang.String">
         update electricity_price_equipment
-        set state = 1
+        set state = 1,
+        update_time = NOW()
+        where version_id = #{versionId,jdbcType=VARCHAR}
+    </update>
+
+
+    <update id="updatePriceEquipment" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        update electricity_price_equipment
+        <set>
+            <if test="ruleId != null">
+                rule_id = #{ruleId,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
         where version_id = #{versionId,jdbcType=VARCHAR}
     </update>
 </mapper>

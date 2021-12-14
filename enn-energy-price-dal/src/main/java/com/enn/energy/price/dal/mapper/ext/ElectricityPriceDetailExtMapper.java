@@ -25,4 +25,6 @@ public interface ElectricityPriceDetailExtMapper {
     List<ElectricityPriceDetail> selectPriceDetailsByVersionId(String versionId);
 
     void batchUpdateByRuleIds(List<ElectricityPriceRule>  electricityPriceRuleBOs);
+
+    int deleteDetailsByVersionId(String versionId);
 }
