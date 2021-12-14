@@ -17,7 +17,7 @@ import java.text.ParseException;
 /**
  * 价格、版本等相关查询
  */
-@FeignClient(name = "electricityPriceSelectService")
+@FeignClient(name = "ENN-ENERGY-PRICE")
 public interface ElectricityPriceSelectService {
     /**
      * 查询电价

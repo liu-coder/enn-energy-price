@@ -5,9 +5,13 @@ import com.enn.energy.price.core.service.impl.CacheService;
 import com.enn.energy.price.web.dto.CacheDemoDelKeyDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 
 
@@ -61,4 +65,26 @@ public class CacheDemoController {
         return RdfaResult.success("");
     }
 
+    @GetMapping("/hello") // 所有的xxxMapping都是RequestMapping
+    public String   sayHello(String name, //可以从请求参数中得到
+                             @RequestParam(value = "user")String user, //可以从请求参数中得到
+                             HttpSession session, HttpServletRequest request, //原生的session对象
+                             @RequestHeader(value = "User-Agent",required = false) String  ua,
+                             Model model,
+                             Integer i,
+                             RedirectAttributes ra){ //@RequestParam Map<String,Object> params：所有请求参数全封装进来
+        int x =10/i;
+//        if("abc".equals(user)){
+//            //非法的用户信息
+//            throw new InvalidUserException();
+//        }
+        // @RequestHeader("User-Agent") String  ua 获取指定请求头的值
+        String header = request.getHeader("User-Agent");
+        //方法的签名，到底能写那些？
+        //详细参照 https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-arguments
+        //https://www.bilibili.com/video/BV19K4y1L7MT?p=32
+        //SpringMVC的目标方法能写哪些返回值
+        //https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#mvc-ann-return-types
+        return "index.jsp";  //@PostMapping("/submit")  表单失败了  前一步，把表单中的数据放到ra中，  return  "redirect:form.jsp" //表单还能取到数据
+    }
 }
