@@ -36,6 +36,7 @@ import top.rdfa.framework.exception.RdfaException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -194,7 +195,7 @@ public class ElectricityPriceSelectHandler {
                     if (seasonPrices!=null && seasonPrices.size() > 0){
                         respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
-                            return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(item.getPrice()).
+                            return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
                                     startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
                                     endStep(item.getEndStep()).build();
                         }).collect(Collectors.toList());
@@ -211,7 +212,7 @@ public class ElectricityPriceSelectHandler {
                         if (seasonPrices!=null && seasonPrices.size() > 0){
                             respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                             List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
-                                return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(item.getPrice()).
+                                return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
                                         startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
                                         endStep(item.getEndStep()).build();
                             }).collect(Collectors.toList());
@@ -313,8 +314,8 @@ public class ElectricityPriceSelectHandler {
         ElectricityPriceValueDetailRespDTO respDTO = ElectricityPriceValueDetailRespDTO.builder()
                 .strategy(ruleBo.getStrategy())
                 .pricingMethod(seasonBO.getPricingMethod())
-                .baseCapacityPrice(ruleBo.getTransformerCapacityPrice())
-                .maxCapacityPrice(ruleBo.getMaxCapacityPrice()).build();
+                .baseCapacityPrice(StringUtils.isNotBlank(ruleBo.getTransformerCapacityPrice())?new BigDecimal(ruleBo.getTransformerCapacityPrice()):null)
+                .maxCapacityPrice(StringUtils.isNotBlank(ruleBo.getMaxCapacityPrice())?new BigDecimal(ruleBo.getMaxCapacityPrice()):null).build();
         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = new ArrayList<>();
         for (ElectricityPriceDetailBO detailBo : detailBos){
             ElectricityPriceValueDetailRespDTO.PriceDetail detail = new ElectricityPriceValueDetailRespDTO.PriceDetail();
@@ -324,7 +325,7 @@ public class ElectricityPriceSelectHandler {
             detail.setStep(detailBo.getStep());
             detail.setStartStep(detailBo.getStartStep());
             detail.setEndStep(detailBo.getEndStep());
-            detail.setElePrice(detailBo.getPrice());
+            detail.setElePrice(StringUtils.isNotBlank(detailBo.getPrice())?new BigDecimal(detailBo.getPrice()):null);
             detailList.add(detail);
         }
         respDTO.setPriceDetails(detailList);

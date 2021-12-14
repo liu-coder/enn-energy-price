@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -20,8 +21,8 @@ import java.util.List;
 public class ElectricityPriceValueDetailRespDTO implements Serializable {
     private String strategy;
     private String pricingMethod;
-    private String baseCapacityPrice;
-    private String maxCapacityPrice;
+    private BigDecimal baseCapacityPrice;
+    private BigDecimal maxCapacityPrice;
     private List<PriceDetail> priceDetails;
     @Data
     @Builder
@@ -34,7 +35,7 @@ public class ElectricityPriceValueDetailRespDTO implements Serializable {
         private String step;
         private String startStep;
         private String endStep;
-        private String elePrice;
+        private BigDecimal elePrice;
 
     }
 }
