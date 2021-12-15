@@ -1,11 +1,10 @@
 package com.enn.energy.price.facade.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.enn.energy.price.biz.service.*;
 import com.enn.energy.price.biz.service.bo.*;
+import com.enn.energy.price.client.dto.request.ElectricityPriceCurrentVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
-import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
@@ -18,11 +17,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,8 +30,6 @@ import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import top.rdfa.framework.exception.RdfaException;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -151,21 +145,21 @@ public class ElectricityPriceSelectHandler {
         return PagedRdfaResult.success(page.getPageNum(), page.getPageSize(), page.getTotal(),respDTOS);
     }
 
-    public RdfaResult<ElectricityPriceVersionDetailRespDTO> versionDetail(@Validated @RequestBody ElectricityPriceVersionDetailReqDTO detailReqDTO) throws Exception {
+    public RdfaResult<ElectricityPriceVersionDetailRespDTO> versionDetail(String equipmentId,String systemCode,String versionId){
         //1、根据版本号查询版本信息
-        ElectricityPriceVersionBO versionBo = electricityPriceVersionService.selectVersionByVersionId(detailReqDTO.getVersionId());
+        ElectricityPriceVersionBO versionBo = electricityPriceVersionService.selectVersionByVersionId(versionId);
         if (versionBo == null){
             return RdfaResult.fail("E20005","电价版本数据未查询到，请填写准确的版本ID");
         }
         //2、根据版本号查询规则信息
-        List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(detailReqDTO.getVersionId());
+        List<ElectricityPriceRuleBO> ruleBos = electricityPriceRuleService.selectRuleListByVersionId(versionId);
         if (ruleBos.size() == 0){
             return RdfaResult.fail("E20006","电价规则数据未查询到，请排查数据记录");
         }
         //3、根据版本ID、设备ID、cimCode 查询设备信息
         ElectricityPriceEquipmentBO equipmentBo = null;
         try {
-            equipmentBo = electricityPriceEquipmentService.selectEquByCondition(detailReqDTO.getEquipmentId(), detailReqDTO.getVersionId(), detailReqDTO.getSystemCode());
+            equipmentBo = electricityPriceEquipmentService.selectEquByCondition(equipmentId, versionId, systemCode);
         }catch (RdfaException e){
             log.error("通过版本Id、设备ID、cim编码查询设备存在异常 {}",e.getMessage());
             return RdfaResult.fail("E20007","设备数据存在异常");
@@ -179,6 +173,19 @@ public class ElectricityPriceSelectHandler {
             return RdfaResult.fail("E20008","季节数据存在异常");
         }
         return RdfaResult.success(respDTO);
+    }
+
+    /**
+     * 查询当前版本的详细信息
+     * @param reqDTO
+     * @return
+     */
+    public RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(ElectricityPriceCurrentVersionDetailReqDTO reqDTO) {
+        Date activeTime = new Date();
+        //获取当前设备生效版本
+        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentService.selectEquVersionLastOneValidByTime(reqDTO.getEquipmentId(), reqDTO.getSystemCode(),activeTime);
+        RdfaResult<ElectricityPriceVersionDetailRespDTO> rdfaResult = versionDetail(reqDTO.getEquipmentId(), reqDTO.getSystemCode(), equVersionView.getVersionId());
+        return rdfaResult;
     }
 
     private ElectricityPriceValueDetailRespDTO getDataFromRedis(String key ,ElectricityPriceValueReqDTO requestDto) {
