@@ -17,6 +17,7 @@ import com.enn.energy.price.core.service.impl.CacheService;
 import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,13 @@ public class ElectricityPriceSelectHandler {
 //            return new SimpleDateFormat("HH:mm:ss");
 //        }
 //    };
+
+    ThreadLocal<SimpleDateFormat> sf_yyyy = new ThreadLocal<SimpleDateFormat>(){
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy");
+        }
+    };
 
     ThreadLocal<SimpleDateFormat> sf_dd = new ThreadLocal<SimpleDateFormat>(){
         @Override
@@ -208,7 +216,7 @@ public class ElectricityPriceSelectHandler {
                         respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
                             return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
-                                    startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
+                                    startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).periods(item.getPeriods()).
                                     endStep(item.getEndStep()).build();
                         }).collect(Collectors.toList());
                         respDTO.setPriceDetails(detailList);
@@ -220,12 +228,16 @@ public class ElectricityPriceSelectHandler {
                     if (PriceDateUtils.beforeOrEqual(split[0],requestDto.getEffectiveTime()) &&//第一个生效时间大于查询时间
                             PriceDateUtils.afterOrEqual(split[1],requestDto.getEffectiveTime()) &&
                             PriceDateUtils.beforeOrEqual(split[3],activeMonthDay) && PriceDateUtils.afterOrEqual(split[4],activeMonthDay)){
+                        Integer year = Integer.valueOf(sf_yyyy.get().format(sf_dd.get().parse(split[0])));
+                        if((year%4==0 && year%100!=0) || (year%400==0)){//版本生效时间闰年
+                            break;
+                        }
                         List<ElectricityPriceDetailCache> seasonPrices = cacheService.getListHashData(key,CommonConstant.ELECTRICITY_PRICE,hkey,ElectricityPriceDetailCache.class);
                         if (seasonPrices!=null && seasonPrices.size() > 0){
                             respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                             List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
                                 return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
-                                        startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).
+                                        startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).periods(item.getPeriods()).
                                         endStep(item.getEndStep()).build();
                             }).collect(Collectors.toList());
                             respDTO.setPriceDetails(detailList);
@@ -306,7 +318,7 @@ public class ElectricityPriceSelectHandler {
             List<ElectricityPriceDetailCache> seasonPrices = cacheService.getHashData(key, CommonConstant.ELECTRICITY_PRICE, hashKey);
             if (CollectionUtils.isEmpty(seasonPrices)){//如果此时取到了这个季节的redis数据，不更新。
                 seasonPrices = detailBos.stream().map(detailBO -> {
-                    return ElectricityPriceDetailCache.builder().price(detailBO.getPrice()).startTime(detailBO.getStartTime()).
+                    return ElectricityPriceDetailCache.builder().price(detailBO.getPrice()).startTime(detailBO.getStartTime()).periods(detailBO.getPeriods()).
                             endTime(detailBO.getEndTime()).step(detailBO.getStep()).startStep(detailBO.getStartStep()).endStep(detailBO.getEndStep()).build();
                 }).collect(Collectors.toList());
                 cacheService.hPutWithTimeOut(key,CommonConstant.ELECTRICITY_PRICE,hashKey,JSONObject.toJSONString(seasonPrices),getExpireSeconds(expireBase,randomNum));
