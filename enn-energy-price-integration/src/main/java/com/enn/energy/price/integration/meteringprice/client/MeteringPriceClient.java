@@ -1,6 +1,8 @@
 package com.enn.energy.price.integration.meteringprice.client;
 
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +30,6 @@ public interface MeteringPriceClient {
      * @return
      */
     @GetMapping("/price/queryCustomElectricPrice")
-    CimResponse<MeteringPriceRespDto> queryMeteringPrice(MeteringPriceReqDto meteringPriceReqDto);
+	CimResponse<List<MeteringPriceRespDto>> queryMeteringPrice(MeteringPriceReqDto meteringPriceReqDto);
 
 }

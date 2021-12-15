@@ -34,15 +34,15 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		meteringPriceReqDto.setDeviceId(eletricityUnifiedReqDto.getDeviceNumber());
 		meteringPriceReqDto.setSystemCode(eletricityUnifiedReqDto.getTenantId());
 		
-		
-		CimResponse<MeteringPriceRespDto> response = meteringPriceClient.queryMeteringPrice(meteringPriceReqDto);
+		CimResponse<List<MeteringPriceRespDto>> response = meteringPriceClient.queryMeteringPrice(meteringPriceReqDto);
 		
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = convert(response);
 				
 		return result;
 	}
 
-	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> convert(CimResponse<MeteringPriceRespDto> cimRespDto) {
+	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> convert(
+			CimResponse<List<MeteringPriceRespDto>> cimRespDto) {
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 		
 		if(cimRespDto.getCode() != 200 || cimRespDto.getData() == null) {
@@ -57,18 +57,26 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		result.setSuccess(true);
 		result.setMessage(cimRespDto.getMsg());
 		ElectricityPriceUnifiedDetailRespDto response = new ElectricityPriceUnifiedDetailRespDto();
-		MeteringPriceRespDto meteringPriceRespDto = cimRespDto.getData() ;
-		PriceDetail priceDetail = new PriceDetail();
-		priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
-		priceDetail.setEndTime(meteringPriceRespDto.getTimeShareEndDate());
-		priceDetail.setStartTime(meteringPriceRespDto.getTimeShareStartDate());
-		priceDetail.setPeriods(String.valueOf(Integer.valueOf(meteringPriceRespDto.getTimeShareType()) -1));
-		
-		List<PriceDetail> priceDetailList = new ArrayList<>();
-		priceDetailList.add(priceDetail);
+		List<MeteringPriceRespDto> meteringPriceRespDto = cimRespDto.getData();
+		List<PriceDetail> priceDetailList = convertList(meteringPriceRespDto);
 		response.setPriceDetails(priceDetailList);
 		result.setData(response);
 		return result;
+	}
+
+	private List<PriceDetail> convertList(List<MeteringPriceRespDto> meteringPriceRespDtoList) {
+		
+		List<PriceDetail> priceDetailList = new ArrayList<>();
+		for (MeteringPriceRespDto meteringPriceRespDto : meteringPriceRespDtoList) {
+			PriceDetail priceDetail = new PriceDetail();
+			priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
+			priceDetail.setEndTime(meteringPriceRespDto.getTimeShareEndDate());
+			priceDetail.setStartTime(meteringPriceRespDto.getTimeShareStartDate());
+			priceDetail.setPeriods(String.valueOf(Integer.valueOf(meteringPriceRespDto.getTimeShareType()) - 1));
+			priceDetailList.add(priceDetail);
+		}
+		
+		return priceDetailList;
 	}
 
 }
