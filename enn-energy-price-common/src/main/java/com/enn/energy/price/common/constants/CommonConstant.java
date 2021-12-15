@@ -40,4 +40,12 @@ public class CommonConstant {
      */
     public static final String VALUE_SPERATOR = "#";
 
+    public static Integer VERSION_HISTORY = 1;
+    public static Integer VERSION_CURRENT = 2;
+    public static Integer VERSION_FUTURE = 3;
+    public static Integer TIME_MONTH_DAY_SPILT = 5;
+    public static String SEPARATOR_SPILT = "/";
+    public static String LEAP_YEAR_FEB_END = "02-29";
+    public static String NOLEAP_YEAR_FEB_END = "02-28";
+
 }

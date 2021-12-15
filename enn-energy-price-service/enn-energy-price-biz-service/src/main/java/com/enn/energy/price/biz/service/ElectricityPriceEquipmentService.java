@@ -9,6 +9,7 @@ import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import top.rdfa.framework.exception.RdfaException;
 
 import java.util.Date;
@@ -101,7 +102,7 @@ public class ElectricityPriceEquipmentService {
         if (electricityPriceEquipments.size() > 1){
             throw new RdfaException("设备数据绑定的同一版本查到多条规则数据，请排查设备数据");
         }
-        if (electricityPriceEquipments.size() == 0){
+        if (CollectionUtils.isEmpty(electricityPriceEquipments)){
             throw new RdfaException("根据设备ID、版本ID、cim编码未查到设备数据");
         }
         List<ElectricityPriceEquipmentBO> equipmentBos = BeanUtil.mapList(electricityPriceEquipments, ElectricityPriceEquipmentBO.class);
