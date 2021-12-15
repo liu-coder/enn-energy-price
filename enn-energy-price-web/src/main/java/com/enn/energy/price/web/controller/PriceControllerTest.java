@@ -52,9 +52,9 @@ public class PriceControllerTest {
 //            }
 //        }
 
-        priceCacheClientImpl.vSet("test","ep","hhhhhhh");
+        priceCacheClientImpl.vSetIfAbsentWithTimeout("test","ep","hhhhhhh",1000000);
+        priceCacheClientImpl.vSetWithTimeOut("test","ep","hhhhhhh",1000000);
         log.error("=========,{}", (String) priceCacheClientImpl.vGet("test","ep"));
-
         return null;
     }
 

@@ -2,6 +2,7 @@ package com.enn.energy.price.core.service.impl;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.cache.jedis.impl.CacheClientImpl;
 
@@ -20,6 +21,9 @@ public class PriceCacheClientImpl extends CacheClientImpl {
 
     @Resource(name = "redisTemplate")
     private HashOperations hashOperations;
+
+    @Resource(name = "redisTemplate")
+    private ValueOperations valueOperations;
 
     @Resource(name = "stringRedisTemplate")
     private RedisTemplate<String, String> stringRedisTemplate;
