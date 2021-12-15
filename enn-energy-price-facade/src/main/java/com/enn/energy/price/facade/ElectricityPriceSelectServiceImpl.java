@@ -23,7 +23,7 @@ import java.text.ParseException;
  * @date ：Created 2021/11/30 10:19
  * @description：快乐工作每一天
  */
-@Api(tags = {"罗森电价查询服务"})
+@Api(tags = {"自定义电价查询服务"})
 @RestController
 @RequestMapping("/price")
 @Slf4j
