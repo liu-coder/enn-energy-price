@@ -7,6 +7,7 @@ import com.enn.energy.price.dal.mapper.ext.ElectricityPriceRuleExtMapper;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ public class ElectricityPriceRuleService {
      * @param electricityPriceRuleList
      */
     public void batchAddElectricityPriceRule(List<ElectricityPriceRule> electricityPriceRuleList){
-        if(CollectionUtil.isEmpty(electricityPriceRuleList)){
+        if(CollectionUtils.isEmpty(electricityPriceRuleList)){
             return;
         }
         electricityPriceRuleExtMapper.batchAddElectricityPriceRule(electricityPriceRuleList);
@@ -59,7 +60,7 @@ public class ElectricityPriceRuleService {
         map.put("ruleId",ruleId);
         map.put("state",0);
         List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleExtMapper.selectRuleByCondition(map);
-        if (electricityPriceRules.size() == 0){
+        if (CollectionUtil.isEmpty(electricityPriceRules)){
             return null;
         }
         ElectricityPriceRuleBO ruleBo = BeanUtil.map(electricityPriceRules.get(0), ElectricityPriceRuleBO.class);
@@ -78,7 +79,7 @@ public class ElectricityPriceRuleService {
         map.put("versionId",versionId);
         map.put("state",0);
         List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleExtMapper.selectRuleByCondition(map);
-        if (electricityPriceRules.size() == 0){
+        if (CollectionUtils.isEmpty(electricityPriceRules)){
             return null;
         }
         ElectricityPriceRuleBO ruleBo = BeanUtil.map(electricityPriceRules.get(0), ElectricityPriceRuleBO.class);
