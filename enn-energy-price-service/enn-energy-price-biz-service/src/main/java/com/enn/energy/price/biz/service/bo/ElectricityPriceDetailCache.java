@@ -52,4 +52,9 @@ public class ElectricityPriceDetailCache implements Serializable {
      */
     private String price;
 
+    /**
+     * 时段，0:尖;1:峰;2:平;3:谷
+     */
+    private String periods;
+
 }
