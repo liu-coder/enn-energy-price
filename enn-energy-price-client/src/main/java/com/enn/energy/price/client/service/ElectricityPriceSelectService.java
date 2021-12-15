@@ -35,7 +35,7 @@ public interface ElectricityPriceSelectService {
      * @return
      */
     @PostMapping(value = "/price/selectVersions")
-    @ApiOperation("自定价版本列表查询")
+    @ApiOperation("自定价电价版本列表查询")
     PagedRdfaResult<ElectricityPriceVersionsRespDTO> selectVersions(ElectricityPriceVersionsReqDTO versionsReqDTO) throws ParseException;
 
     /**
@@ -45,10 +45,10 @@ public interface ElectricityPriceSelectService {
      * @throws ParseException
      */
     @PostMapping(value = "/price/versionDetail")
-    @ApiOperation("自定义版本详情信息查询")
+    @ApiOperation("自定义电价版本详情信息查询")
     RdfaResult<ElectricityPriceVersionDetailRespDTO> versionDetail(ElectricityPriceVersionDetailReqDTO detailReqDTO) throws Exception;
 
     @PostMapping(value = "/price/currentVersionDetail")
-    @ApiOperation("自定义版本当前生效版本详情")
+    @ApiOperation("自定义定价版本当前生效版本详情")
     RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(ElectricityPriceCurrentVersionDetailReqDTO reqDTO);
 }
