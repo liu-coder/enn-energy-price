@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public RdfaResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error(e.getMessage(), e);
-        return RdfaResult.fail(ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorCode(), e.getMessage());
+        return RdfaResult.fail(ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorCode(), ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorMsg());
     }
 
     @ExceptionHandler(Exception.class)

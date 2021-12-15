@@ -26,9 +26,9 @@ public class PriceVersionConfig implements WebMvcConfigurer {
         InterceptorRegistration interceptor = registry.addInterceptor(priceVersionInterceptor);
 
         // 设置拦截的路径
-        interceptor.addPathPatterns("/addElectricityPrice","/updateElectricityPrice",
-                "/delElectricityPrice","/price/electricityPrice","/price/selectVersions",
-                "/price/versionDetail","/price/findDictionary");
+//        interceptor.addPathPatterns("/addElectricityPrice","/updateElectricityPrice",
+//                "/delElectricityPrice","/price/electricityPrice","/price/selectVersions",
+//                "/price/versionDetail","/price/findDictionary");
     }
 
 }
