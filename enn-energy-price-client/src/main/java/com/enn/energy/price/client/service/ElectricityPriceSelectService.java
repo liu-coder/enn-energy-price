@@ -1,5 +1,6 @@
 package com.enn.energy.price.client.service;
 
+import com.enn.energy.price.client.dto.request.ElectricityPriceCurrentVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
@@ -47,4 +48,7 @@ public interface ElectricityPriceSelectService {
     @ApiOperation("自定义版本详情信息查询")
     RdfaResult<ElectricityPriceVersionDetailRespDTO> versionDetail(ElectricityPriceVersionDetailReqDTO detailReqDTO) throws Exception;
 
+    @PostMapping(value = "/price/currentVersionDetail")
+    @ApiOperation("自定义版本当前生效版本详情")
+    RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(ElectricityPriceCurrentVersionDetailReqDTO reqDTO);
 }
