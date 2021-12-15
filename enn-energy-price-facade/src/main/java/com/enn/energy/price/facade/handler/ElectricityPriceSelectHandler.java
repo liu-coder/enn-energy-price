@@ -113,11 +113,11 @@ public class ElectricityPriceSelectHandler {
     public RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(@Validated @RequestBody ElectricityPriceValueReqDTO requestDto){
         String timeStr = PriceDateUtils.formatTimeStr(requestDto.getEffectiveTime());
         if (StringUtils.isBlank(timeStr)){
-            return RdfaResult.fail("E20013","时间格式错误");
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorMsg());
         }
         //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库
         requestDto.setEffectiveTime(timeStr);
-        String key = requestDto.getSystemCode() + "_" + requestDto.getEquipmentId();
+        String key = requestDto.getSystemCode() + CommonConstant.KEY_SPERATOR + requestDto.getEquipmentId();
         ElectricityPriceValueDetailRespDTO resp = getDataFromRedis(key,requestDto);
         if (resp != null){
             log.info("get data from redis !");
