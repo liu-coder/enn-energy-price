@@ -2,6 +2,7 @@ package com.enn.energy.price.client.dto.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -27,6 +28,7 @@ public class ElectricityPriceSeasonDTO implements Serializable, Comparable<Elect
      */
     @ApiModelProperty(value = "定价方式策略", example = "", required = true)
     @NotBlank(message = "定价方式必填")
+    @Length(max=20,message = "定价方式的长度不能超过20")
     private String pricingMethod;
 
     /**
@@ -34,6 +36,7 @@ public class ElectricityPriceSeasonDTO implements Serializable, Comparable<Elect
      */
     @ApiModelProperty(value = "季节开始时间", example = "11-22,只包括日期", required = true)
     @NotBlank(message = "季节开始时间必填")
+    @Length(max=5,message = "季节开始时间长度不能超过5")
     private String seaStartDate;
 
     /**
@@ -41,6 +44,7 @@ public class ElectricityPriceSeasonDTO implements Serializable, Comparable<Elect
      */
     @ApiModelProperty(value = "季节结束时间", example = "11-22,只包括日期", required = true)
     @NotBlank(message = "季节结束时间必填")
+    @Length(max=5,message = "季节结束时间的长度不能超过5")
     private String seaEndDate;
 
     /**
@@ -48,6 +52,7 @@ public class ElectricityPriceSeasonDTO implements Serializable, Comparable<Elect
      */
     @ApiModelProperty(value = "季节名称", example = "春季", required = true)
     @NotBlank(message = "季节名称必填")
+    @Length(max=20,message = "季节名称的长度不能超过20")
     private String season;
 
     /**

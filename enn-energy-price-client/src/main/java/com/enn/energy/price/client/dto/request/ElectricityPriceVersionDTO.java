@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -31,36 +32,43 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
     @ApiModelProperty(value = "电价版本名称", required = true)
     @NotBlank(message = "电价版本名称必填")
+    @Length(max=30,message = "电价版本长度不能超过30")
     private String versionName;
 
     /**
      * 省编码
      */
+    @Length(max=20,message = "省编码长度不能超过20")
     private String provinceCode;
 
     /**
      * 省
      */
+    @Length(max=20,message = "省名称长度不能超过20")
     private String province;
 
     /**
      * 市编码
      */
+    @Length(max=20,message = "市编码长度不能超过20")
     private String cityCode;
 
     /**
      * 市
      */
+    @Length(max=20,message = "市名称长度不能超过20")
     private String city;
 
     /**
      * 区、县编码
      */
+    @Length(max=20,message = "区、县编码长度不能超过20")
     private String districtCode;
 
     /**
      * 区、县
      */
+    @Length(max=20,message = "区、县名称长度不能超过20")
     private String district;
 
     /**
@@ -68,6 +76,7 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
     @ApiModelProperty(value = "企业", required = true)
     @NotBlank(message = "企业必填")
+    @Length(max=20,message = "企业长度不能超过20")
     private String enterprise;
 
     /**
@@ -75,6 +84,7 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
     @ApiModelProperty(value = "系统编码", required = true)
     @NotBlank(message = "系统编码必填")
+    @Length(max=20,message = "系统编码长度不能超过20")
     private String systemCode;
 
     /**
@@ -82,20 +92,21 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
     @ApiModelProperty(value = "系统名称", required = true)
     @NotBlank(message = "系统名称必填")
+    @Length(max=20,message = "系统名称长度不能超过20")
     private String systemName;
 
     /**
      * 门店编码
      */
     @ApiModelProperty(value = "门店编码")
-    @NotBlank(message = "门店编码必填")
+    @Length(max=20,message = "门店编码长度不能超过20")
     private String storeCode;
 
     /**
      * 门店名称
      */
     @ApiModelProperty(value = "门店名称")
-    @NotBlank(message = "门店名称必填")
+    @Length(max=20,message = "门店名称长度不能超过20")
     private String storeName;
 
     /**
@@ -131,6 +142,7 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
     @ApiModelProperty(value = "电价类型", example = "0:目录电价;1:自定义电价", required = true)
     @NotBlank(message = "电价类型必填")
+    @Length(max=4, message = "电价类型长度不能超过4")
     private String priceType;
 
     /**
@@ -138,6 +150,7 @@ public class ElectricityPriceVersionDTO implements Serializable {
      */
     @ApiModelProperty(value = "绑定类型", example = "0:企业;1:设备;2:行政区域", required = true)
     @NotBlank(message = "绑定类型必填")
+    @Length(max=4,message = "绑定类型长度不能超过4")
     private String bindType;
 
     /**

@@ -2,6 +2,7 @@ package com.enn.energy.price.client.dto.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -33,9 +34,11 @@ public class ElectricityPriceRuleDTO implements Serializable {
 //     */
 //    private String versionId;
 
+
     /**
      * 用电行业
      */
+    @Length(max=20,message = "定价策略长度不能超过20")
     private String industry;
 
     /**
@@ -43,21 +46,25 @@ public class ElectricityPriceRuleDTO implements Serializable {
      */
     @ApiModelProperty(value = "定价策略", example = "0:单一制;1:双部制", required = true)
     @NotBlank(message = "定价策略必填")
+    @Length(max=4,message = "定价策略长度不能超过4")
     private String strategy;
 
     /**
      * 电压等级id
      */
+    @Length(max=20,message = "电压等级id长度不能超过20")
     private String voltageLevel;
 
     /**
      * 变压器容量基础电价
      */
+    @Length(max=20,message = "变压器容量基础电价长度不能超过20")
     private String transformerCapacityPrice;
 
     /**
      * 最大容量基础电价
      */
+    @Length(max=20,message = "最大容量基础电价长度不能超过20")
     private String maxCapacityPrice;
 
     /**
