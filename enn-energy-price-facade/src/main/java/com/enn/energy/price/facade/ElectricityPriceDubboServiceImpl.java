@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -124,6 +125,23 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
         String year = String.format("%tY",  electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
+
+
+        String regexp="^[A-Za-z0-9]+$";
+        String provinceCode = electricityPriceVersionDTO.getProvinceCode();
+        if(StringUtils.isNotEmpty(provinceCode)&& !provinceCode.matches(regexp)){
+            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "省、市编码必须为英文和数字");
+        }
+
+        String cityCode = electricityPriceVersionDTO.getCityCode();
+        if(StringUtils.isNotEmpty(cityCode)&& !cityCode.matches(regexp)){
+            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "市、区编码必须为英文和数字");
+        }
+
+        String districtCode = electricityPriceVersionDTO.getDistrictCode();
+        if(StringUtils.isNotEmpty(districtCode)&& !districtCode.matches(regexp)){
+            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "区、县编码必须为英文和数字");
+        }
 
         for (ElectricityPriceRuleDTO electricityPriceRuleDTO : electricityPriceRuleDTOList) {
 
