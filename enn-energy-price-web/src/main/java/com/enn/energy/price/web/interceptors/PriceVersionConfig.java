@@ -23,7 +23,7 @@ public class PriceVersionConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
 
         // 添加拦截器
-        InterceptorRegistration interceptor = registry.addInterceptor(priceVersionInterceptor);
+//        InterceptorRegistration interceptor = registry.addInterceptor(priceVersionInterceptor);
 
         // 设置拦截的路径
 //        interceptor.addPathPatterns("/addElectricityPrice","/updateElectricityPrice",
