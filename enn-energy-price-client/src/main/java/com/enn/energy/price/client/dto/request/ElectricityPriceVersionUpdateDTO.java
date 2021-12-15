@@ -150,7 +150,7 @@ public class ElectricityPriceVersionUpdateDTO implements Serializable {
      */
     @ApiModelProperty(value = "绑定类型", example = "0:企业;1:设备;2:行政区域", required = true)
     @NotBlank(message = "绑定类型必填")
-    @Length(max=1,message = "绑定类型长度不能超过1")
+    @Length(max=4,message = "绑定类型长度不能超过4")
     private String bindType;
 
     /**
