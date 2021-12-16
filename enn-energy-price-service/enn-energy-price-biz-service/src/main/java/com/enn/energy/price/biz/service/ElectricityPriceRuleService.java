@@ -38,19 +38,6 @@ public class ElectricityPriceRuleService {
     }
 
     /**
-     * 根据价格版本id查询价格规则
-     * @param versionId
-     * @return
-     */
-    public List<ElectricityPriceRule> selectPriceRulesByVersionId(String versionId){
-
-        return electricityPriceRuleExtMapper.selectPriceRulesByVersionId(versionId);
-
-    }
-
-
-
-    /**
      * 根据规则ID查询电价规则
      * @param ruleId
      * @return

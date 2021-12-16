@@ -25,7 +25,7 @@ import java.text.ParseException;
  */
 @Api(tags = {"罗森电价查询服务"})
 @RestController
-@RequestMapping("/price")
+//@RequestMapping("/price")
 @Slf4j
 @DubboService(version = "1.0.0", protocol = {"dubbo"})
 public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelectService {

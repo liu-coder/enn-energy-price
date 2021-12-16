@@ -23,7 +23,6 @@ public interface ElectricityPriceEquipmentExtMapper {
 
     void addElectricityPriceEquipment(ElectricityPriceEquipment electricityPriceEquipment);
 
-    ElectricityPriceEquipment selectPriceEquipmentByVersionId(String versionId);
 
     List<ElectricityPriceEquipment> selectEquByCondition(Map<String,Object> map);
 

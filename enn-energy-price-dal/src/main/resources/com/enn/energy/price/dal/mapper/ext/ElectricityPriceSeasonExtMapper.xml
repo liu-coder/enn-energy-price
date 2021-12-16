@@ -22,14 +22,14 @@
 
   <sql id="Select_By_Map">
     <where>
+      <if test="seasonId != null">
+        and season_id = #{seasonId}
+      </if>
       <if test="ruleId != null">
         and rule_id = #{ruleId}
       </if>
       <if test="versionId != null">
         and version_id = #{versionId}
-      </if>
-      <if test="seasonId != null">
-        and season_id = #{seasonId}
       </if>
       <if test="seasonIds != null">
         and season_id in
@@ -62,14 +62,6 @@
       #{item.updateTime,jdbcType=TIMESTAMP})
     </foreach>
   </insert>
-
-  <select id="selectPriceSeasonsByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select season_id, rule_id, version_id, season, sea_start_date, sea_end_date, pricing_method,
-      state, create_time, update_time
-    from electricity_price_season
-    where version_id = #{versionId,jdbcType=VARCHAR}
-    and state = 0
-  </select>
 
     <select id="selectSeasonByCondition" resultMap="BaseResultMap">
       select
