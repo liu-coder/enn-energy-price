@@ -30,7 +30,7 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		
 		MeteringPriceReqDto meteringPriceReqDto = new MeteringPriceReqDto();
 		
-		meteringPriceReqDto.setDate(eletricityUnifiedReqDto.getEffectiveTime());
+		meteringPriceReqDto.setDate(eletricityUnifiedReqDto.getEffectiveTime() + " 00:00:00");
 		meteringPriceReqDto.setDeviceId(eletricityUnifiedReqDto.getDeviceNumber());
 		meteringPriceReqDto.setSystemCode(eletricityUnifiedReqDto.getTenantId());
 		
@@ -44,8 +44,14 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> convert(
 			CimResponse<List<MeteringPriceRespDto>> cimRespDto) {
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
-		
-		if(cimRespDto.getCode() != 200 || cimRespDto.getData() == null) {
+		if(cimRespDto == null) {
+			result.setCode("404");
+			result.setSuccess(false);
+			result.setMessage("find metering-prepaid price fail");
+			result.setData(null);
+			return result;
+		}
+		if (cimRespDto.getCode() != 200 || cimRespDto.getData() == null) {
 			result.setCode(String.valueOf(cimRespDto.getCode()));
 			result.setSuccess(false);
 			result.setMessage(cimRespDto.getMsg());

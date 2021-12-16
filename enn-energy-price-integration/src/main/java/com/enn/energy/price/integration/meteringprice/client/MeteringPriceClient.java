@@ -21,7 +21,7 @@ import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceRespDto;
 //@FeignClient(name="MeteringPriceClient",contextId = "MeteringPriceClient",path="/prepaid", url = "${metering.api.server.url}")
 
 @FeignClient(name="MeteringPriceClient",contextId = "MeteringPriceClient",path="/prepaid", url = "http://metering-prepaid.test.fnwintranet.com")
-@RequestMapping(headers = "ticket=123456")
+@RequestMapping(headers = { "ticket=123456", "Content-Type=application/json" })
 public interface MeteringPriceClient {
 
     /**

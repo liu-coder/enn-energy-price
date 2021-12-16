@@ -14,6 +14,7 @@ import com.enn.energy.price.integration.cim.client.CimApiClient;
 import com.enn.energy.price.integration.cim.dto.CimPriceReq;
 import com.enn.energy.price.integration.cim.dto.CimPriceResp;
 import com.enn.energy.price.integration.cim.dto.CimPriceResp.TimeSharing;
+import com.enn.energy.price.integration.cim.dto.IdTypeConstant;
 import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
 
 import top.rdfa.framework.biz.ro.RdfaResult;
@@ -37,19 +38,16 @@ public class CimPriceService implements  PriceStrategyService{
 		
 		CimPriceReq cimPriceReq = new CimPriceReq();
 
-		cimPriceReq.setIdType("03");
+		cimPriceReq.setIdType(IdTypeConstant.DEVICE_IDTYPE);
 		cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getDeviceNumber());
 		cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
 		cimPriceReq.setSystemCode(eletricityUnifiedReqDto.getTenantId());
 
-
-		
 		CimResponse<CimPriceResp>  response= CimApiClient.getDayEnergyPrice(cimPriceReq);
 		if(response.getData() != null) {
-
 			respDto = converResp(response);
 		}else {
-			cimPriceReq.setIdType("01");
+			cimPriceReq.setIdType(IdTypeConstant.COMPANY_IDTYPE);
 			cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getTenantId());
 			cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
 			response= CimApiClient.getDayEnergyPrice(cimPriceReq);
