@@ -70,12 +70,13 @@ public class CimPriceService implements  PriceStrategyService{
 			ElectricityPriceUnifiedDetailRespDto response = new ElectricityPriceUnifiedDetailRespDto();
 			CimPriceResp cimPriceResp = cimResponse.getData();
 			response.setBaseCapacityPrice(cimPriceResp.getDemandPrice());
+			response.setMaxCapacityPrice(cimPriceResp.getDemandPrice());
 			response.setPriceRate(cimPriceResp.getPriceRate());
 			List<PriceDetail> priceDetailList = convertPriceDetail(cimPriceResp.getPriceDataList());
 			response.setPriceDetails(priceDetailList);
 			result.setData(response);
 		}
-		;
+
 		return result;
 	}
 
