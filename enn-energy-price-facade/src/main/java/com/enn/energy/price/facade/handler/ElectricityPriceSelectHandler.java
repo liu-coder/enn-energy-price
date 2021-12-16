@@ -253,10 +253,10 @@ public class ElectricityPriceSelectHandler {
     }
 
     private RdfaResult<ElectricityPriceValueDetailRespDTO> getPriceDetailFromDB(String key ,ElectricityPriceValueReqDTO requestDto){
-        String lockKey = key + CommonConstant.KEY_SPERATOR + requestDto.getEffectiveTime();
-        Lock lock = null;
-        try {//TODO 看门狗机制？？？
-            lock = redDisLock.lock(lockKey);
+//        String lockKey = key + CommonConstant.KEY_SPERATOR + requestDto.getEffectiveTime();
+//        Lock lock = null;
+//        try {//TODO 看门狗机制？？？
+//            lock = redDisLock.lock(lockKey);
             //重新从redis获取
             ElectricityPriceValueDetailRespDTO respDTO = getDataFromRedis(key,requestDto);
             if (respDTO != null){
@@ -298,12 +298,12 @@ public class ElectricityPriceSelectHandler {
             putRedisValue(key,equVersionView,electricityPriceSeasonBO,detailBos);
             removeThreadLocal();
             return RdfaResult.success(respDTO);
-        } catch(LockFailException e){
-            log.error(e.getMessage(), e);
-            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(),ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
-        } finally{
-            redDisLock.unlock(lock);
-        }
+//        } catch(LockFailException e){
+//            log.error(e.getMessage(), e);
+//            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(),ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
+//        } finally{
+////            redDisLock.unlock(lock);
+//        }
     }
 
     private void putRedisValue(String key,ElectricityPriceEquVersionView equVersionView,
