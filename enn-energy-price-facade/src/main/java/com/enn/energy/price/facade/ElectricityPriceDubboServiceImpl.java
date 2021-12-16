@@ -6,6 +6,7 @@ import com.enn.energy.price.client.dto.request.*;
 import com.enn.energy.price.client.service.ElectricityPriceDubboService;
 import com.enn.energy.price.biz.service.ElectricityPriceService;
 import com.enn.energy.price.biz.service.bo.*;
+import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.ResponseCode;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.utils.PriceDateUtils;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
+import top.rdfa.framework.concurrent.api.exception.LockFailException;
+import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -29,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * 电价同步.
@@ -46,6 +51,9 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Autowired
     private ElectricityPriceService electricityPriceService;
 
+    @Autowired
+    private RedissonRedDisLock redDisLock;
+
     @Override
     @PostMapping(value = "/addElectricityPrice")
     public RdfaResult<String> addElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
@@ -58,8 +66,32 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
         convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
-        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
-        return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+
+        Lock lock = null;
+        String lockKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        int times = 0;
+        while (lock == null && times < 3) {
+            try {
+                lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, 15, -1);
+                if (lock != null) {
+                    electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
+                    redDisLock.unlock(lock);
+                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+                } else {
+                    times++;
+                    log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                    continue;
+                }
+            } catch (LockFailException e) {
+                times++;
+                log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                continue;
+            } catch (Exception e) {
+                redDisLock.unlock(lock);
+                return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+            }
+        }
+        return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
     }
 
     @Override
@@ -75,8 +107,33 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionUpdateDTO, ElectricityPriceVersionBO.class);
         convertBO(null, electricityPriceVersionUpdateDTO, electricityPriceVersionBO);
         electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
-        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
-        return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+
+        Lock lock = null;
+        String lockKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        int times = 0;
+        while (lock == null && times < 3) {
+            try {
+                lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, 15, -1);
+                if (lock != null) {
+                    electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
+                    redDisLock.unlock(lock);
+                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+                } else {
+                    times++;
+                    log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                    continue;
+                }
+            } catch (LockFailException e) {
+                times++;
+                log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                continue;
+            } catch (Exception e) {
+                redDisLock.unlock(lock);
+                return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+            }
+
+        }
+        return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
     }
 
     /**
