@@ -124,24 +124,26 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     private RdfaResult<String> validateDTO(ElectricityPriceVersionDTO electricityPriceVersionDTO, ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
-        String year = String.format("%tY",  electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
+        String year = String.format("%tY", electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
 
+        if (null != electricityPriceVersionDTO) {
+            String regexp = "^[A-Za-z0-9]+$";
+            String provinceCode = electricityPriceVersionDTO.getProvinceCode();
+            if (StringUtils.isNotEmpty(provinceCode) && !provinceCode.matches(regexp)) {
+                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "省、市编码必须为英文和数字");
+            }
 
-        String regexp="^[A-Za-z0-9]+$";
-        String provinceCode = electricityPriceVersionDTO.getProvinceCode();
-        if(StringUtils.isNotEmpty(provinceCode)&& !provinceCode.matches(regexp)){
-            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "省、市编码必须为英文和数字");
+            String cityCode = electricityPriceVersionDTO.getCityCode();
+            if (StringUtils.isNotEmpty(cityCode) && !cityCode.matches(regexp)) {
+                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "市、区编码必须为英文和数字");
+            }
+
+            String districtCode = electricityPriceVersionDTO.getDistrictCode();
+            if (StringUtils.isNotEmpty(districtCode) && !districtCode.matches(regexp)) {
+                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "区、县编码必须为英文和数字");
+            }
         }
 
-        String cityCode = electricityPriceVersionDTO.getCityCode();
-        if(StringUtils.isNotEmpty(cityCode)&& !cityCode.matches(regexp)){
-            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "市、区编码必须为英文和数字");
-        }
-
-        String districtCode = electricityPriceVersionDTO.getDistrictCode();
-        if(StringUtils.isNotEmpty(districtCode)&& !districtCode.matches(regexp)){
-            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "区、县编码必须为英文和数字");
-        }
 
         for (ElectricityPriceRuleDTO electricityPriceRuleDTO : electricityPriceRuleDTOList) {
 
@@ -190,7 +192,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 }
 
                 //单一电价
-                if ("p".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())){
+                if ("p".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())) {
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     for (int j = 0; j < electricityPriceDetailDTOList.size(); j++) {
                         electricityPriceDetailDTOList.get(i).setStartTime(null);
@@ -248,17 +250,17 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         SimpleDateFormat format = new SimpleDateFormat("MM-dd");
         //format.format();
         format.setLenient(false);
-   //     try {
-  //          String year = String.format("%tY", new Date());
+        //     try {
+        //          String year = String.format("%tY", new Date());
 //            "04:52:00".compareTo("00:00:00");
 //            "02-22".compareTo("02-21");
-  String  strNum = "123";
-           //   strNum.matches("[1-9] [.]?[0-9]*");
+        String strNum = "123";
+        //   strNum.matches("[1-9] [.]?[0-9]*");
         System.out.println(strNum.matches("^([0-9]{1,}[.]?[0-9]*)$"));
 
 //            format.parse("02-28");
 //            PriceDateUtils.addDateByday(format.parse("02-20"), 1).equals(format.parse("02-21"));
-            //format.setLenient(false);
+        //format.setLenient(false);
 //        } catch (ParseException e) {
 //            e.printStackTrace();
 //        }
