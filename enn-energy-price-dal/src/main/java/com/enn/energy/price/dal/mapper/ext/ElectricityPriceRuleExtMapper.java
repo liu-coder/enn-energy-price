@@ -20,7 +20,5 @@ public interface ElectricityPriceRuleExtMapper {
 
     void batchAddElectricityPriceRule(List<ElectricityPriceRule> electricityPriceRuleList);
 
-    List<ElectricityPriceRule> selectPriceRulesByVersionId(String versionId);
-
     List<ElectricityPriceRule> selectRuleByCondition(Map<String,Object> map);
 }

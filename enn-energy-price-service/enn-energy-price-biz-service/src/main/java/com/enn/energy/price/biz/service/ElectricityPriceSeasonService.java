@@ -48,17 +48,6 @@ public class ElectricityPriceSeasonService {
 
 
     /**
-     * 根据版本id查询季节
-     * @param versionId
-     * @return
-     */
-    public List<ElectricityPriceSeason> selectPriceSeasonsByVersionId(String versionId){
-
-        return electricityPriceSeasonExtMapper.selectPriceSeasonsByVersionId(versionId);
-
-    }
-
-    /**
      * 根据版本ID、有效时间 查询唯一的seasonId。
      * @param versionId
      * @param activeTime

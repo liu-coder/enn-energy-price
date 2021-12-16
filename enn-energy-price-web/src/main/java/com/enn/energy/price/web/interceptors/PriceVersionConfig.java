@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @version : 1.0 2021/12/7 16:37
  * @since : 1.0
  **/
-@Configuration
+//@Configuration
 public class PriceVersionConfig implements WebMvcConfigurer {
 
     @Autowired

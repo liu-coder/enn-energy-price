@@ -44,14 +44,6 @@ public class ElectricityPriceDetailService {
         return electricityPriceDetailBos;
     }
 
-    public List<ElectricityPriceDetailBO> selectDetailByCondition(String ruleId) {
-        Map<String,Object> map = new HashMap<>();
-        map.put("ruleId",ruleId);
-        map.put("state",0);
-        List<ElectricityPriceDetail> priceDetails = electricityPriceDetailExtMapper.selectDetailByCondition(map);
-        List<ElectricityPriceDetailBO> detailBos = BeanUtil.mapList(priceDetails, ElectricityPriceDetailBO.class);
-        return detailBos;
-    }
     private void removeThreadLocal(){
         sf_mm_dd.remove();
     }
@@ -66,16 +58,6 @@ public class ElectricityPriceDetailService {
         }
         electricityPriceDetailExtMapper.batchAddElectricityPriceDetail(electricityPriceDetailList);
     }
-
-    /**
-     * 根据版本id查询价格明细
-     * @param versionId
-     * @return
-     */
-    public List<ElectricityPriceDetail> selectPriceDetailsByVersionId(String versionId){
-        return electricityPriceDetailExtMapper.selectPriceDetailsByVersionId(versionId);
-    }
-
 
     public void batchUpdateByRuleIds(List<ElectricityPriceRuleBO> ruleBos) {
         if (CollectionUtil.isEmpty(ruleBos)) {

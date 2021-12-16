@@ -23,9 +23,9 @@ import java.text.ParseException;
  * @date ：Created 2021/11/30 10:19
  * @description：快乐工作每一天
  */
-@Api(tags = {"罗森电价查询服务"})
+@Api(tags = {"自定义电价查询服务"})
 @RestController
-@RequestMapping("/price")
+//@RequestMapping("/price")
 @Slf4j
 @DubboService(version = "1.0.0", protocol = {"dubbo"})
 public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelectService {

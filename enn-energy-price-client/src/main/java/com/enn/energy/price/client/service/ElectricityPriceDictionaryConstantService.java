@@ -14,7 +14,7 @@ public interface ElectricityPriceDictionaryConstantService {
      * @param priceDictionaryDTO
      * @return
      */
-    @ApiOperation("创建新常量")
+    @ApiOperation("创建字典项")
     @PostMapping("/price/saveDictionary")
     public RdfaResult insertDictionary(ElectricityPriceDictionaryDTO priceDictionaryDTO);
     /**

@@ -63,17 +63,6 @@ public class ElectricityPriceEquipmentService {
         electricityPriceEquipmentExtMapper.addElectricityPriceEquipment(electricityPriceEquipment);
     }
 
-    /**
-     * 根据价格版本id查询价格设备
-     * @param versionId
-     * @return
-     */
-    public ElectricityPriceEquipment selectPriceEquipmentByVersionId(String versionId){
-
-      return electricityPriceEquipmentExtMapper.selectPriceEquipmentByVersionId(versionId);
-    }
-
-
     public List<ElectricityPriceEquipmentBO> selectEquByCondition(String versionId) {
         Map<String,Object> map = new HashMap<>();
         map.put("versionId",versionId);
