@@ -43,21 +43,15 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 
 	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> convert(
 			CimResponse<List<MeteringPriceRespDto>> cimRespDto) {
-		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 		if(cimRespDto == null) {
-			result.setCode("404");
-			result.setSuccess(false);
-			result.setMessage("find metering-prepaid price fail");
-			result.setData(null);
-			return result;
+			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false, "404",
+					"find metering-prepaid price fail");
 		}
 		if (cimRespDto.getCode() != 200 || cimRespDto.getData() == null) {
-			result.setCode(String.valueOf(cimRespDto.getCode()));
-			result.setSuccess(false);
-			result.setMessage(cimRespDto.getMsg());
-			result.setData(null);
-			return result;
+			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false, String.valueOf(cimRespDto.getCode()),
+					cimRespDto.getMsg());
 		}
+		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 		
 		result.setCode(String.valueOf(cimRespDto.getCode()));
 		result.setSuccess(true);
