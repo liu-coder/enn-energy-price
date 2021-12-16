@@ -49,14 +49,6 @@
         </foreach>
     </insert>
 
-    <select id="selectPriceRulesByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select rule_id, version_id, industry, strategy, voltage_level, transformer_capacity_price,
-            max_capacity_price, state, create_time, update_time
-        from electricity_price_rule
-        where version_id = #{versionId,jdbcType=VARCHAR}
-        and state = 0
-    </select>
-
     <select id="selectRuleByCondition" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

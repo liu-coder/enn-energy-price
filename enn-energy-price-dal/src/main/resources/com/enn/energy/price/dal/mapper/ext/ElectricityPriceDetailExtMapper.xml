@@ -40,25 +40,16 @@
         </foreach>
     </insert>
 
-    <select id="selectPriceDetailsByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select detail_id, rule_id,season_id, version_id, periods, start_time, end_time, step, start_step, end_step,
-               price, state, create_time, update_time
-        from electricity_price_detail
-        where version_id = #{versionId,jdbcType=VARCHAR}
-        and state = 0
-    </select>
-
-
     <sql id="Select_By_Map">
         <where>
-            <if test="ruleId != null">
-                and rule_id = #{ruleId}
-            </if>
             <if test="seasonId != null">
                 and season_id = #{seasonId}
             </if>
             <if test="versionId != null">
                 and version_id = #{versionId}
+            </if>
+            <if test="ruleId != null">
+                and rule_id = #{ruleId}
             </if>
             <if test="state != null">
                 and state = #{state}
