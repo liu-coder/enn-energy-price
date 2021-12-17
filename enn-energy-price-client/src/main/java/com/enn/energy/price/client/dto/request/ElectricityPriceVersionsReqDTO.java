@@ -1,6 +1,7 @@
 package com.enn.energy.price.client.dto.request;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotBlank;
  * @description：快乐工作每一天
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ElectricityPriceVersionsReqDTO extends BasePageDto {
     @NotBlank(message = "设备ID不能为空")
     private String equipmentId;
