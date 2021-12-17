@@ -9,6 +9,7 @@ import com.enn.energy.price.biz.service.bo.*;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.ResponseCode;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -86,8 +87,13 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 times++;
                 log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
                 continue;
+            } catch (PriceException e) {
+                redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
+                return RdfaResult.fail(e.getCode(), e.getMessage());
             } catch (Exception e) {
                 redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
                 return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
             }
         }
@@ -127,8 +133,13 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 times++;
                 log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
                 continue;
+            } catch (PriceException e) {
+                redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
+                return RdfaResult.fail(e.getCode(), e.getMessage());
             } catch (Exception e) {
                 redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
                 return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
             }
 
