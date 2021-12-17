@@ -215,8 +215,8 @@ public class ExcelUtil {
                 if(convertMethods[cellnum] != null){
                     String methodName = convertMethods[cellnum];
                     try {
-                        Method method = data.getClass().getMethod(methodName,null);
-                        val = method.invoke(data,null);
+                        Method method = data.getClass().getMethod(methodName,new Class[0]);
+                        val = method.invoke(data,new Object[]{});
                     } catch (NoSuchMethodException e) {
                         log.error("NoSuchMethodException：",e);
                     } catch (InvocationTargetException e) {
