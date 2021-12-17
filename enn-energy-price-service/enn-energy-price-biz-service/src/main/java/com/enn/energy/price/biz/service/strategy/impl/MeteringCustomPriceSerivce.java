@@ -18,6 +18,12 @@ import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceRespDto;
 
 import top.rdfa.framework.biz.ro.RdfaResult;
 
+/**
+ * 单一电价平台查询自定义电价
+ * 
+ * @author wenjianpinga
+ *
+ */
 @Service("meteringCustomPriceService")
 public class MeteringCustomPriceSerivce implements PriceStrategyService {
 
