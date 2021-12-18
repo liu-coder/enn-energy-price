@@ -36,6 +36,11 @@ public class CommonConstant {
     public static final String KEY_SPERATOR = "_";
 
     /**
+     * 并发锁前缀
+     */
+    public static final String LOCK_KEY = "price";
+
+    /**
      * 缓存值分隔符
      */
     public static final String VALUE_SPERATOR = "#";

@@ -69,7 +69,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
 
         Lock lock = null;
-        String lockKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        String lockKey = CommonConstant.LOCK_KEY+ CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
         int times = 0;
         while (lock == null && times < 3) {
             try {
@@ -115,7 +115,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
 
         Lock lock = null;
-        String lockKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        String lockKey = CommonConstant.LOCK_KEY+ CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
         int times = 0;
         while (lock == null && times < 3) {
             try {
