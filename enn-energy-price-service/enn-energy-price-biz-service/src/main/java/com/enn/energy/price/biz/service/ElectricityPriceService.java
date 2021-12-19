@@ -203,7 +203,7 @@ public class ElectricityPriceService {
      *
      * @param electricityPriceVersionBO
      */
-    public ElectricityPriceVersion directlyAddElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, Map<String, String> addPriceVersionCache, List<ElectricityPriceRule> addPriceRuleList, List<ElectricityPriceSeason> addPriceSeasonList, List<ElectricityPriceDetail> addPriceDetailList, ElectricityPriceEquipment electricityPriceEquipment) {
+    private ElectricityPriceVersion directlyAddElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, Map<String, String> addPriceVersionCache, List<ElectricityPriceRule> addPriceRuleList, List<ElectricityPriceSeason> addPriceSeasonList, List<ElectricityPriceDetail> addPriceDetailList, ElectricityPriceEquipment electricityPriceEquipment) {
 
         ElectricityPriceVersion electricityPriceVersion = BeanUtil.toBean(electricityPriceVersionBO, ElectricityPriceVersion.class);
 

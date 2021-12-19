@@ -26,12 +26,10 @@ import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
@@ -69,7 +67,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
 
         Lock lock = null;
-        String lockKey = CommonConstant.LOCK_KEY+ CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
         int times = 0;
         while (lock == null && times < 3) {
             try {
@@ -115,7 +113,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
 
         Lock lock = null;
-        String lockKey = CommonConstant.LOCK_KEY+ CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
         int times = 0;
         while (lock == null && times < 3) {
             try {
@@ -286,7 +284,6 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         }
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
-        //List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO.getElectricityPriceRuleDTOList();
         List<ElectricityPriceRuleBO> electricityPriceRuleBOList = new ArrayList<>();
         electricityPriceVersionBO.setElectricityPriceRuleBOList(electricityPriceRuleBOList);
 
@@ -312,25 +309,5 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             electricityPriceRuleBOList.add(electricityPriceRuleBO);
         }
 
-    }
-
-    public static void main(String[] args) {
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-        //format.format();
-        format.setLenient(false);
-        //     try {
-        //          String year = String.format("%tY", new Date());
-//            "04:52:00".compareTo("00:00:00");
-//            "02-22".compareTo("02-21");
-        String strNum = "123";
-        //   strNum.matches("[1-9] [.]?[0-9]*");
-        System.out.println(strNum.matches("^([0-9]{1,}[.]?[0-9]*)$"));
-
-//            format.parse("02-28");
-//            PriceDateUtils.addDateByday(format.parse("02-20"), 1).equals(format.parse("02-21"));
-        //format.setLenient(false);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
     }
 }
