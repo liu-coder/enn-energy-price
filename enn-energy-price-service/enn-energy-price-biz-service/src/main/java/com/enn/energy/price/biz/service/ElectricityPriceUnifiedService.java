@@ -8,10 +8,10 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.enn.energy.price.biz.service.aop.MyCacheable;
 import com.enn.energy.price.biz.service.strategy.PriceStrategyService;
 import com.enn.energy.price.client.dto.request.EletricityUnifiedReqDto;
 import com.enn.energy.price.client.dto.response.ElectricityPriceUnifiedDetailRespDto;
-import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.PriceType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,23 +49,23 @@ public class ElectricityPriceUnifiedService {
 	
 //	@MyCacheable(key = "#{eletricityUnifiedReqDto.priceType}-#{eletricityUnifiedReqDto.tenantId}-#{eletricityUnifiedReqDto.deviceNumber}-#{eletricityUnifiedReqDto.effectiveTime}", timeout = 24
 //			* 60 * 60)
-//	@MyCacheable(key = "#eletricityUnifiedReqDto.priceType,#eletricityUnifiedReqDto.tenantId,#eletricityUnifiedReqDto.deviceNumber,#eletricityUnifiedReqDto.effectiveTime", timeout = 60)
+	@MyCacheable(key = "#eletricityUnifiedReqDto.priceType,#eletricityUnifiedReqDto.tenantId,#eletricityUnifiedReqDto.deviceNumber,#eletricityUnifiedReqDto.effectiveTime", timeout = 60)
 	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryUnifiedPrice(EletricityUnifiedReqDto eletricityUnifiedReqDto){
 		PriceType priceType = PriceType.valueOf(eletricityUnifiedReqDto.getPriceType());
 
-		ElectricityPriceUnifiedDetailRespDto resultDto = cacheClient.vGet(getKey(eletricityUnifiedReqDto),
-				CommonConstant.CACHE_PREFIX);
-		if (resultDto != null) {
-			log.info("get data from redis for queryUnifiedPrice, {}", eletricityUnifiedReqDto);
-			return newResult(resultDto);
-		}
+//		ElectricityPriceUnifiedDetailRespDto resultDto = cacheClient.vGet(getKey(eletricityUnifiedReqDto),
+//				CommonConstant.CACHE_PREFIX);
+//		if (resultDto != null) {
+//			log.info("get data from redis for queryUnifiedPrice, {}", eletricityUnifiedReqDto);
+//			return newResult(resultDto);
+//		}
 		PriceStrategyService service = priceStrategyServiceMap.get(priceType);
 		if(service != null) {
 			RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = service.queryPrice(eletricityUnifiedReqDto);
-			if (result != null && result.getData() != null) {
-				cacheClient.vSetWithTimeOut(getKey(eletricityUnifiedReqDto), CommonConstant.CACHE_PREFIX,
-						result.getData(), 60 * 1000);
-			}
+//			if (result != null && result.getData() != null) {
+//				cacheClient.vSetWithTimeOut(getKey(eletricityUnifiedReqDto), CommonConstant.CACHE_PREFIX,
+//						result.getData(), 60 * 1000);
+//			}
 
 			return result;
 		}
