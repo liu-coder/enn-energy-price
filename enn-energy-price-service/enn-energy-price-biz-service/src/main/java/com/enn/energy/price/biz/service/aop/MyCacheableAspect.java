@@ -60,7 +60,7 @@ public class MyCacheableAspect implements Ordered {
 			useWrapper = true;
 		}
 		String key = getSpelKey(pjp, cacheable.key());
-		System.out.println("cache key is" + key);
+//		System.out.println("cache key is" + key);
 		String prefix = CommonConstant.CACHE_PREFIX;
 
 		Object result = cacheClient.vGet(key, prefix);
@@ -78,7 +78,7 @@ public class MyCacheableAspect implements Ordered {
 
 		result = pjp.proceed();
 
-		if (isCache(result)) {
+		if (needCache(result)) {
 			log.debug("method process success , cache for key {}", key);
 			if (useWrapper) {
 				cacheClient.vSetIfAbsentWithTimeout(key, prefix, ((RdfaResult) result).getData(),
@@ -92,22 +92,8 @@ public class MyCacheableAspect implements Ordered {
 
 	}
 
-	private <T> T getResult(String key, String prefix, Class<T> clazz) {
-		T o;
-		try {
-			o = clazz.newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		o = (T) cacheClient.vGet(key, prefix);
-		return o;
-	}
 
-	private boolean isCache(Object result) {
+	private boolean needCache(Object result) {
 		if (result == null) {
 			return false;
 		}
