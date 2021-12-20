@@ -40,13 +40,17 @@ public class CustomPriceService implements PriceStrategyService {
 
 	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> converCustom(
 			RdfaResult<ElectricityPriceValueDetailRespDTO> sepecialResult) {
-//		ElectricityPriceValueDetailRespDTO electricityPriceValueDetailRespDTO = sepecialResult.getData();
-//		ElectricityPriceUnifiedDetailRespDto electricityPriceUnifiedDetailRespDto = new ElectricityPriceUnifiedDetailRespDto();
+		ElectricityPriceValueDetailRespDTO electricityPriceValueDetailRespDTO = sepecialResult.getData();
+		ElectricityPriceUnifiedDetailRespDto electricityPriceUnifiedDetailRespDto = new ElectricityPriceUnifiedDetailRespDto();
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> rdfaResult = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 
-//			BeanUtils.copyProperties(electricityPriceUnifiedDetailRespDto, electricityPriceValueDetailRespDTO);
 		try {
-			BeanUtils.copyProperties(rdfaResult, sepecialResult);
+			BeanUtils.copyProperties(electricityPriceUnifiedDetailRespDto, electricityPriceValueDetailRespDTO);
+			rdfaResult.setCode(sepecialResult.getCode());
+			rdfaResult.setMessage(sepecialResult.getMessage());
+			rdfaResult.setData(electricityPriceUnifiedDetailRespDto);
+			rdfaResult.success(sepecialResult.isSuccess());
+
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			log.error("copy properties error:", e);
