@@ -77,4 +77,14 @@ public class ElectricityPriceDetailBO implements Serializable {
      * 删除状态
      */
     private Integer state;
+
+    /**
+     * 企业租户id
+     */
+    private String tenantId;
+
+    /**
+     * 企业租户名称
+     */
+    private String tenantName;
 }

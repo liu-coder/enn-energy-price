@@ -72,14 +72,6 @@ public class ElectricityPriceVersionDTO implements Serializable {
     private String district;
 
     /**
-     * 企业
-     */
-    @ApiModelProperty(value = "企业", required = true)
-    @NotBlank(message = "企业必填")
-    @Length(max=20,message = "企业长度不能超过20")
-    private String enterprise;
-
-    /**
      * 系统编码
      */
     @ApiModelProperty(value = "系统编码", required = true)
@@ -96,18 +88,20 @@ public class ElectricityPriceVersionDTO implements Serializable {
     private String systemName;
 
     /**
-     * 门店编码
+     * 企业租户id
      */
-    @ApiModelProperty(value = "门店编码")
-    @Length(max=20,message = "门店编码长度不能超过20")
-    private String storeCode;
+    @ApiModelProperty(value = "企业租户id")
+    @NotBlank(message = "企业租户id必填")
+    @Length(max=20,message = "企业租户id长度不能超过20")
+    private String tenantId;
 
     /**
-     * 门店名称
+     * 企业租户名称
      */
-    @ApiModelProperty(value = "门店名称")
-    @Length(max=20,message = "门店名称长度不能超过20")
-    private String storeName;
+    @ApiModelProperty(value = "企业租户名称")
+    @NotBlank(message = "企业租户名称必填")
+    @Length(max=20,message = "企业租户名称长度不能超过20")
+    private String tenantName;
 
     /**
      * 设备
