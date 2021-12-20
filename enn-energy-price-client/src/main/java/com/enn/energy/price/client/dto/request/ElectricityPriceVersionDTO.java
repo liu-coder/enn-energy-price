@@ -90,7 +90,7 @@ public class ElectricityPriceVersionDTO implements Serializable {
     /**
      * 企业租户id
      */
-    @ApiModelProperty(value = "企业租户id")
+    @ApiModelProperty(value = "企业租户id", required = true)
     @NotBlank(message = "企业租户id必填")
     @Length(max=20,message = "企业租户id长度不能超过20")
     private String tenantId;
@@ -98,7 +98,7 @@ public class ElectricityPriceVersionDTO implements Serializable {
     /**
      * 企业租户名称
      */
-    @ApiModelProperty(value = "企业租户名称")
+    @ApiModelProperty(value = "企业租户名称", required = true)
     @NotBlank(message = "企业租户名称必填")
     @Length(max=20,message = "企业租户名称长度不能超过20")
     private String tenantName;
