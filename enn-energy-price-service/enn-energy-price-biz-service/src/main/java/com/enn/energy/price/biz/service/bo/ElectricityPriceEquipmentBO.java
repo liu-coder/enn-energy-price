@@ -39,9 +39,14 @@ public class ElectricityPriceEquipmentBO implements Serializable {
     private String equipmentName;
 
     /**
-     * 企业租户
+     * 企业租户id
      */
-    private String tenant;
+    private String tenantId;
+
+    /**
+     * 企业租户名称
+     */
+    private String tenantName;
 
     /**
      * 系统编码

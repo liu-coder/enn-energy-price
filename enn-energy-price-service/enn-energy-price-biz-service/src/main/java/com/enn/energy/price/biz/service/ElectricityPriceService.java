@@ -214,10 +214,13 @@ public class ElectricityPriceService {
 
             BeanUtil.copyProperties(electricityPriceVersionBO.getElectricityPriceEquipmentBO(), electricityPriceEquipment);
             electricityPriceEquipment.setSystemCode(electricityPriceVersionBO.getSystemCode());
+            electricityPriceEquipment.setTenantId(electricityPriceVersionBO.getTenantId());
+            electricityPriceEquipment.setTenantName(electricityPriceVersionBO.getTenantName());
             electricityPriceEquipment.setCreateTime(new Date());
             electricityPriceEquipment.setState(0);
             electricityPriceVersion.setEquipmentId(electricityPriceEquipment.getEquipmentId());
             electricityPriceVersion.setEquipmentName(electricityPriceEquipment.getEquipmentName());
+
         }
 
         electricityPriceEquipment.setVersionId(electricityPriceVersion.getVersionId());
@@ -229,6 +232,8 @@ public class ElectricityPriceService {
             ElectricityPriceRule electricityPriceRule = BeanUtil.toBean(electricityPriceRuleBO, ElectricityPriceRule.class);
             electricityPriceRule.setRuleId(String.valueOf(SnowFlake.getInstance().nextId()));
             electricityPriceRule.setVersionId(electricityPriceVersion.getVersionId());
+            electricityPriceRule.setTenantId(electricityPriceVersion.getTenantId());
+            electricityPriceRule.setTenantName(electricityPriceVersion.getTenantName());
             electricityPriceRule.setCreateTime(new Date());
             electricityPriceRule.setUpdateTime(new Date());
             electricityPriceRule.setState(0);
@@ -239,6 +244,8 @@ public class ElectricityPriceService {
 
                 ElectricityPriceSeason electricityPriceSeason = BeanUtil.toBean(electricityPriceSeasonBO, ElectricityPriceSeason.class);
                 electricityPriceSeason.setVersionId(electricityPriceVersion.getVersionId());
+                electricityPriceSeason.setTenantId(electricityPriceVersion.getTenantId());
+                electricityPriceSeason.setTenantName(electricityPriceVersion.getTenantName());
                 electricityPriceSeason.setRuleId(electricityPriceRule.getRuleId());
                 electricityPriceSeason.setSeasonId(String.valueOf(SnowFlake.getInstance().nextId()));
                 electricityPriceSeason.setCreateTime(new Date());
@@ -254,6 +261,8 @@ public class ElectricityPriceService {
 
                 for (ElectricityPriceDetail electricityPriceDetail : electricityPriceDetailList) {
                     electricityPriceDetail.setVersionId(electricityPriceVersion.getVersionId());
+                    electricityPriceDetail.setTenantId(electricityPriceVersion.getTenantId());
+                    electricityPriceDetail.setTenantName(electricityPriceVersion.getTenantName());
                     electricityPriceDetail.setRuleId(electricityPriceRule.getRuleId());
                     electricityPriceDetail.setDetailId(String.valueOf(SnowFlake.getInstance().nextId()));
                     electricityPriceDetail.setSeasonId(electricityPriceSeason.getSeasonId());

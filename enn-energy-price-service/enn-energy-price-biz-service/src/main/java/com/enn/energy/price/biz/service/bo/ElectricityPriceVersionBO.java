@@ -81,14 +81,14 @@ public class ElectricityPriceVersionBO implements Serializable, Comparable<Elect
     private String systemName;
 
     /**
-     * 门店编码
+     * 企业租户id
      */
-    private String storeCode;
+    private String tenantId;
 
     /**
-     * 门店名称
+     * 企业租户名称
      */
-    private String storeName;
+    private String tenantName;
 
     /**
      * 生效日期

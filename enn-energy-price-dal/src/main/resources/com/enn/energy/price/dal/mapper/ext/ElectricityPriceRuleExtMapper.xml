@@ -2,21 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.ElectricityPriceRuleExtMapper">
     <resultMap id="BaseResultMap" type="com.enn.energy.price.dal.po.mbg.ElectricityPriceRule">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="rule_id" jdbcType="VARCHAR" property="ruleId"/>
-        <result column="version_id" jdbcType="VARCHAR" property="versionId"/>
-        <result column="industry" jdbcType="VARCHAR" property="industry"/>
-        <result column="strategy" jdbcType="VARCHAR" property="strategy"/>
-        <result column="voltage_level" jdbcType="VARCHAR" property="voltageLevel"/>
-        <result column="transformer_capacity_price" jdbcType="VARCHAR" property="transformerCapacityPrice"/>
-        <result column="max_capacity_price" jdbcType="VARCHAR" property="maxCapacityPrice"/>
-        <result column="state" jdbcType="INTEGER" property="state"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="version_id" jdbcType="VARCHAR" property="versionId" />
+        <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+        <result column="tenant_name" jdbcType="VARCHAR" property="tenantName" />
+        <result column="industry" jdbcType="VARCHAR" property="industry" />
+        <result column="strategy" jdbcType="VARCHAR" property="strategy" />
+        <result column="voltage_level" jdbcType="VARCHAR" property="voltageLevel" />
+        <result column="transformer_capacity_price" jdbcType="VARCHAR" property="transformerCapacityPrice" />
+        <result column="max_capacity_price" jdbcType="VARCHAR" property="maxCapacityPrice" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
     <sql id="Base_Column_List">
-        id, rule_id, version_id, industry, strategy, voltage_level, transformer_capacity_price,
-    max_capacity_price, state, create_time, update_time
+        id, rule_id, version_id, tenant_id, tenant_name, industry, strategy, voltage_level,
+        transformer_capacity_price, max_capacity_price, state, create_time, update_time
     </sql>
 
     <sql id="Select_By_Map">
@@ -34,14 +36,16 @@
     </sql>
 
     <insert id="batchAddElectricityPriceRule" parameterType="java.util.List">
-        insert into electricity_price_rule (rule_id, version_id, industry,
+        insert into electricity_price_rule (rule_id, version_id, tenant_id, tenant_name, industry,
         strategy, voltage_level,
         transformer_capacity_price, max_capacity_price,
         state, create_time, update_time
         )
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.ruleId,jdbcType=VARCHAR}, #{item.versionId,jdbcType=VARCHAR}, #{item.industry,jdbcType=VARCHAR},
+            (#{item.ruleId,jdbcType=VARCHAR}, #{item.versionId,jdbcType=VARCHAR},
+            #{item.tenantId,jdbcType=VARCHAR},#{item.tenantName,jdbcType=VARCHAR},
+            #{item.industry,jdbcType=VARCHAR},
             #{item.strategy,jdbcType=VARCHAR}, #{item.voltageLevel,jdbcType=VARCHAR},
             #{item.transformerCapacityPrice,jdbcType=VARCHAR}, #{item.maxCapacityPrice,jdbcType=VARCHAR},
             #{item.state,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP}

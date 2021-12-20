@@ -37,8 +37,8 @@ public class ElectricityPriceEquipmentDTO implements Serializable {
     /**
      * 企业租户
      */
-    @Length(max=20,message = "设企业租户长度不能超过20")
-    private String tenant;
+//    @Length(max=20,message = "设企业租户长度不能超过20")
+//    private String tenant;
 
 //    /**
 //     * 系统编码
