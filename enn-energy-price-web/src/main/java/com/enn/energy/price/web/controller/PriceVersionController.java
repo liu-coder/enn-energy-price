@@ -118,6 +118,8 @@ public class PriceVersionController {
                         electricityPriceVersionBO.setPriceType("1");
                         electricityPriceVersionBO.setBindType("1");
                         electricityPriceVersionBO.setVersionName("版本20210101000000");
+                        electricityPriceVersionBO.setTenantId("1437667581924274178");
+                        electricityPriceVersionBO.setTenantName("罗森总部");
                         electricityPriceVersionBO.setSystemCode(systemCode);
                         electricityPriceVersionBO.setSystemName(systemName);
                         //设备
