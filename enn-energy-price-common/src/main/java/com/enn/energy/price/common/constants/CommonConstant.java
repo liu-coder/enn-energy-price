@@ -33,7 +33,7 @@ public class CommonConstant {
     /**
      * 缓存KEY分隔符
      */
-    public static final String KEY_SPERATOR = "_";
+    public static final String KEY_SPERATOR = ":";
 
     /**
      * 并发锁前缀
