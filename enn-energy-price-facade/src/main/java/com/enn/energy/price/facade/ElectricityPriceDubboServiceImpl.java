@@ -242,7 +242,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             for (int i = 0; i < electricityPriceSeasonDTOList.size(); i++) {
 
                 //分时校验明细
-                if (electricityPriceSeasonDTOList.get(i).getPricingMethod().contains("tp")) {
+                if ("tp".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())) {
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     Collections.sort(electricityPriceDetailDTOList);
 
