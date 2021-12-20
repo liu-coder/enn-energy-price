@@ -14,12 +14,11 @@ import com.enn.energy.price.client.dto.request.EletricityUnifiedReqDto;
 import com.enn.energy.price.client.dto.response.ElectricityPriceUnifiedDetailRespDto;
 import com.enn.energy.price.common.enums.PriceType;
 
-import lombok.extern.slf4j.Slf4j;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.cache.api.CacheClient;
 
 @Service
-@Slf4j
+//@Slf4j
 public class ElectricityPriceUnifiedService {
 	
 
@@ -47,9 +46,8 @@ public class ElectricityPriceUnifiedService {
 		priceStrategyServiceMap.put(PriceType.meteringCustom, meteringCustomPriceService);
 	}
 	
-//	@MyCacheable(key = "#{eletricityUnifiedReqDto.priceType}-#{eletricityUnifiedReqDto.tenantId}-#{eletricityUnifiedReqDto.deviceNumber}-#{eletricityUnifiedReqDto.effectiveTime}", timeout = 24
-//			* 60 * 60)
-	@MyCacheable(key = "#eletricityUnifiedReqDto.priceType,#eletricityUnifiedReqDto.tenantId,#eletricityUnifiedReqDto.deviceNumber,#eletricityUnifiedReqDto.effectiveTime", timeout = 60)
+	@MyCacheable(key = "#eletricityUnifiedReqDto.priceType,#eletricityUnifiedReqDto.tenantId,#eletricityUnifiedReqDto.deviceNumber,#eletricityUnifiedReqDto.effectiveTime", timeout = 24
+			* 60 * 60)
 	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryUnifiedPrice(EletricityUnifiedReqDto eletricityUnifiedReqDto){
 		PriceType priceType = PriceType.valueOf(eletricityUnifiedReqDto.getPriceType());
 

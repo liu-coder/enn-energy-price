@@ -52,7 +52,6 @@ public class CustomPriceService implements PriceStrategyService {
 			rdfaResult.success(sepecialResult.isSuccess());
 
 		} catch (IllegalAccessException | InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			log.error("copy properties error:", e);
 		}
 		
