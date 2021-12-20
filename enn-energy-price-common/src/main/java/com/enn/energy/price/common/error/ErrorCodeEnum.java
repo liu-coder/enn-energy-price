@@ -15,8 +15,19 @@ public enum ErrorCodeEnum {
     DUPLICATE_KEY_EXCEPTION("1004","数据重复提交异常"),
     HTTP_MESSAGE_NOT_READABLE_EXCEPTION("1004","数据格式异常"),
     NON_EXISTENT_DATA_EXCEPTION("1005","数据不存在异常"),
-    INVALID_TOKEN_ERROR("400","用户令牌无效");
+    INVALID_TOKEN_ERROR("400","用户令牌无效"),
 
+    //查询接口错误提示
+    SELECT_PARAM_TIME_ERROR("E20001","时间参数错误"),
+    SELECT_VERSION_VALID_ERROR("E20002","未查到有效的版本数据"),
+    SELECT_RULE_VALID_ERROR("E20003","未查到有效的电费规则"),
+    SELECT_SEASON_VALID_ERROR("E20004","未查到有效季节性数据"),
+    SELECT_DETAIL_VALID_ERROR("E20005","未查到有效的电价明细信息，请排查电价详情"),
+    SELECT_EQUIPMENT_VALID_ERROR("E20006","未查到有效设备数据"),
+    SELECT_CURRENT_VERSION_VALID_ERROR("E20007","未查到正在生效的版本数据"),
+
+    REIDS_LOCK_ERROR("E30001","获取redis red lock 失败")
+    ;
     private String errorCode;
     private String errorMsg;
 

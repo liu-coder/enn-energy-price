@@ -36,6 +36,11 @@ public class CommonConstant {
     public static final String KEY_SPERATOR = "_";
 
     /**
+     * 并发锁前缀
+     */
+    public static final String LOCK_KEY = "price";
+
+    /**
      * 缓存值分隔符
      */
     public static final String VALUE_SPERATOR = "#";
@@ -44,5 +49,12 @@ public class CommonConstant {
 	 * 缓存前缀
 	 */
 	public static final String CACHE_PREFIX = "price_electricity_";
+    public static Integer VERSION_HISTORY = 1;
+    public static Integer VERSION_CURRENT = 2;
+    public static Integer VERSION_FUTURE = 3;
+    public static Integer TIME_MONTH_DAY_SPILT = 5;
+    public static String SEPARATOR_SPILT = "/";
+    public static String LEAP_YEAR_FEB_END = "02-29";
+    public static String NOLEAP_YEAR_FEB_END = "02-28";
 
 }

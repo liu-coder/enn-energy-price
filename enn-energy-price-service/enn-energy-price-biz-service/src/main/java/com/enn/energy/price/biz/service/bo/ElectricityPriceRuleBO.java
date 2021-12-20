@@ -35,7 +35,7 @@ public class ElectricityPriceRuleBO implements Serializable {
     private String industry;
 
     /**
-     * 定价策略，0:单一制;1:双部制
+     * 定价策略，1:单一制;2:两部制
      */
     private String strategy;
 

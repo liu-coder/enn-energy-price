@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @version : 1.0 2021/12/7 16:37
  * @since : 1.0
  **/
-@Configuration
+//@Configuration
 public class PriceVersionConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -23,12 +23,12 @@ public class PriceVersionConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
 
         // 添加拦截器
-        InterceptorRegistration interceptor = registry.addInterceptor(priceVersionInterceptor);
+//        InterceptorRegistration interceptor = registry.addInterceptor(priceVersionInterceptor);
 
         // 设置拦截的路径
-        interceptor.addPathPatterns("/addElectricityPrice","/updateElectricityPrice",
-                "/delElectricityPrice","/price/electricityPrice","/price/selectVersions",
-                "/price/versionDetail","/price/findDictionary");
+//        interceptor.addPathPatterns("/addElectricityPrice","/updateElectricityPrice",
+//                "/delElectricityPrice","/price/electricityPrice","/price/selectVersions",
+//                "/price/versionDetail","/price/findDictionary");
     }
 
 }

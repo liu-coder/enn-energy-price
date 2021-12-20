@@ -18,18 +18,18 @@ import top.rdfa.framework.biz.ro.RdfaResult;
 public interface ElectricityPriceDubboService {
 
     @PostMapping(value = "/addElectricityPrice")
-    @ApiOperation("新增电价版本")
+    @ApiOperation("新增自定义电价版本")
     RdfaResult<String> addElectricityPrice(ElectricityPriceVersionDTO electricityPriceVersionDTO);
 
     @PostMapping(value = "/updateElectricityPrice")
-    @ApiOperation("修改电价版本")
+    @ApiOperation("修改自定义电价版本")
     RdfaResult<String> updateElectricityPrice(ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO);
 
     @PostMapping(value = "/delElectricityPrice")
-    @ApiOperation("删除电价版本")
+    @ApiOperation("删除自定义电价版本(未来版本)")
     RdfaResult<String> delElectricityPrice(ElectricityPriceVersionDelDTO delDTO);
 
     @PostMapping(value = "/delElectricityPriceForCommon")
-    @ApiOperation("删除电价版本同步通用")
+    @ApiOperation("删除自定义电价版本(通用)")
     RdfaResult<String> delElectricityPriceForCommon(ElectricityPriceVersionDelDTO delDTO);
 }

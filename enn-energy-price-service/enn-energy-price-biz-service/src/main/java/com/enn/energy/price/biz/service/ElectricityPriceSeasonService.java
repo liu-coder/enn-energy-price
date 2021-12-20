@@ -7,6 +7,7 @@ import com.enn.energy.price.dal.mapper.ext.ElectricityPriceSeasonExtMapper;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceSeason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import top.rdfa.framework.exception.RdfaException;
 
 import java.text.SimpleDateFormat;
@@ -47,17 +48,6 @@ public class ElectricityPriceSeasonService {
 
 
     /**
-     * 根据版本id查询季节
-     * @param versionId
-     * @return
-     */
-    public List<ElectricityPriceSeason> selectPriceSeasonsByVersionId(String versionId){
-
-        return electricityPriceSeasonExtMapper.selectPriceSeasonsByVersionId(versionId);
-
-    }
-
-    /**
      * 根据版本ID、有效时间 查询唯一的seasonId。
      * @param versionId
      * @param activeTime
@@ -71,12 +61,12 @@ public class ElectricityPriceSeasonService {
         map.put("seaStartDate",sf_mm_dd.get().format(activeTime));
         map.put("seaEndDate",sf_mm_dd.get().format(activeTime));
         List<ElectricityPriceSeason> seasons = electricityPriceSeasonExtMapper.selectSeasonByCondition(map);
-        if (seasons.size() == 0 && sf_mm_dd.get().format(activeTime).equals("02-29")){
+        if (CollectionUtils.isEmpty(seasons) && sf_mm_dd.get().format(activeTime).equals("02-29")){
             map.put("seaStartDate","02-28");
             map.put("seaEndDate","02-28");
             seasons = electricityPriceSeasonExtMapper.selectSeasonByCondition(map);
         }
-        if (seasons.size() > 1 || seasons.size() == 0){
+        if (seasons.size() > 1 || CollectionUtils.isEmpty(seasons)){
             throw new RdfaException("季节数据存在异常，请联系技术人员进行排查");
         }
         List<ElectricityPriceSeasonBO> seasonBOS = BeanUtil.mapList(seasons, ElectricityPriceSeasonBO.class);

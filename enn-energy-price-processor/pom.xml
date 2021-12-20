@@ -23,16 +23,16 @@
         <dependency>
             <groupId>top.rdfa</groupId>
             <artifactId>rdfa-timer-client</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.4</version>
         </dependency>
         <dependency>
             <groupId>com.enn.energy.price</groupId>
             <artifactId>enn-energy-price-biz-service</artifactId>
         </dependency>
-        <dependency>
-            <groupId>top.rdfa.framework</groupId>
-            <artifactId>rdfa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>top.rdfa.framework</groupId>-->
+<!--            <artifactId>rdfa-test</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

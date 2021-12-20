@@ -5,9 +5,11 @@ import java.math.BigDecimal;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ElectricityPriceUnifiedDetailRespDto extends ElectricityPriceValueDetailRespDTO{
 
 	/**

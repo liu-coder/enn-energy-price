@@ -18,8 +18,6 @@ public interface ElectricityPriceSeasonExtMapper {
 
     void batchAddElectricityPriceSeason(List<ElectricityPriceSeason> electricityPriceSeasonList);
 
-    List<ElectricityPriceSeason> selectPriceSeasonsByVersionId(String versionId);
-
     List<ElectricityPriceSeason> selectSeasonByCondition(Map<String, Object> map);
 
     List<String> selectSeasonGroupByCondition(Map<String,Object> map);

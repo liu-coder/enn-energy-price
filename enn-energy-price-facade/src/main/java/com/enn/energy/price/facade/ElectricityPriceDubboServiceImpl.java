@@ -6,8 +6,10 @@ import com.enn.energy.price.client.dto.request.*;
 import com.enn.energy.price.client.service.ElectricityPriceDubboService;
 import com.enn.energy.price.biz.service.ElectricityPriceService;
 import com.enn.energy.price.biz.service.bo.*;
+import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.ResponseCode;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,14 +22,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
+import top.rdfa.framework.concurrent.api.exception.LockFailException;
+import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 /**
  * 电价同步.
@@ -45,6 +50,9 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Autowired
     private ElectricityPriceService electricityPriceService;
 
+    @Autowired
+    private RedissonRedDisLock redDisLock;
+
     @Override
     @PostMapping(value = "/addElectricityPrice")
     public RdfaResult<String> addElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
@@ -57,8 +65,37 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
         convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
-        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
-        return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+
+        Lock lock = null;
+        String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        int times = 0;
+        while (lock == null && times < 3) {
+            try {
+                lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, 15, -1);
+                if (lock != null) {
+                    electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
+                    redDisLock.unlock(lock);
+                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+                } else {
+                    times++;
+                    log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                    continue;
+                }
+            } catch (LockFailException e) {
+                times++;
+                log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                continue;
+            } catch (PriceException e) {
+                redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
+                return RdfaResult.fail(e.getCode(), e.getMessage());
+            } catch (Exception e) {
+                redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
+                return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+            }
+        }
+        return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
     }
 
     @Override
@@ -74,8 +111,38 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionUpdateDTO, ElectricityPriceVersionBO.class);
         convertBO(null, electricityPriceVersionUpdateDTO, electricityPriceVersionBO);
         electricityPriceService.updateElectricityPrice(electricityPriceVersionBO);
-        electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
-        return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+
+        Lock lock = null;
+        String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+        int times = 0;
+        while (lock == null && times < 3) {
+            try {
+                lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, 15, -1);
+                if (lock != null) {
+                    electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
+                    redDisLock.unlock(lock);
+                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+                } else {
+                    times++;
+                    log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                    continue;
+                }
+            } catch (LockFailException e) {
+                times++;
+                log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
+                continue;
+            } catch (PriceException e) {
+                redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
+                return RdfaResult.fail(e.getCode(), e.getMessage());
+            } catch (Exception e) {
+                redDisLock.unlock(lock);
+                log.error(e.getMessage(), e);
+                return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+            }
+
+        }
+        return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
     }
 
     /**
@@ -123,7 +190,26 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     private RdfaResult<String> validateDTO(ElectricityPriceVersionDTO electricityPriceVersionDTO, ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
-        String year = String.format("%tY",  electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
+        String year = String.format("%tY", electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
+
+        if (null != electricityPriceVersionDTO) {
+            String regexp = "^[A-Za-z0-9]+$";
+            String provinceCode = electricityPriceVersionDTO.getProvinceCode();
+            if (StringUtils.isNotEmpty(provinceCode) && !provinceCode.matches(regexp)) {
+                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "省、市编码必须为英文和数字");
+            }
+
+            String cityCode = electricityPriceVersionDTO.getCityCode();
+            if (StringUtils.isNotEmpty(cityCode) && !cityCode.matches(regexp)) {
+                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "市、区编码必须为英文和数字");
+            }
+
+            String districtCode = electricityPriceVersionDTO.getDistrictCode();
+            if (StringUtils.isNotEmpty(districtCode) && !districtCode.matches(regexp)) {
+                return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), "区、县编码必须为英文和数字");
+            }
+        }
+
 
         for (ElectricityPriceRuleDTO electricityPriceRuleDTO : electricityPriceRuleDTOList) {
 
@@ -172,7 +258,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 }
 
                 //单一电价
-                if ("p".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())){
+                if ("p".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())) {
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     for (int j = 0; j < electricityPriceDetailDTOList.size(); j++) {
                         electricityPriceDetailDTOList.get(i).setStartTime(null);
@@ -198,7 +284,6 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         }
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
-        //List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO.getElectricityPriceRuleDTOList();
         List<ElectricityPriceRuleBO> electricityPriceRuleBOList = new ArrayList<>();
         electricityPriceVersionBO.setElectricityPriceRuleBOList(electricityPriceRuleBOList);
 
@@ -224,25 +309,5 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             electricityPriceRuleBOList.add(electricityPriceRuleBO);
         }
 
-    }
-
-    public static void main(String[] args) {
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
-        //format.format();
-        format.setLenient(false);
-   //     try {
-  //          String year = String.format("%tY", new Date());
-//            "04:52:00".compareTo("00:00:00");
-//            "02-22".compareTo("02-21");
-  String  strNum = "123";
-           //   strNum.matches("[1-9] [.]?[0-9]*");
-        System.out.println(strNum.matches("^([0-9]{1,}[.]?[0-9]*)$"));
-
-//            format.parse("02-28");
-//            PriceDateUtils.addDateByday(format.parse("02-20"), 1).equals(format.parse("02-21"));
-            //format.setLenient(false);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
     }
 }

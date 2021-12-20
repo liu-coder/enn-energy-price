@@ -91,13 +91,6 @@
                 #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
 
-    <select id="selectPriceEquipmentByVersionId" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select equipment_id, equipment_name, rule_id, version_id, tenant, system_code, state,
-               create_time, update_time
-        from electricity_price_equipment
-        where version_id = #{versionId,jdbcType=VARCHAR}
-        and state = 0
-    </select>
     <select id="selectEquVersionRecentOneValidByCondition"
             resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView">
         select equ.version_id versionId, equ.rule_id ruleId,ver.start_date startDate,ver.end_date endDate

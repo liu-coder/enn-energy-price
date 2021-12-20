@@ -9,6 +9,7 @@ import com.enn.energy.price.dal.po.mbg.ElectricityPriceDictionary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -49,7 +50,7 @@ public class ElectricityPriceDictionaryService{
         map.put("type",type);
         map.put("state",0);
         List<ElectricityPriceDictionary> dictionaries = extElectricityPriceDictionaryMapper.selectDictionaryByCondition(map);
-        return dictionaries.size() == 0 ? null : dictionaries.get(0);
+        return CollectionUtils.isEmpty(dictionaries)? null : dictionaries.get(0);
     }
 
     public ElectricityPriceDictionary selectByNameAndType(String name, Integer type) {
@@ -58,7 +59,7 @@ public class ElectricityPriceDictionaryService{
         map.put("type",type);
         map.put("state",0);
         List<ElectricityPriceDictionary> dictionaries = extElectricityPriceDictionaryMapper.selectDictionaryByCondition(map);
-        return dictionaries.size() == 0 ? null : dictionaries.get(0);
+        return CollectionUtils.isEmpty(dictionaries) ? null : dictionaries.get(0);
     }
     public List<ElectricityPriceDictionaryBO> selectDictionary(ElectricityPriceDictionaryBO bo) {
         Map<String,Object> map = new HashMap<>();

@@ -1,4 +1,4 @@
-package com.enn.energy.price.core.service.exception;
+package com.enn.energy.price.web.exception;
 
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public RdfaResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error(e.getMessage(), e);
-        return RdfaResult.fail(ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorCode(), e.getMessage());
+        return RdfaResult.fail(ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorCode(), ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorMsg());
     }
 
     @ExceptionHandler(Exception.class)

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -33,6 +34,7 @@ public class ElectricityPriceVersionUpdateDTO implements Serializable {
      */
     @ApiModelProperty(value = "电价版本", required = true)
     @NotBlank(message = "电价版本id必填")
+    @Length(max=20,message = "电价版本id长度不能超过20")
     private String versionId;
 
     /**
@@ -40,6 +42,7 @@ public class ElectricityPriceVersionUpdateDTO implements Serializable {
      */
     @ApiModelProperty(value = "电价版本名称", required = true)
     @NotBlank(message = "电价版本名称必填")
+    @Length(max=30,message = "电价版本名称长度不能超过30")
     private String versionName;
 
     /**
@@ -147,6 +150,7 @@ public class ElectricityPriceVersionUpdateDTO implements Serializable {
      */
     @ApiModelProperty(value = "绑定类型", example = "0:企业;1:设备;2:行政区域", required = true)
     @NotBlank(message = "绑定类型必填")
+    @Length(max=4,message = "绑定类型长度不能超过4")
     private String bindType;
 
     /**

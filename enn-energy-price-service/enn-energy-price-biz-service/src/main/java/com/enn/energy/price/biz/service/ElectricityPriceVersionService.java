@@ -9,6 +9,7 @@ import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import top.rdfa.framework.exception.RdfaException;
 
 import java.util.Date;
@@ -121,7 +122,7 @@ public class ElectricityPriceVersionService {
         List<ElectricityPriceVersionBO> versionBos = electricityPriceVersionBos.stream().
                 filter(item -> PriceDateUtils.beforeOrEqual(item.getStartDate(), activeTime) && PriceDateUtils.afterOrEqual(item.getEndDate(), activeTime)).
                 collect(Collectors.toList());
-        if (versionBos.size() > 1 || versionBos.size() == 0) {
+        if (versionBos.size() > 1 || CollectionUtils.isEmpty(versionBos)) {
             throw new RdfaException("版本数据存在异常，请排查版本的有效时间");
         }
         return versionBos.get(0);
@@ -136,16 +137,13 @@ public class ElectricityPriceVersionService {
         return versionBos;
     }
 
-    public ElectricityPriceVersionBO selectVersionByVersionId(String versionId) throws RdfaException {
+    public ElectricityPriceVersionBO selectVersionByVersionId(String versionId){
         Map<String, Object> map = new HashMap<>();
         map.put("versionId", versionId);
         map.put("state", 0);
         List<ElectricityPriceVersion> priceVersions = electricityPriceVersionExtMapper.selectVersionByCondition(map);
-        if (priceVersions.size() == 0) {
+        if (CollectionUtils.isEmpty(priceVersions)) {
             return null;
-        }
-        if (priceVersions.size() > 1) {
-            throw new RdfaException("版本数据存在异常，请排查版本数据");
         }
         List<ElectricityPriceVersionBO> versionBos = BeanUtil.mapList(priceVersions, ElectricityPriceVersionBO.class);
         return versionBos.get(0);

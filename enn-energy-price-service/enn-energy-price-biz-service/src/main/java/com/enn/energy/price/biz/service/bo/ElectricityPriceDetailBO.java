@@ -31,8 +31,8 @@ public class ElectricityPriceDetailBO implements Serializable {
     /**
      * 电价规则ID
      */
-
     private String ruleId;
+
     /**
      * 电价明细id
      */

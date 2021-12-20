@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div data-th-fragment="header">
+    <form id="fileUpload" name="fileUpload" enctype="multipart/form-data" action="/fileUpload" method="post">
+            <div>
+                <input type="file" id="file"  name="file"/>
+                <input type="submit" value="提交">
+            </div>
+    </form>
+</div>
+</body>
+</html>

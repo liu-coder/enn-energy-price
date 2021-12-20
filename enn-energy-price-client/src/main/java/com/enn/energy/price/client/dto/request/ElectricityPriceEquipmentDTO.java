@@ -2,6 +2,7 @@ package com.enn.energy.price.client.dto.request;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -22,6 +23,7 @@ public class ElectricityPriceEquipmentDTO implements Serializable {
      */
     @ApiModelProperty(value = "设备id", required = true)
     @NotBlank(message = "设备id必填")
+    @Length(max=20,message = "设备id长度不能超过20")
     private String equipmentId;
 
     /**
@@ -29,11 +31,13 @@ public class ElectricityPriceEquipmentDTO implements Serializable {
      */
     @ApiModelProperty(value = "设备名称", required = true)
     @NotBlank(message = "设备名称必填")
+    @Length(max=20,message = "设备名称长度不能超过20")
     private String equipmentName;
 
     /**
      * 企业租户
      */
+    @Length(max=20,message = "设企业租户长度不能超过20")
     private String tenant;
 
 //    /**

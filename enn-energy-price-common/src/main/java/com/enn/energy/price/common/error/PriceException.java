@@ -1,6 +1,7 @@
 package com.enn.energy.price.common.error;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 自定义异常.
@@ -10,7 +11,7 @@ import lombok.Data;
  * @since : 1.0
  **/
 @Data
-
+@EqualsAndHashCode(callSuper=false)
 public class PriceException extends RuntimeException{
 
     private String code;
