@@ -142,6 +142,7 @@
             <dependency>
                 <groupId>top.rdfa.framework</groupId>
                 <artifactId>rdfa-actuator</artifactId>
+                <version>1.6.3-RELEASE</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
