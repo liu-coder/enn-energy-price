@@ -5,7 +5,6 @@ import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.core.service.impl.PriceCacheClientImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,7 +26,7 @@ public class PriceControllerTest {
     private PriceCacheClientImpl priceCacheClientImpl;
 
     @RequestMapping("/deleteCache")
-    public String deleteCache(@RequestBody @NotNull String key) {
+    public String deleteCache(@NotNull String key) {
 
 
         Set<Object> fields = priceCacheClientImpl.hashKeys(key, CommonConstant.ELECTRICITY_PRICE);
