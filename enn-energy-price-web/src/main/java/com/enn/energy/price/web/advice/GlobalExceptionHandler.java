@@ -1,4 +1,4 @@
-package com.enn.energy.price.web.exception;
+package com.enn.energy.price.web.advice;
 
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
