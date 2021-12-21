@@ -45,6 +45,21 @@ public class CommonConstant {
      */
     public static final String VALUE_SPERATOR = "#";
 
+    /**
+     * 获取并发锁超时时间
+     */
+    public static final int LOCK_TIME_OUT = 15;
+
+    /**
+     * 并发锁释放时间
+     */
+    public static final int LOCK_LEASE_TIME = 1800;
+
+    /**
+     * 获取并发锁重试次数
+     */
+    public static final int LOCK_REPEAT_TIMES = 3;
+
     public static Integer VERSION_HISTORY = 1;
     public static Integer VERSION_CURRENT = 2;
     public static Integer VERSION_FUTURE = 3;

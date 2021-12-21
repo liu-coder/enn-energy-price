@@ -295,6 +295,8 @@ public class ElectricityPriceService {
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), "当前电价版本不存在");
         }
         electricityPriceVersionBO.setSystemCode(electricityPriceVersion.getSystemCode());
+        electricityPriceVersionBO.setTenantId(electricityPriceVersion.getTenantId());
+        electricityPriceVersionBO.setTenantName(electricityPriceVersion.getTenantName());
         ElectricityPriceEquipmentBO electricityPriceEquipmentBO = new ElectricityPriceEquipmentBO();
         electricityPriceEquipmentBO.setEquipmentId(electricityPriceVersion.getEquipmentId());
         electricityPriceVersionBO.setElectricityPriceEquipmentBO(electricityPriceEquipmentBO);
