@@ -10,14 +10,12 @@ import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespD
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
 import com.enn.energy.price.common.constants.CommonConstant;
-import com.enn.energy.price.common.enums.*;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import com.enn.energy.price.core.service.impl.CacheService;
 import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,8 +79,6 @@ public class ElectricityPriceSelectHandler {
             return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         }
     };
-    @Value("${rdfa.redis.app-prefix}")
-    private String appPrefix;
     @Value("${rdfa.redis.expire.base}")
     private Long expireBase;
     @Value("${random.long[3600,43200]}")
