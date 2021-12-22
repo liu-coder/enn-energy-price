@@ -1,6 +1,5 @@
 package com.enn.energy.price.biz.service.bo;
 
-import com.enn.energy.price.client.dto.request.ElectricityPriceSeasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +24,7 @@ public class ElectricityPriceVersionBO implements Serializable, Comparable<Elect
 
 
     private static final long serialVersionUID = 983625301693655951L;
+
     /**
      * 电价版本id
      */
@@ -81,14 +81,14 @@ public class ElectricityPriceVersionBO implements Serializable, Comparable<Elect
     private String systemName;
 
     /**
-     * 门店编码
+     * 企业租户id
      */
-    private String storeCode;
+    private String tenantId;
 
     /**
-     * 门店名称
+     * 企业租户名称
      */
-    private String storeName;
+    private String tenantName;
 
     /**
      * 生效日期
@@ -106,7 +106,7 @@ public class ElectricityPriceVersionBO implements Serializable, Comparable<Elect
     private String priceType;
 
     /**
-     * 绑定类型
+     * 绑定类型,1:设备
      */
     private String bindType;
 

@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.ElectricityPriceEquipmentExtMapper">
     <resultMap id="BaseResultMap" type="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId"/>
-        <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName"/>
-        <result column="rule_id" jdbcType="VARCHAR" property="ruleId"/>
-        <result column="version_id" jdbcType="VARCHAR" property="versionId"/>
-        <result column="tenant" jdbcType="VARCHAR" property="tenant"/>
-        <result column="system_code" jdbcType="VARCHAR" property="systemCode"/>
-        <result column="state" jdbcType="INTEGER" property="state"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+        <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="version_id" jdbcType="VARCHAR" property="versionId" />
+        <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+        <result column="tenant_name" jdbcType="VARCHAR" property="tenantName" />
+        <result column="system_code" jdbcType="VARCHAR" property="systemCode" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
-
     <sql id="Base_Column_List">
-        id , equipment_id, equipment_name, rule_id, version_id, tenant, system_code, state,
-    create_time, update_time
+        id, equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, system_code,
+        state, create_time, update_time
     </sql>
 
     <sql id="Select_By_Map">
@@ -72,22 +72,22 @@
 
     <insert id="batchAddElectricityPriceEquipment" parameterType="java.util.List">
         insert into electricity_price_equipment (equipment_id, equipment_name, rule_id,
-        version_id, tenant, system_code,
+        version_id, tenant_id, tenant_name, system_code,
         state, create_time, update_time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.equipmentId,jdbcType=VARCHAR}, #{item.equipmentName,jdbcType=VARCHAR}, #{item.ruleId,jdbcType=VARCHAR},
-            #{item.versionId,jdbcType=VARCHAR}, #{item.tenant,jdbcType=VARCHAR}, #{item.systemCode,jdbcType=VARCHAR},
+            #{item.versionId,jdbcType=VARCHAR}, #{item.tenantId,jdbcType=VARCHAR},#{item.tenantName,jdbcType=VARCHAR}, #{item.systemCode,jdbcType=VARCHAR},
             #{item.state,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.updateTime,jdbcType=TIMESTAMP})
         </foreach>
     </insert>
 
     <insert id="addElectricityPriceEquipment" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         insert into electricity_price_equipment (equipment_id, equipment_name, rule_id,
-                                                 version_id, tenant, system_code,
+                                                 version_id, tenant_id, tenant_name, system_code,
                                                  state, create_time, update_time)
         values (#{equipmentId,jdbcType=VARCHAR}, #{equipmentName,jdbcType=VARCHAR}, #{ruleId,jdbcType=VARCHAR},
-                #{versionId,jdbcType=VARCHAR}, #{tenant,jdbcType=VARCHAR}, #{systemCode,jdbcType=VARCHAR},
+                #{versionId,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR},#{tenantName,jdbcType=VARCHAR}, #{systemCode,jdbcType=VARCHAR},
                 #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
 

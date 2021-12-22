@@ -43,6 +43,10 @@
             <artifactId>rdfa-cfg-ucm2</artifactId>
             <groupId>top.rdfa.framework</groupId>
         </dependency>
+        <dependency>
+            <groupId>top.rdfa.framework</groupId>
+            <artifactId>rdfa-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

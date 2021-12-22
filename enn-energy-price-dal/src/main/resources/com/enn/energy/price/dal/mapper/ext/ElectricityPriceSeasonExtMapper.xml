@@ -2,11 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.ElectricityPriceSeasonExtMapper">
   <resultMap id="BaseResultMap" type="com.enn.energy.price.dal.po.mbg.ElectricityPriceSeason">
-
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="season_id" jdbcType="VARCHAR" property="seasonId" />
     <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
     <result column="version_id" jdbcType="VARCHAR" property="versionId" />
+    <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+    <result column="tenant_name" jdbcType="VARCHAR" property="tenantName" />
     <result column="season" jdbcType="VARCHAR" property="season" />
     <result column="sea_start_date" jdbcType="VARCHAR" property="seaStartDate" />
     <result column="sea_end_date" jdbcType="VARCHAR" property="seaEndDate" />
@@ -16,8 +17,8 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, season_id, rule_id, version_id, season, sea_start_date, sea_end_date, pricing_method, 
-    state, create_time, update_time
+    id, season_id, rule_id, version_id, tenant_id, tenant_name, season, sea_start_date,
+    sea_end_date, pricing_method, state, create_time, update_time
   </sql>
 
   <sql id="Select_By_Map">
@@ -50,13 +51,14 @@
   </sql>
 
   <insert id="batchAddElectricityPriceSeason" parameterType="java.util.List">
-    insert into electricity_price_season (season_id, rule_id, version_id,
+    insert into electricity_price_season (season_id, rule_id, version_id, tenant_id, tenant_name,
     season, sea_start_date, sea_end_date,
     pricing_method, state, create_time,
     update_time)
     values
     <foreach collection="list" item="item" index="index" separator=",">
      (#{item.seasonId,jdbcType=VARCHAR}, #{item.ruleId,jdbcType=VARCHAR}, #{item.versionId,jdbcType=VARCHAR},
+      #{item.tenantId,jdbcType=VARCHAR},#{item.tenantName,jdbcType=VARCHAR},
       #{item.season,jdbcType=VARCHAR}, #{item.seaStartDate,jdbcType=DATE}, #{item.seaEndDate,jdbcType=DATE},
       #{item.pricingMethod,jdbcType=VARCHAR}, #{item.state,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP},
       #{item.updateTime,jdbcType=TIMESTAMP})
@@ -78,140 +80,6 @@
       ORDER BY create_time
   </select>
 
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from electricity_price_season
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceSeason">
-    insert into electricity_price_season (season_id, rule_id, version_id, 
-      season, sea_start_date, sea_end_date, 
-      pricing_method, state, create_time, 
-      update_time)
-    values (#{seasonId,jdbcType=VARCHAR}, #{ruleId,jdbcType=VARCHAR}, #{versionId,jdbcType=VARCHAR}, 
-      #{season,jdbcType=VARCHAR}, #{seaStartDate,jdbcType=DATE}, #{seaEndDate,jdbcType=DATE}, 
-      #{pricingMethod,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceSeason">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into electricity_price_season
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="seasonId != null">
-        season_id,
-      </if>
-      <if test="ruleId != null">
-        rule_id,
-      </if>
-      <if test="versionId != null">
-        version_id,
-      </if>
-      <if test="season != null">
-        season,
-      </if>
-      <if test="seaStartDate != null">
-        sea_start_date,
-      </if>
-      <if test="seaEndDate != null">
-        sea_end_date,
-      </if>
-      <if test="pricingMethod != null">
-        pricing_method,
-      </if>
-      <if test="state != null">
-        state,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="seasonId != null">
-        #{seasonId,jdbcType=VARCHAR},
-      </if>
-      <if test="ruleId != null">
-        #{ruleId,jdbcType=VARCHAR},
-      </if>
-      <if test="versionId != null">
-        #{versionId,jdbcType=VARCHAR},
-      </if>
-      <if test="season != null">
-        #{season,jdbcType=VARCHAR},
-      </if>
-      <if test="seaStartDate != null">
-        #{seaStartDate,jdbcType=DATE},
-      </if>
-      <if test="seaEndDate != null">
-        #{seaEndDate,jdbcType=DATE},
-      </if>
-      <if test="pricingMethod != null">
-        #{pricingMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        #{state,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceSeason">
-    update electricity_price_season
-    <set>
-      <if test="seasonId != null">
-        season_id = #{seasonId,jdbcType=VARCHAR},
-      </if>
-      <if test="ruleId != null">
-        rule_id = #{ruleId,jdbcType=VARCHAR},
-      </if>
-      <if test="versionId != null">
-        version_id = #{versionId,jdbcType=VARCHAR},
-      </if>
-      <if test="season != null">
-        season = #{season,jdbcType=VARCHAR},
-      </if>
-      <if test="seaStartDate != null">
-        sea_start_date = #{seaStartDate,jdbcType=DATE},
-      </if>
-      <if test="seaEndDate != null">
-        sea_end_date = #{seaEndDate,jdbcType=DATE},
-      </if>
-      <if test="pricingMethod != null">
-        pricing_method = #{pricingMethod,jdbcType=VARCHAR},
-      </if>
-      <if test="state != null">
-        state = #{state,jdbcType=INTEGER},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceSeason">
-    update electricity_price_season
-    set season_id = #{seasonId,jdbcType=VARCHAR},
-      rule_id = #{ruleId,jdbcType=VARCHAR},
-      version_id = #{versionId,jdbcType=VARCHAR},
-      season = #{season,jdbcType=VARCHAR},
-      sea_start_date = #{seaStartDate,jdbcType=DATE},
-      sea_end_date = #{seaEndDate,jdbcType=DATE},
-      pricing_method = #{pricingMethod,jdbcType=VARCHAR},
-      state = #{state,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
   <update id="updateSeasonStateByVersionId">
     update electricity_price_season
     set state = 1,

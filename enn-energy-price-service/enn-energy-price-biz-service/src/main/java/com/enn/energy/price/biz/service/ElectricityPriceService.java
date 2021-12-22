@@ -203,7 +203,7 @@ public class ElectricityPriceService {
      *
      * @param electricityPriceVersionBO
      */
-    public ElectricityPriceVersion directlyAddElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, Map<String, String> addPriceVersionCache, List<ElectricityPriceRule> addPriceRuleList, List<ElectricityPriceSeason> addPriceSeasonList, List<ElectricityPriceDetail> addPriceDetailList, ElectricityPriceEquipment electricityPriceEquipment) {
+    private ElectricityPriceVersion directlyAddElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, Map<String, String> addPriceVersionCache, List<ElectricityPriceRule> addPriceRuleList, List<ElectricityPriceSeason> addPriceSeasonList, List<ElectricityPriceDetail> addPriceDetailList, ElectricityPriceEquipment electricityPriceEquipment) {
 
         ElectricityPriceVersion electricityPriceVersion = BeanUtil.toBean(electricityPriceVersionBO, ElectricityPriceVersion.class);
 
@@ -214,10 +214,13 @@ public class ElectricityPriceService {
 
             BeanUtil.copyProperties(electricityPriceVersionBO.getElectricityPriceEquipmentBO(), electricityPriceEquipment);
             electricityPriceEquipment.setSystemCode(electricityPriceVersionBO.getSystemCode());
+            electricityPriceEquipment.setTenantId(electricityPriceVersionBO.getTenantId());
+            electricityPriceEquipment.setTenantName(electricityPriceVersionBO.getTenantName());
             electricityPriceEquipment.setCreateTime(new Date());
             electricityPriceEquipment.setState(0);
             electricityPriceVersion.setEquipmentId(electricityPriceEquipment.getEquipmentId());
             electricityPriceVersion.setEquipmentName(electricityPriceEquipment.getEquipmentName());
+
         }
 
         electricityPriceEquipment.setVersionId(electricityPriceVersion.getVersionId());
@@ -229,6 +232,8 @@ public class ElectricityPriceService {
             ElectricityPriceRule electricityPriceRule = BeanUtil.toBean(electricityPriceRuleBO, ElectricityPriceRule.class);
             electricityPriceRule.setRuleId(String.valueOf(SnowFlake.getInstance().nextId()));
             electricityPriceRule.setVersionId(electricityPriceVersion.getVersionId());
+            electricityPriceRule.setTenantId(electricityPriceVersion.getTenantId());
+            electricityPriceRule.setTenantName(electricityPriceVersion.getTenantName());
             electricityPriceRule.setCreateTime(new Date());
             electricityPriceRule.setUpdateTime(new Date());
             electricityPriceRule.setState(0);
@@ -239,6 +244,8 @@ public class ElectricityPriceService {
 
                 ElectricityPriceSeason electricityPriceSeason = BeanUtil.toBean(electricityPriceSeasonBO, ElectricityPriceSeason.class);
                 electricityPriceSeason.setVersionId(electricityPriceVersion.getVersionId());
+                electricityPriceSeason.setTenantId(electricityPriceVersion.getTenantId());
+                electricityPriceSeason.setTenantName(electricityPriceVersion.getTenantName());
                 electricityPriceSeason.setRuleId(electricityPriceRule.getRuleId());
                 electricityPriceSeason.setSeasonId(String.valueOf(SnowFlake.getInstance().nextId()));
                 electricityPriceSeason.setCreateTime(new Date());
@@ -254,6 +261,8 @@ public class ElectricityPriceService {
 
                 for (ElectricityPriceDetail electricityPriceDetail : electricityPriceDetailList) {
                     electricityPriceDetail.setVersionId(electricityPriceVersion.getVersionId());
+                    electricityPriceDetail.setTenantId(electricityPriceVersion.getTenantId());
+                    electricityPriceDetail.setTenantName(electricityPriceVersion.getTenantName());
                     electricityPriceDetail.setRuleId(electricityPriceRule.getRuleId());
                     electricityPriceDetail.setDetailId(String.valueOf(SnowFlake.getInstance().nextId()));
                     electricityPriceDetail.setSeasonId(electricityPriceSeason.getSeasonId());
@@ -286,6 +295,8 @@ public class ElectricityPriceService {
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), "当前电价版本不存在");
         }
         electricityPriceVersionBO.setSystemCode(electricityPriceVersion.getSystemCode());
+        electricityPriceVersionBO.setTenantId(electricityPriceVersion.getTenantId());
+        electricityPriceVersionBO.setTenantName(electricityPriceVersion.getTenantName());
         ElectricityPriceEquipmentBO electricityPriceEquipmentBO = new ElectricityPriceEquipmentBO();
         electricityPriceEquipmentBO.setEquipmentId(electricityPriceVersion.getEquipmentId());
         electricityPriceVersionBO.setElectricityPriceEquipmentBO(electricityPriceEquipmentBO);
@@ -335,7 +346,7 @@ public class ElectricityPriceService {
 
     private void removeRedisPriceVersionData(String equipmentId, String systemCode, String... versionIds) {
         //通过versionId获取所有已绑定的设备
-        String key = systemCode + "_" + equipmentId;
+        String key = systemCode + CommonConstant.KEY_SPERATOR + equipmentId;
         for (int i = 0; i < versionIds.length; i++) {
             Set<String> hKeys = cacheService.getHKeysWithPattern(key, CommonConstant.ELECTRICITY_PRICE, versionIds[i] + "#");
             hKeys.forEach(hkey -> cacheService.hdelHashKey(key, CommonConstant.ELECTRICITY_PRICE, hkey));//删除包含 versionId 的 hashKey

@@ -35,7 +35,7 @@ public class ElectricityPriceRuleBO implements Serializable {
     private String industry;
 
     /**
-     * 定价策略，0:单一制;1:双部制
+     * 定价策略，1:单一制;2:两部制
      */
     private String strategy;
 
@@ -58,5 +58,15 @@ public class ElectricityPriceRuleBO implements Serializable {
      * 电价规则对应的季节
      */
     private List<ElectricityPriceSeasonBO> electricityPriceSeasonBOList;
+
+    /**
+     * 企业租户id
+     */
+    private String tenantId;
+
+    /**
+     * 企业租户名称
+     */
+    private String tenantName;
 
 }

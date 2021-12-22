@@ -29,16 +29,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.cache.api.CacheClient;
-import top.rdfa.framework.cache.redisson.RedissonConfig;
-import top.rdfa.framework.concurrent.api.exception.LockFailException;
-import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import top.rdfa.framework.exception.RdfaException;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 /**
@@ -107,11 +103,11 @@ public class ElectricityPriceSelectHandler {
     private CacheClient cacheClient;
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
-    private RedissonConfig config;
+//    private RedissonConfig config;
 //    @Autowired
 //    private RedissonClient redissonClient;
-    @Autowired
-    private RedissonRedDisLock redDisLock;
+//    @Autowired
+//    private RedissonRedDisLock redDisLock;
 
     /**
      * 查询电价

@@ -54,4 +54,14 @@ public class ElectricityPriceSeasonBO {
      */
     private List<ElectricityPriceDetailBO> electricityPriceDetailBOList;
 
+    /**
+     * 企业租户id
+     */
+    private String tenantId;
+
+    /**
+     * 企业租户名称
+     */
+    private String tenantName;
+
 }
