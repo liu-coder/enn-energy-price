@@ -45,6 +45,10 @@ public class CommonConstant {
      */
     public static final String VALUE_SPERATOR = "#";
 
+	/**
+	 * 缓存前缀
+	 */
+	public static final String CACHE_PREFIX = "price_electricity_";
     public static Integer VERSION_HISTORY = 1;
     public static Integer VERSION_CURRENT = 2;
     public static Integer VERSION_FUTURE = 3;

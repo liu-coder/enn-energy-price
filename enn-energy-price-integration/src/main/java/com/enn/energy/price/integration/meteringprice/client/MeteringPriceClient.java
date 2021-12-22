@@ -1,16 +1,15 @@
 package com.enn.energy.price.integration.meteringprice.client;
 
 
-import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
-import com.enn.energy.price.integration.cimzuul.dto.EntDTO;
-import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceReqDto;
-import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceRespDto;
+import java.util.List;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.List;
+import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
+import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceReqDto;
+import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceRespDto;
 
 /**
  * @author 
@@ -20,7 +19,9 @@ import java.util.List;
  * 需要去uac拿ticket鉴权，或者固定的123456
  **/
 //@FeignClient(name="MeteringPriceClient",contextId = "MeteringPriceClient",path="/prepaid", url = "${metering.api.server.url}")
-@RequestMapping(headers = "ticket=123456")
+
+@FeignClient(name = "MeteringPriceClient", contextId = "MeteringPriceClient", path = "/prepaid", url = "${metering.api.server.url}")
+@RequestMapping(headers = { "ticket=123456", "Content-Type=application/json" })
 public interface MeteringPriceClient {
 
     /**
@@ -29,6 +30,6 @@ public interface MeteringPriceClient {
      * @return
      */
     @GetMapping("/price/queryCustomElectricPrice")
-    CimResponse<MeteringPriceRespDto> queryMeteringPrice(MeteringPriceReqDto meteringPriceReqDto);
+	CimResponse<List<MeteringPriceRespDto>> queryMeteringPrice(MeteringPriceReqDto meteringPriceReqDto);
 
 }
