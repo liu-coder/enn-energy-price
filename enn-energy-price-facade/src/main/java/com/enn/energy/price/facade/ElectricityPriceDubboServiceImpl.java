@@ -283,32 +283,4 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         }
 
     }
-
-    public static void main(String[] args) {
-//        try {
-//            int a = 4 / 0;
-//        } catch (Exception e) {
-//            System.out.println("eeeeeee");
-//            throw new PriceException("222", "WWW");
-//        } finally {
-//            System.out.println("finally");
-//        }
-        test();
-    }
-
-    public static void test() {
-
-        System.out.println("test");
-        try {
-           int a = 4 / 0;
-            System.out.println("===================");
-            return;
-        } catch (Exception e) {
-            System.out.println("eeeeeee");
-           return;
-        } finally {
-            System.out.println("finally");
-        }
-
-    }
 }
