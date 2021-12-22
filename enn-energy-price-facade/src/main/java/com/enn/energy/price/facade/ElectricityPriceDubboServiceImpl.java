@@ -234,11 +234,11 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
                 if ("p".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())) {
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     for (int j = 0; j < electricityPriceDetailDTOList.size(); j++) {
-                        electricityPriceDetailDTOList.get(i).setStartTime(null);
-                        electricityPriceDetailDTOList.get(i).setEndTime(null);
-                        electricityPriceDetailDTOList.get(i).setStartStep(null);
-                        electricityPriceDetailDTOList.get(i).setEndStep(null);
-                        electricityPriceDetailDTOList.get(i).setStep(null);
+                        electricityPriceDetailDTOList.get(j).setStartTime(null);
+                        electricityPriceDetailDTOList.get(j).setEndTime(null);
+                        electricityPriceDetailDTOList.get(j).setStartStep(null);
+                        electricityPriceDetailDTOList.get(j).setEndStep(null);
+                        electricityPriceDetailDTOList.get(j).setStep(null);
                     }
                 }
 
