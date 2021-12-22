@@ -86,8 +86,18 @@ public class CimPriceService implements  PriceStrategyService{
 			priceDetail.setPeriods(String.valueOf(Integer.valueOf(timeSharing.getTimeShareType()) - 1));
 			priceDetail.setStartTime(timeSharing.getTimeShareStartDate());
 			priceDetail.setEndTime(timeSharing.getTimeShareEndDate());
-			priceDetail.setStartStep(String.valueOf(timeSharing.getLadderStartValue()));
-			priceDetail.setEndStep(String.valueOf(timeSharing.getLadderEndValue()));
+			if (timeSharing.getLadderStartValue() == null) {
+				priceDetail.setStartStep("");
+			} else {
+				priceDetail.setStartStep(timeSharing.getLadderStartValue().toString());
+			}
+
+			if (timeSharing.getLadderEndValue() == null) {
+				priceDetail.setEndStep("");
+			} else {
+				priceDetail.setEndStep(timeSharing.getLadderEndValue().toString());
+			}
+
 			priceDetail.setStep(timeSharing.getLadderName());
 			priceDetailList.add(priceDetail);
 		}
@@ -100,5 +110,4 @@ public class CimPriceService implements  PriceStrategyService{
 		cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
 		return cimPriceReq;
 	}
-
 }

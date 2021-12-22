@@ -1,6 +1,8 @@
 package com.enn.energy.price.web.controller;
 
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,13 +26,15 @@ public class ElectricityController {
 	ElectricityPriceUnifiedService electricityPriceUnifiedService;
 	
     /**
-     * 统一电价接口，统一自定义电价，目录电价
-     * @param <ElectricityPriceUnifiedDetailRespDto>
-     * @return
-     */
-    @PostMapping("/price/queryElectricity")
+	 * 统一电价接口，统一自定义电价，目录电价
+	 * 
+	 * @param <EletricityUnifiedReqDto>
+	 * @return
+	 */
+	@PostMapping("/queryElectricity")
     @ApiOperation("统一电价接口，统一自定义电价，目录电价查询")
-    public  RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(@RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto){
+	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(
+			@Valid @RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto) {
         
     	
     	return electricityPriceUnifiedService.queryUnifiedPrice(eletricityUnifiedReqDto);

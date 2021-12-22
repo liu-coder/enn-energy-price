@@ -76,8 +76,19 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		for (MeteringPriceRespDto meteringPriceRespDto : meteringPriceRespDtoList) {
 			PriceDetail priceDetail = new PriceDetail();
 			priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
-			priceDetail.setEndTime(meteringPriceRespDto.getTimeShareEndDate());
-			priceDetail.setStartTime(meteringPriceRespDto.getTimeShareStartDate());
+			String endStr = meteringPriceRespDto.getTimeShareEndDate();
+			if (endStr != null && endStr.length() >= 16) {
+				endStr = endStr.substring(11, 16);
+				if ("00:00".equals(endStr)) {
+					endStr = "24:00";
+				}
+			}
+			priceDetail.setEndTime(endStr);
+			String startStr = meteringPriceRespDto.getTimeShareStartDate();
+			if (startStr != null && startStr.length() >= 16) {
+				startStr = startStr.substring(11, 16);
+			}
+			priceDetail.setStartTime(startStr);
 			priceDetail.setPeriods(String.valueOf(Integer.valueOf(meteringPriceRespDto.getTimeShareType()) - 1));
 			priceDetailList.add(priceDetail);
 		}
