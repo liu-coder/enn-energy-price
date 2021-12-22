@@ -2,15 +2,16 @@ package com.enn.energy.price.facade;
 
 
 import cn.hutool.core.bean.BeanUtil;
-import com.enn.energy.price.client.dto.request.*;
-import com.enn.energy.price.client.service.ElectricityPriceDubboService;
 import com.enn.energy.price.biz.service.ElectricityPriceService;
 import com.enn.energy.price.biz.service.bo.*;
+import com.enn.energy.price.client.dto.request.*;
+import com.enn.energy.price.client.service.ElectricityPriceDubboService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.ResponseCode;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.common.utils.PriceDateUtils;
+import com.enn.energy.price.core.service.impl.DisLockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
-import top.rdfa.framework.concurrent.api.exception.LockFailException;
-import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 
 import javax.validation.constraints.NotNull;
 import java.text.ParseException;
@@ -31,7 +30,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -51,7 +49,8 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     private ElectricityPriceService electricityPriceService;
 
     @Autowired
-    private RedissonRedDisLock redDisLock;
+    private DisLockService disLockService;
+
 
     @Override
     @PostMapping(value = "/addElectricityPrice")
@@ -66,34 +65,22 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
         ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
         convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
 
-        Lock lock = null;
         String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
-        int times = 0;
-        while (lock == null && times < 3) {
-            try {
-                lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, 15, -1);
-                if (lock != null) {
-                    electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
-                    redDisLock.unlock(lock);
-                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
-                } else {
-                    times++;
-                    log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
-                    continue;
-                }
-            } catch (LockFailException e) {
-                times++;
-                log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
-                continue;
-            } catch (PriceException e) {
-                redDisLock.unlock(lock);
-                log.error(e.getMessage(), e);
-                return RdfaResult.fail(e.getCode(), e.getMessage());
-            } catch (Exception e) {
-                redDisLock.unlock(lock);
-                log.error(e.getMessage(), e);
-                return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+        Lock lock = null;
+        try {
+            lock = disLockService.tryLock(lockKey, CommonConstant.LOCK_TIME_OUT, CommonConstant.LOCK_LEASE_TIME, CommonConstant.LOCK_REPEAT_TIMES);
+            if (lock != null) {
+                electricityPriceService.addElectricityPrice(electricityPriceVersionBO, false);
+                return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
             }
+        } catch (PriceException e) {
+            log.error(e.getMessage(), e);
+            return RdfaResult.fail(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+        } finally {
+            disLockService.unlock(lock);
         }
         return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
     }
@@ -101,7 +88,6 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @Override
     @PostMapping(value = "/updateElectricityPrice")
     public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
-
 
         RdfaResult<String> validateResult = validateDTO(null, electricityPriceVersionUpdateDTO);
         if (!validateResult.isSuccess()) {
@@ -114,33 +100,20 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
         Lock lock = null;
         String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
-        int times = 0;
-        while (lock == null && times < 3) {
-            try {
-                lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, 15, -1);
-                if (lock != null) {
-                    electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
-                    redDisLock.unlock(lock);
-                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
-                } else {
-                    times++;
-                    log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
-                    continue;
-                }
-            } catch (LockFailException e) {
-                times++;
-                log.error("获取并发锁失败:{},重试次数:{}", lockKey, times);
-                continue;
-            } catch (PriceException e) {
-                redDisLock.unlock(lock);
-                log.error(e.getMessage(), e);
-                return RdfaResult.fail(e.getCode(), e.getMessage());
-            } catch (Exception e) {
-                redDisLock.unlock(lock);
-                log.error(e.getMessage(), e);
-                return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+        try {
+            lock = disLockService.tryLock(lockKey, CommonConstant.LOCK_TIME_OUT, CommonConstant.LOCK_LEASE_TIME, CommonConstant.LOCK_REPEAT_TIMES);
+            if (lock != null) {
+                electricityPriceService.addElectricityPrice(electricityPriceVersionBO, true);
+                return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
             }
-
+        } catch (PriceException e) {
+            log.error(e.getMessage(), e);
+            return RdfaResult.fail(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+        } finally {
+            disLockService.unlock(lock);
         }
         return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
     }
@@ -242,7 +215,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             for (int i = 0; i < electricityPriceSeasonDTOList.size(); i++) {
 
                 //分时校验明细
-                if (electricityPriceSeasonDTOList.get(i).getPricingMethod().contains("tp")) {
+                if ("tp".equals(electricityPriceSeasonDTOList.get(i).getPricingMethod())) {
                     List<ElectricityPriceDetailDTO> electricityPriceDetailDTOList = electricityPriceSeasonDTOList.get(i).getElectricityPriceDetailDTOList();
                     Collections.sort(electricityPriceDetailDTOList);
 
@@ -307,6 +280,34 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             }
             electricityPriceRuleBO.setElectricityPriceSeasonBOList(electricityPriceSeasonBOList);
             electricityPriceRuleBOList.add(electricityPriceRuleBO);
+        }
+
+    }
+
+    public static void main(String[] args) {
+//        try {
+//            int a = 4 / 0;
+//        } catch (Exception e) {
+//            System.out.println("eeeeeee");
+//            throw new PriceException("222", "WWW");
+//        } finally {
+//            System.out.println("finally");
+//        }
+        test();
+    }
+
+    public static void test() {
+
+        System.out.println("test");
+        try {
+           int a = 4 / 0;
+            System.out.println("===================");
+            return;
+        } catch (Exception e) {
+            System.out.println("eeeeeee");
+           return;
+        } finally {
+            System.out.println("finally");
         }
 
     }

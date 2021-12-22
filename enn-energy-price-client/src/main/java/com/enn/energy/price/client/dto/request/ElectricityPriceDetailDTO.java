@@ -72,7 +72,7 @@ public class ElectricityPriceDetailDTO implements Serializable,Comparable<Electr
      */
     @ApiModelProperty(value = "电价", required = true)
     @NotBlank(message = "电价必填")
-    @Pattern(regexp="^([0-9]{1,}[.]?[0-9]*)$", message = "价格必须为数字")
+    @Pattern(regexp="^([0-9]+[.]?[0-9]*)$", message = "价格必须为数字")
     @Length(max=20,message = "价格长度不能超过20")
     private String price;
 

@@ -295,6 +295,8 @@ public class ElectricityPriceService {
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), "当前电价版本不存在");
         }
         electricityPriceVersionBO.setSystemCode(electricityPriceVersion.getSystemCode());
+        electricityPriceVersionBO.setTenantId(electricityPriceVersion.getTenantId());
+        electricityPriceVersionBO.setTenantName(electricityPriceVersion.getTenantName());
         ElectricityPriceEquipmentBO electricityPriceEquipmentBO = new ElectricityPriceEquipmentBO();
         electricityPriceEquipmentBO.setEquipmentId(electricityPriceVersion.getEquipmentId());
         electricityPriceVersionBO.setElectricityPriceEquipmentBO(electricityPriceEquipmentBO);
@@ -344,7 +346,7 @@ public class ElectricityPriceService {
 
     private void removeRedisPriceVersionData(String equipmentId, String systemCode, String... versionIds) {
         //通过versionId获取所有已绑定的设备
-        String key = systemCode + "_" + equipmentId;
+        String key = systemCode + CommonConstant.KEY_SPERATOR + equipmentId;
         for (int i = 0; i < versionIds.length; i++) {
             Set<String> hKeys = cacheService.getHKeysWithPattern(key, CommonConstant.ELECTRICITY_PRICE, versionIds[i] + "#");
             hKeys.forEach(hkey -> cacheService.hdelHashKey(key, CommonConstant.ELECTRICITY_PRICE, hkey));//删除包含 versionId 的 hashKey

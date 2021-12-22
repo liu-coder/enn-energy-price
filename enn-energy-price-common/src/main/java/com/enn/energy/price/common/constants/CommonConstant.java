@@ -33,7 +33,7 @@ public class CommonConstant {
     /**
      * 缓存KEY分隔符
      */
-    public static final String KEY_SPERATOR = "_";
+    public static final String KEY_SPERATOR = ":";
 
     /**
      * 并发锁前缀
@@ -49,6 +49,21 @@ public class CommonConstant {
 	 * 缓存前缀
 	 */
 	public static final String CACHE_PREFIX = "price_electricity_";
+    /**
+     * 获取并发锁超时时间
+     */
+    public static final int LOCK_TIME_OUT = 15;
+
+    /**
+     * 并发锁释放时间
+     */
+    public static final int LOCK_LEASE_TIME = 1800;
+
+    /**
+     * 获取并发锁重试次数
+     */
+    public static final int LOCK_REPEAT_TIMES = 3;
+
     public static Integer VERSION_HISTORY = 1;
     public static Integer VERSION_CURRENT = 2;
     public static Integer VERSION_FUTURE = 3;
