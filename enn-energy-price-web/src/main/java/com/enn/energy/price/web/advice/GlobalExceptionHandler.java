@@ -3,7 +3,6 @@ package com.enn.energy.price.web.advice;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -79,12 +78,6 @@ public class GlobalExceptionHandler {
     public RdfaResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.error(e.getMessage(), e);
         return RdfaResult.fail(ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorCode(), ErrorCodeEnum.HTTP_MESSAGE_NOT_READABLE_EXCEPTION.getErrorMsg());
-    }
-
-    @ExceptionHandler(ClientAbortException.class)
-    public RdfaResult handleException(ClientAbortException e) {
-        log.error(e.getMessage(), e);
-        return RdfaResult.fail("500", "系统繁忙,请稍后再试");
     }
 
     @ExceptionHandler(Exception.class)
