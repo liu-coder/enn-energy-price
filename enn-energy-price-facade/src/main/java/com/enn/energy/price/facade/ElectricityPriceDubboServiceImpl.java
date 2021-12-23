@@ -281,6 +281,5 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             electricityPriceRuleBO.setElectricityPriceSeasonBOList(electricityPriceSeasonBOList);
             electricityPriceRuleBOList.add(electricityPriceRuleBO);
         }
-
     }
 }
