@@ -7,10 +7,12 @@ import com.enn.energy.price.client.dto.response.ElectricityPriceUnifiedDetailRes
 import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
 import com.enn.energy.price.client.service.ElectricityPriceSelectService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.rdfa.framework.biz.ro.RdfaResult;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * 自定义电价
@@ -40,16 +42,16 @@ public class CustomPriceService implements PriceStrategyService {
 		ElectricityPriceUnifiedDetailRespDto electricityPriceUnifiedDetailRespDto = new ElectricityPriceUnifiedDetailRespDto();
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> rdfaResult = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 
-	//	try {
+		try {
 			BeanUtils.copyProperties(electricityPriceUnifiedDetailRespDto, electricityPriceValueDetailRespDTO);
 			rdfaResult.setCode(sepecialResult.getCode());
 			rdfaResult.setMessage(sepecialResult.getMessage());
 			rdfaResult.setData(electricityPriceUnifiedDetailRespDto);
 			rdfaResult.success(sepecialResult.isSuccess());
 
-//		} catch (IllegalAccessException | InvocationTargetException e) {
-//			log.error("copy properties error:", e);
-//		}
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			log.error("copy properties error:", e);
+		}
 		
 
 		return rdfaResult;

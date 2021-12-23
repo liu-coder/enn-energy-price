@@ -31,10 +31,10 @@
             <groupId>top.rdfa.framework</groupId>
             <artifactId>rdfa-biz</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>top.rdfa.framework</groupId>-->
-<!--            <artifactId>rdfa-mq-rocketmq</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>top.rdfa.framework</groupId>
+            <artifactId>rdfa-mq-rocketmq</artifactId>
+        </dependency>
         <dependency>
             <groupId>top.rdfa.framework</groupId>
             <artifactId>rdfa-concurrent-redis</artifactId>
