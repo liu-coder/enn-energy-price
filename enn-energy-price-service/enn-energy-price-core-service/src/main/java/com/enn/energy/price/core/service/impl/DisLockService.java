@@ -19,7 +19,7 @@ public class DisLockService {
     private RedissonRedDisLock redDisLock;
 
     public boolean biz(String lockKey) {
-        Lock lock;
+        Lock lock= null;
         // must use try catch finnaly to lock and unlock!
         try {
             lock = redDisLock.lock(lockKey);
@@ -35,7 +35,7 @@ public class DisLockService {
             logger.error(e.getMessage(), e);
             return false;
         } finally {
-            // redDisLock.unlock(lock);
+             redDisLock.unlock(lock);
         }
     }
 

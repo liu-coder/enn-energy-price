@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
+import java.util.List;
+
 /**
  * 罗森电价同步接口.
  *
@@ -32,4 +34,8 @@ public interface ElectricityPriceDubboService {
     @PostMapping(value = "/delElectricityPriceForCommon")
     @ApiOperation("删除自定义电价版本(通用)")
     RdfaResult<String> delElectricityPriceForCommon(ElectricityPriceVersionDelDTO delDTO);
+
+    @PostMapping(value = "/batchAddElectricityPrice")
+    @ApiOperation("批量新增自定义电价版本")
+    RdfaResult<String> batchAddElectricityPrice(List<ElectricityPriceVersionDTO> electricityPriceVersionDTOList);
 }
