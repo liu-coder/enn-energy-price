@@ -208,7 +208,7 @@ public class ElectricityPriceSelectHandler {
                         respDTO = ElectricityPriceValueDetailRespDTO.builder().pricingMethod(split[5]).build();
                         List<ElectricityPriceValueDetailRespDTO.PriceDetail> detailList = seasonPrices.stream().map(item -> {
                             return ElectricityPriceValueDetailRespDTO.PriceDetail.builder().elePrice(StringUtils.isNotBlank(item.getPrice())?new BigDecimal(item.getPrice()):null).
-                                    startTime(item.getStartTime()).endTime(item.getEndTime()).step(item.getStep()).startStep(item.getStartStep()).periods(item.getPeriods()).
+                                    startTime(StringUtils.isNotBlank(item.getStartTime())?item.getStartTime():"00:00").endTime(StringUtils.isNotBlank(item.getEndTime())?item.getEndTime():"24:00").step(item.getStep()).startStep(item.getStartStep()).periods(item.getPeriods()).
                                     endStep(item.getEndStep()).build();
                         }).collect(Collectors.toList());
                         respDTO.setPriceDetails(detailList);
@@ -249,47 +249,47 @@ public class ElectricityPriceSelectHandler {
 //        Lock lock = null;
 //        try {//TODO 看门狗机制？？？
 //            lock = redDisLock.lock(lockKey);
-            //重新从redis获取
-            ElectricityPriceValueDetailRespDTO respDTO = getDataFromRedis(key,requestDto);
-            if (respDTO != null){
-                log.info("get data from redis !");
-                return RdfaResult.success(respDTO);
-            }
-            log.info("can not get data from redis,begin select from database");
-
-            //1、根据设备ID、systemCode、查询日期，确认最近的一个生效日期 < 查询日期 的版本
-            Date activeTime = null;
-            try {
-                activeTime = sf_dd.get().parse(requestDto.getEffectiveTime());
-            } catch (ParseException e) {
-                log.error("时间格式错误 ",e.getMessage());
-                return RdfaResult.fail(ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorMsg());
-            }
-            ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentService.selectEquVersionLastOneValidByTime(requestDto.getEquipmentId(), requestDto.getSystemCode(),activeTime);
-            if (equVersionView == null){
-                return RdfaResult.fail(ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorMsg());
-            }
-            ElectricityPriceRuleBO electricityPriceRuleBo = electricityPriceRuleService.selectRuleByCondition(equVersionView.getRuleId(),equVersionView.getVersionId());
-            if (electricityPriceRuleBo == null){
-                return RdfaResult.fail(ErrorCodeEnum.SELECT_RULE_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_RULE_VALID_ERROR.getErrorMsg());
-            }
-            //根据确定的版本ID、规则ID、有效时间确定唯一的季节ID
-            ElectricityPriceSeasonBO electricityPriceSeasonBO = null;
-            try {
-                electricityPriceSeasonBO = electricityPriceSeasonService.selectSeasonByCondition(equVersionView.getVersionId(), equVersionView.getRuleId(), activeTime);
-            } catch (RdfaException e) {
-                log.error("查询季节数据遇到异常，请排查, {} ",e.getMessage());
-                return RdfaResult.fail(ErrorCodeEnum.SELECT_SEASON_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_SEASON_VALID_ERROR.getErrorMsg());
-            }
-            //根据规则ID、季节ID确定电价详情
-            List<ElectricityPriceDetailBO> detailBos = electricityPriceDetailService.selectDetailByCondition(equVersionView.getVersionId(),equVersionView.getRuleId(),electricityPriceSeasonBO.getSeasonId());
-            if (CollectionUtils.isEmpty(detailBos)){
-                return RdfaResult.fail(ErrorCodeEnum.SELECT_DETAIL_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_DETAIL_VALID_ERROR.getErrorMsg());
-            }
-            respDTO = convert(electricityPriceRuleBo,electricityPriceSeasonBO, detailBos);
-            putRedisValue(key,equVersionView,electricityPriceSeasonBO,detailBos);
-            removeThreadLocal();
+        //重新从redis获取
+        ElectricityPriceValueDetailRespDTO respDTO = getDataFromRedis(key,requestDto);
+        if (respDTO != null){
+            log.info("get data from redis !");
             return RdfaResult.success(respDTO);
+        }
+        log.info("can not get data from redis,begin select from database");
+
+        //1、根据设备ID、systemCode、查询日期，确认最近的一个生效日期 < 查询日期 的版本
+        Date activeTime = null;
+        try {
+            activeTime = sf_dd.get().parse(requestDto.getEffectiveTime());
+        } catch (ParseException e) {
+            log.error("时间格式错误 ",e.getMessage());
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorMsg());
+        }
+        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentService.selectEquVersionLastOneValidByTime(requestDto.getEquipmentId(), requestDto.getSystemCode(),activeTime);
+        if (equVersionView == null){
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorMsg());
+        }
+        ElectricityPriceRuleBO electricityPriceRuleBo = electricityPriceRuleService.selectRuleByCondition(equVersionView.getRuleId(),equVersionView.getVersionId());
+        if (electricityPriceRuleBo == null){
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_RULE_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_RULE_VALID_ERROR.getErrorMsg());
+        }
+        //根据确定的版本ID、规则ID、有效时间确定唯一的季节ID
+        ElectricityPriceSeasonBO electricityPriceSeasonBO = null;
+        try {
+            electricityPriceSeasonBO = electricityPriceSeasonService.selectSeasonByCondition(equVersionView.getVersionId(), equVersionView.getRuleId(), activeTime);
+        } catch (RdfaException e) {
+            log.error("查询季节数据遇到异常，请排查, {} ",e.getMessage());
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_SEASON_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_SEASON_VALID_ERROR.getErrorMsg());
+        }
+        //根据规则ID、季节ID确定电价详情
+        List<ElectricityPriceDetailBO> detailBos = electricityPriceDetailService.selectDetailByCondition(equVersionView.getVersionId(),equVersionView.getRuleId(),electricityPriceSeasonBO.getSeasonId());
+        if (CollectionUtils.isEmpty(detailBos)){
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_DETAIL_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_DETAIL_VALID_ERROR.getErrorMsg());
+        }
+        respDTO = convert(electricityPriceRuleBo,electricityPriceSeasonBO, detailBos);
+        putRedisValue(key,equVersionView,electricityPriceSeasonBO,detailBos);
+        removeThreadLocal();
+        return RdfaResult.success(respDTO);
 //        } catch(LockFailException e){
 //            log.error(e.getMessage(), e);
 //            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(),ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
@@ -335,8 +335,8 @@ public class ElectricityPriceSelectHandler {
         for (ElectricityPriceDetailBO detailBo : detailBos){
             ElectricityPriceValueDetailRespDTO.PriceDetail detail = new ElectricityPriceValueDetailRespDTO.PriceDetail();
             detail.setPeriods(detailBo.getPeriods());
-            detail.setStartTime(detailBo.getStartTime());
-            detail.setEndTime(detailBo.getEndTime());
+            detail.setStartTime(StringUtils.isNotBlank(detailBo.getStartTime())?detailBo.getStartTime():"00:00");
+            detail.setEndTime(StringUtils.isNotBlank(detailBo.getEndTime())?detailBo.getEndTime():"24:00");
             detail.setStep(detailBo.getStep());
             detail.setStartStep(detailBo.getStartStep());
             detail.setEndStep(detailBo.getEndStep());
