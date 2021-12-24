@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 全局异常处理器.
@@ -59,7 +62,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     public RdfaResult handleConstraintViolationException(ConstraintViolationException e) {
         log.error(e.getMessage(), e);
-        return RdfaResult.fail(ErrorCodeEnum.CONSTRAINT_VIOLATION_EXCEPTION.getErrorCode(), e.getMessage());
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        String message = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(";"));
+        return RdfaResult.fail(ErrorCodeEnum.CONSTRAINT_VIOLATION_EXCEPTION.getErrorCode(), message);
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)

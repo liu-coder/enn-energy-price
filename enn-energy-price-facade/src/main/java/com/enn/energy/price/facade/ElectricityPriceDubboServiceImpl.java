@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
-import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,6 +38,7 @@ import java.util.concurrent.locks.Lock;
  **/
 @Api(tags = {"电价同步服务"})
 @RestController
+@Validated
 @Slf4j
 @DubboService(version = "1.0.0", protocol = {"dubbo"})
 public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboService {
@@ -52,7 +52,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     @Override
     @PostMapping(value = "/addElectricityPrice")
-    public RdfaResult<String> addElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
+    public RdfaResult<String> addElectricityPrice(ElectricityPriceVersionDTO electricityPriceVersionDTO) {
 
         //校验DTO
         RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO, null);
@@ -85,7 +85,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     @Override
     @PostMapping(value = "/updateElectricityPrice")
-    public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
+    public RdfaResult<String> updateElectricityPrice(ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
         RdfaResult<String> validateResult = validateDTO(null, electricityPriceVersionUpdateDTO);
         if (!validateResult.isSuccess()) {
@@ -159,7 +159,12 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     }
 
     @Override
-    public RdfaResult<String> batchAddElectricityPrice(@RequestBody @NotNull @Validated List<ElectricityPriceVersionDTO> electricityPriceVersionDTOList) {
+    @PostMapping(value = "/batchAddElectricityPrice")
+    public RdfaResult<String> batchAddElectricityPrice(List<ElectricityPriceVersionDTO> electricityPriceVersionDTOList) {
+
+        if (electricityPriceVersionDTOList.size() > 2000) {
+            return RdfaResult.fail(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(), "条数不能超过2000");
+        }
 
         Set<String> checkRepeat = new HashSet<>();
         List<ElectricityPriceVersionBO> electricityPriceVersionBOList = new ArrayList<>();
