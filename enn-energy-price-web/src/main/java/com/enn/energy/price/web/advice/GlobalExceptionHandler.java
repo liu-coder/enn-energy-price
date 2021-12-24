@@ -63,6 +63,9 @@ public class GlobalExceptionHandler {
     public RdfaResult handleConstraintViolationException(ConstraintViolationException e) {
         log.error(e.getMessage(), e);
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        for (ConstraintViolation<?> constraintViolation : violations) {
+            return RdfaResult.fail(ErrorCodeEnum.CONSTRAINT_VIOLATION_EXCEPTION.getErrorCode(), constraintViolation.getMessage() + ":" + constraintViolation.getInvalidValue());
+        }
         String message = violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(";"));
         return RdfaResult.fail(ErrorCodeEnum.CONSTRAINT_VIOLATION_EXCEPTION.getErrorCode(), message);
     }
