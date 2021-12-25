@@ -50,8 +50,8 @@ public class DisLockService {
      */
     public Lock tryLock(String lockKey, int timeout, int leaseTime, int repeatTimes) {
         Lock lock = null;
-        int times = -1;
-        while (lock == null && times < repeatTimes) {
+        int times = 0;
+        while (lock == null && times <= repeatTimes) {
             try {
                 lock = redDisLock.lock(lockKey, TimeUnit.SECONDS, timeout, leaseTime);
                 if (lock == null) {
