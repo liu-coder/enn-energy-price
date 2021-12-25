@@ -2,6 +2,7 @@ package com.enn.energy.price.biz.service.aop;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.Random;
 
 import javax.annotation.Resource;
 
@@ -32,6 +33,8 @@ import top.rdfa.framework.cache.api.CacheClient;
 @Component
 @Slf4j
 public class MyCacheableAspect implements Ordered {
+
+	Random random = new Random();
 
 	@Resource
 	private CacheClient cacheClient;
@@ -79,12 +82,18 @@ public class MyCacheableAspect implements Ordered {
 		result = pjp.proceed();
 
 		if (needCache(result)) {
+			int randomNum = 0;
+			if(cacheable.random() > 0) {
+				randomNum = random.nextInt(cacheable.random());
+			}
+			
+			long timeout = (cacheable.timeout() + randomNum) * 1000;
 			log.debug("method process success , cache for key {}", key);
 			if (useWrapper) {
 				cacheClient.vSetIfAbsentWithTimeout(key, prefix, ((RdfaResult) result).getData(),
-						cacheable.timeout() * 1000);
+						timeout);
 			} else {
-				cacheClient.vSetIfAbsentWithTimeout(key, prefix, result, cacheable.timeout() * 1000);
+				cacheClient.vSetIfAbsentWithTimeout(key, prefix, result, timeout);
 			}
 		}
 
@@ -117,9 +126,7 @@ public class MyCacheableAspect implements Ordered {
 		Method method = getMethod(pjp);
 		Object[] args = pjp.getArgs();
 
-		LocalVariableTableParameterNameDiscoverer u =
-
-				new LocalVariableTableParameterNameDiscoverer();
+		LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
 
 		String[] paraNameArr = u.getParameterNames(method);
 

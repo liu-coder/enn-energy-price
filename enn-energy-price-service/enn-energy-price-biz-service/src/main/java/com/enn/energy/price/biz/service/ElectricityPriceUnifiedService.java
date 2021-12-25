@@ -47,7 +47,7 @@ public class ElectricityPriceUnifiedService {
 	}
 	
 	@MyCacheable(key = "#eletricityUnifiedReqDto.priceType,#eletricityUnifiedReqDto.tenantId,#eletricityUnifiedReqDto.deviceNumber,#eletricityUnifiedReqDto.effectiveTime", timeout = 24
-			* 60 * 60)
+			* 60 * 60, random = 100)
 	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryUnifiedPrice(EletricityUnifiedReqDto eletricityUnifiedReqDto){
 		PriceType priceType = PriceType.valueOf(eletricityUnifiedReqDto.getPriceType());
 
