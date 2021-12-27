@@ -1,5 +1,6 @@
 package com.enn.energy.price.core.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -28,9 +29,24 @@ public class PriceCacheClientImpl extends CacheClientImpl {
     @Resource(name = "stringRedisTemplate")
     private RedisTemplate<String, String> stringRedisTemplate;
 
-    public Set<Object> hashKeys(String key,String funcPrefix) {
+    public Set<Object> hashKeys(String key, String funcPrefix) {
         return hashOperations.keys(getRealKey(key, funcPrefix));
 
+    }
+
+    /**
+     * 测试环境刷数据用
+     */
+    public void flushDB() {
+        Set<String> fields = stringRedisTemplate.keys("*");
+        if (CollectionUtil.isNotEmpty(fields)) {
+            for (String hKey : fields) {
+                if ("db4-价格中心已使用".equals(hKey)) {
+                    continue;
+                }
+                stringRedisTemplate.delete(hKey);
+            }
+        }
     }
 
 }

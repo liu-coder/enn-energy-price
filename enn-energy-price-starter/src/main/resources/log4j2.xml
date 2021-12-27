@@ -15,44 +15,42 @@
         <console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${FILE_PATTERN}"/>
         </console>
-<!--        <RollingFile name="RollingFile" fileName="${LOG_PATH}/${FILE_NAME}"-->
-<!--                     filePattern="${LOG_PATH}/app-%d{yyyyMMdd}-%i.log.gz">-->
-<!--            <PatternLayout pattern="${FILE_PATTERN}"/>-->
-<!--            <Policies>-->
-<!--                <TimeBasedTriggeringPolicy interval="4" modulate="true"/>-->
-<!--                <SizeBasedTriggeringPolicy size="512MB"/>-->
-<!--            </Policies>-->
-<!--            &lt;!&ndash;保存日志文件个数&ndash;&gt;-->
-<!--            <DefaultRolloverStrategy max="24"/>-->
-<!--            &lt;!&ndash;            <encoder>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <charset>UTF-8</charset>&ndash;&gt;-->
-<!--            &lt;!&ndash;            </encoder>&ndash;&gt;-->
-<!--            &lt;!&ndash;            <param name="Encoding" value="UTF-8" />&ndash;&gt;-->
-<!--            &lt;!&ndash;            <encoder>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <charset>UTF-8</charset>&ndash;&gt;-->
-<!--            &lt;!&ndash;            </encoder>&ndash;&gt;-->
-<!--        </RollingFile>-->
+        <RollingFile name="RollingFile" fileName="${LOG_PATH}/${FILE_NAME}"
+                     filePattern="${LOG_PATH}/app-%d{yyyyMMdd}-%i.log.gz">
+            <PatternLayout pattern="${FILE_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="4" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="512MB"/>
+            </Policies>
+            <!--保存日志文件个数-->
+            <DefaultRolloverStrategy max="24"/>
+            <!--            <encoder>-->
+            <!--                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
+            <!--                <charset>UTF-8</charset>-->
+            <!--            </encoder>-->
+            <!--            <param name="Encoding" value="UTF-8" />-->
+            <!--            <encoder>-->
+            <!--                <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
+            <!--                <charset>UTF-8</charset>-->
+            <!--            </encoder>-->
+        </RollingFile>
 <!--        <encoder>-->
 <!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
 <!--            <charset>UTF-8</charset>-->
 <!--        </encoder>-->
 
-        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
-<!--            <File>${LOG_HOME}/${APP}_detail.log</File>-->
-            <File>${LOG_PATH}/${FILE_NAME}</File>
-            <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>
-                <charset>UTF-8</charset>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-<!--                <fileNamePattern>${LOG_PATH}/${APP_ID}_detail.log.%d{yyyyMMdd}</fileNamePattern>-->
-                <fileNamePattern>${LOG_PATH}/${FILE_NAME}.${FILE_PATTERN}</fileNamePattern>
-            </rollingPolicy>
-        </appender>
-
-
+<!--        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">-->
+<!--&lt;!&ndash;            <File>${LOG_HOME}/${APP}_detail.log</File>&ndash;&gt;-->
+<!--            <File>${LOG_PATH}/${FILE_NAME}</File>-->
+<!--            <encoder>-->
+<!--                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
+<!--                <charset>UTF-8</charset>-->
+<!--            </encoder>-->
+<!--            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--&lt;!&ndash;                <fileNamePattern>${LOG_PATH}/${APP_ID}_detail.log.%d{yyyyMMdd}</fileNamePattern>&ndash;&gt;-->
+<!--                <fileNamePattern>${LOG_PATH}/${FILE_NAME}.${FILE_PATTERN}</fileNamePattern>-->
+<!--            </rollingPolicy>-->
+<!--        </appender>-->
 
     </Appenders>
     <Loggers>
