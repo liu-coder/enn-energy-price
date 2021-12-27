@@ -23,7 +23,9 @@
             </Policies>
             <!--保存日志文件个数-->
             <DefaultRolloverStrategy max="24"/>
-            <param name="Encoding" value="UTF-8"/>
+            <encoder>
+                <charset>UTF-8</charset>
+            </encoder>
         </RollingFile>
     </Appenders>
     <Loggers>
