@@ -49,11 +49,11 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 
 	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> convert(
 			CimResponse<List<MeteringPriceRespDto>> cimRespDto) {
-		if(cimRespDto == null) {
+		if (cimRespDto == null) {
 			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false, "404",
 					"find metering-prepaid price fail");
 		}
-		if (cimRespDto.getCode() != 200 || cimRespDto.getData() == null) {
+		if (cimRespDto.getCode() != 200 || cimRespDto.getData() == null  ) {
 			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false, String.valueOf(cimRespDto.getCode()),
 					cimRespDto.getMsg());
 		}
@@ -75,7 +75,10 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		List<PriceDetail> priceDetailList = new ArrayList<>();
 		for (MeteringPriceRespDto meteringPriceRespDto : meteringPriceRespDtoList) {
 			PriceDetail priceDetail = new PriceDetail();
-			priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
+			if (meteringPriceRespDto.getPrice() != null) {
+				priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
+			}
+
 			String endStr = meteringPriceRespDto.getTimeShareEndDate();
 			if (endStr != null && endStr.length() >= 16) {
 				endStr = endStr.substring(11, 16);

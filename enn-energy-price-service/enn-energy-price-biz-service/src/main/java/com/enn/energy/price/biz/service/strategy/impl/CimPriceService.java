@@ -44,18 +44,23 @@ public class CimPriceService implements  PriceStrategyService{
 		cimPriceReq.setSystemCode(eletricityUnifiedReqDto.getTenantId());
 
 		CimResponse<CimPriceResp>  response= CimApiClient.getDayEnergyPrice(cimPriceReq);
-		if(response.getData() != null) {
+		if (response.success() && response.getData() != null) {
 			respDto = converResp(response);
 		}else {
 			cimPriceReq.setIdType(IdTypeConstant.COMPANY_IDTYPE);
 			cimPriceReq.setBusinessId(eletricityUnifiedReqDto.getTenantId());
 			cimPriceReq.setDate(eletricityUnifiedReqDto.getEffectiveTime());
 			response= CimApiClient.getDayEnergyPrice(cimPriceReq);
-			if(response.getData() != null) {
+			if (response.success() && response.getData() != null) {
 				respDto = converResp(response);
+			} else {
+				respDto = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false,
+						String.valueOf(response.getCode()),
+						response.getMsg());
 			}
 		}
 		
+
 		return respDto;
 	}
 
