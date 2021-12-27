@@ -55,7 +55,7 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
     @PostMapping(value = "/addElectricityPrice")
     public RdfaResult<String> addElectricityPrice(ElectricityPriceVersionDTO electricityPriceVersionDTO) {
 
-        log.info("新增电价:{}", JSON.toJSONString(electricityPriceVersionDTO));
+        log.info("新增电价:{} ", JSON.toJSONString(electricityPriceVersionDTO));
         //校验DTO
         RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO, null);
         if (!validateResult.isSuccess()) {
