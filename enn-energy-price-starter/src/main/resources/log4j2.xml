@@ -7,8 +7,6 @@
         <Property name="FILE_NAME">applog.log</Property>
         <Property name="FILE_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] [%X{apm_traceId}]
             [%X{apm_traceSegmentId}] [%X{apm_spanId}] %logger{36} %L - %msg%xEx%n
-            <Property name="FILE_ENCODING">UTF-8</Property>
-            <Property name="ENCODING">UTF-8</Property>
         </Property>
     </Properties>
 
@@ -36,6 +34,10 @@
             <!--                <charset>UTF-8</charset>-->
             <!--            </encoder>-->
         </RollingFile>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
     </Appenders>
     <Loggers>
         <AsyncRoot level="${logging.level.root:-INFO}" includeLocation="true">
