@@ -5,8 +5,7 @@
         <!--从环境变量中获取APP_ID,日志文件保存到指定位置-->
         <Property name="LOG_PATH">/data/logs/${env:APP_ID:-undefinedappid}/${env:hostName}</Property>
         <Property name="FILE_NAME">applog.log</Property>
-        <Property name="FILE_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] [%X{apm_traceId}]
-            [%X{apm_traceSegmentId}] [%X{apm_spanId}] %logger{36} %L - %msg%xEx%n
+        <Property name="FILE_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] [%X{apm_traceId}] [%X{apm_traceSegmentId}] [%X{apm_spanId}] %logger{36} %L - %msg%xEx%n
         </Property>
     </Properties>
 
@@ -24,34 +23,7 @@
             </Policies>
             <!--保存日志文件个数-->
             <DefaultRolloverStrategy max="24"/>
-            <!--            <encoder>-->
-            <!--                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
-            <!--                <charset>UTF-8</charset>-->
-            <!--            </encoder>-->
-            <!--            <param name="Encoding" value="UTF-8" />-->
-            <!--            <encoder>-->
-            <!--                <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>-->
-            <!--                <charset>UTF-8</charset>-->
-            <!--            </encoder>-->
         </RollingFile>
-<!--        <encoder>-->
-<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
-<!--            <charset>UTF-8</charset>-->
-<!--        </encoder>-->
-
-<!--        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">-->
-<!--&lt;!&ndash;            <File>${LOG_HOME}/${APP}_detail.log</File>&ndash;&gt;-->
-<!--            <File>${LOG_PATH}/${FILE_NAME}</File>-->
-<!--            <encoder>-->
-<!--                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
-<!--                <charset>UTF-8</charset>-->
-<!--            </encoder>-->
-<!--            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
-<!--&lt;!&ndash;                <fileNamePattern>${LOG_PATH}/${APP_ID}_detail.log.%d{yyyyMMdd}</fileNamePattern>&ndash;&gt;-->
-<!--                <fileNamePattern>${LOG_PATH}/${FILE_NAME}.${FILE_PATTERN}</fileNamePattern>-->
-<!--            </rollingPolicy>-->
-<!--        </appender>-->
-
     </Appenders>
     <Loggers>
         <AsyncRoot level="${logging.level.root:-INFO}" includeLocation="true">
