@@ -1,17 +1,16 @@
 package com.enn.energy.price.client.dto.response;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author ：chenchangtong
@@ -53,6 +52,7 @@ public class ElectricityPriceValueDetailRespDTO implements Serializable {
 		@ApiModelProperty(value = "阶梯止码")
         private String endStep;
 		@ApiModelProperty(value = "电价", name = "price")
+		@JsonInclude(JsonInclude.Include.ALWAYS)
         private BigDecimal elePrice;
 
     }
