@@ -25,7 +25,8 @@ public enum ErrorCodeEnum {
     SELECT_DETAIL_VALID_ERROR("E20005","未查到有效的电价明细信息，请排查电价详情"),
     SELECT_EQUIPMENT_VALID_ERROR("E20006","未查到有效设备数据"),
     SELECT_CURRENT_VERSION_VALID_ERROR("E20007","未查到正在生效的版本数据"),
-
+    SELECT_SERVICE_UNACCESS_ERROR("E20008","后端电价服务不可达，暂时无法查询"),
+    
     REIDS_LOCK_ERROR("E30001","获取redis red lock 失败")
     ;
     private String errorCode;
