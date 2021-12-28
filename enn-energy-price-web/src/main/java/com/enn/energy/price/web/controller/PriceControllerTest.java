@@ -32,9 +32,11 @@ public class PriceControllerTest {
         Set<Object> fields = priceCacheClientImpl.hashKeys(key, CommonConstant.ELECTRICITY_PRICE);
         if (CollectionUtil.isNotEmpty(fields)) {
             for (Object hKey : fields) {
-                priceCacheClientImpl.hDelete(key, CommonConstant.ELECTRICITY_PRICE, (String) hKey);
+                priceCacheClientImpl.hDelete(key, CommonConstant.ELECTRICITY_PRICE, hKey);
             }
         }
+
+       // priceCacheClientImpl.flushDB();
         return "删除缓存成功";
     }
 

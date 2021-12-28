@@ -5,8 +5,7 @@
         <!--从环境变量中获取APP_ID,日志文件保存到指定位置-->
         <Property name="LOG_PATH">/data/logs/${env:APP_ID:-undefinedappid}/${env:hostName}</Property>
         <Property name="FILE_NAME">applog.log</Property>
-        <Property name="FILE_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] [%X{apm_traceId}]
-            [%X{apm_traceSegmentId}] [%X{apm_spanId}] %logger{36} %L - %msg%xEx%n
+        <Property name="FILE_PATTERN">[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%level] [%thread] [%X{apm_traceId}] [%X{apm_traceSegmentId}] [%X{apm_spanId}] %logger{36} %L - %msg%xEx%n
         </Property>
     </Properties>
 
@@ -15,45 +14,16 @@
         <console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${FILE_PATTERN}"/>
         </console>
-<!--        <RollingFile name="RollingFile" fileName="${LOG_PATH}/${FILE_NAME}"-->
-<!--                     filePattern="${LOG_PATH}/app-%d{yyyyMMdd}-%i.log.gz">-->
-<!--            <PatternLayout pattern="${FILE_PATTERN}"/>-->
-<!--            <Policies>-->
-<!--                <TimeBasedTriggeringPolicy interval="4" modulate="true"/>-->
-<!--                <SizeBasedTriggeringPolicy size="512MB"/>-->
-<!--            </Policies>-->
-<!--            &lt;!&ndash;保存日志文件个数&ndash;&gt;-->
-<!--            <DefaultRolloverStrategy max="24"/>-->
-<!--            &lt;!&ndash;            <encoder>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <charset>UTF-8</charset>&ndash;&gt;-->
-<!--            &lt;!&ndash;            </encoder>&ndash;&gt;-->
-<!--            &lt;!&ndash;            <param name="Encoding" value="UTF-8" />&ndash;&gt;-->
-<!--            &lt;!&ndash;            <encoder>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss.sss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>&ndash;&gt;-->
-<!--            &lt;!&ndash;                <charset>UTF-8</charset>&ndash;&gt;-->
-<!--            &lt;!&ndash;            </encoder>&ndash;&gt;-->
-<!--        </RollingFile>-->
-<!--        <encoder>-->
-<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>-->
-<!--            <charset>UTF-8</charset>-->
-<!--        </encoder>-->
-
-        <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender" additivity="false">
-<!--            <File>${LOG_HOME}/${APP}_detail.log</File>-->
-            <File>${LOG_PATH}/${FILE_NAME}</File>
-            <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-16t] %-5p %-22c{0} - %m%n</pattern>
-                <charset>UTF-8</charset>
-            </encoder>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-<!--                <fileNamePattern>${LOG_PATH}/${APP_ID}_detail.log.%d{yyyyMMdd}</fileNamePattern>-->
-                <fileNamePattern>${LOG_PATH}/${FILE_NAME}.${FILE_PATTERN}</fileNamePattern>
-            </rollingPolicy>
-        </appender>
-
-
-
+        <RollingFile name="RollingFile" fileName="${LOG_PATH}/${FILE_NAME}"
+                     filePattern="${LOG_PATH}/app-%d{yyyyMMdd}-%i.log.gz">
+            <PatternLayout pattern="${FILE_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="4" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="512MB"/>
+            </Policies>
+            <!--保存日志文件个数-->
+            <DefaultRolloverStrategy max="24"/>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <AsyncRoot level="${logging.level.root:-INFO}" includeLocation="true">
