@@ -35,6 +35,7 @@ public class PriceControllerTest {
                 priceCacheClientImpl.hDelete(key, CommonConstant.ELECTRICITY_PRICE, hKey);
             }
         }
+
        // priceCacheClientImpl.flushDB();
         return "删除缓存成功";
     }
