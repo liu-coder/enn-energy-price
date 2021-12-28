@@ -11,6 +11,7 @@ import com.enn.energy.price.biz.service.strategy.PriceStrategyService;
 import com.enn.energy.price.client.dto.request.EletricityUnifiedReqDto;
 import com.enn.energy.price.client.dto.response.ElectricityPriceUnifiedDetailRespDto;
 import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO.PriceDetail;
+import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
 import com.enn.energy.price.integration.meteringprice.client.MeteringPriceClient;
 import com.enn.energy.price.integration.meteringprice.dto.MeteringPriceReqDto;
@@ -49,22 +50,30 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 
 	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> convert(
 			CimResponse<List<MeteringPriceRespDto>> cimRespDto) {
-		if (cimRespDto == null) {
-			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false, "404",
-					"find metering-prepaid price fail");
+		if (cimRespDto == null || !cimRespDto.success()) {
+			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false,
+					ErrorCodeEnum.SELECT_SERVICE_UNACCESS_ERROR.getErrorCode(),
+					ErrorCodeEnum.SELECT_SERVICE_UNACCESS_ERROR.getErrorMsg());
 		}
 		if (cimRespDto.getCode() != 200 || cimRespDto.getData() == null  ) {
 			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false, String.valueOf(cimRespDto.getCode()),
 					cimRespDto.getMsg());
 		}
-		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 		
+		List<MeteringPriceRespDto> meteringPriceRespDto = cimRespDto.getData();
+		List<PriceDetail> priceDetailList = convertList(meteringPriceRespDto);
+		if (priceDetailList.size() == 0) {
+			return new RdfaResult<ElectricityPriceUnifiedDetailRespDto>(false,
+					ErrorCodeEnum.SELECT_DETAIL_VALID_ERROR.getErrorCode(),
+					ErrorCodeEnum.SELECT_DETAIL_VALID_ERROR.getErrorMsg());
+		}
+
+		RdfaResult<ElectricityPriceUnifiedDetailRespDto> result = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
+		ElectricityPriceUnifiedDetailRespDto response = new ElectricityPriceUnifiedDetailRespDto();
+
 		result.setCode(String.valueOf(cimRespDto.getCode()));
 		result.setSuccess(true);
 		result.setMessage(cimRespDto.getMsg());
-		ElectricityPriceUnifiedDetailRespDto response = new ElectricityPriceUnifiedDetailRespDto();
-		List<MeteringPriceRespDto> meteringPriceRespDto = cimRespDto.getData();
-		List<PriceDetail> priceDetailList = convertList(meteringPriceRespDto);
 		response.setPriceDetails(priceDetailList);
 		result.setData(response);
 		return result;
@@ -75,10 +84,11 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		List<PriceDetail> priceDetailList = new ArrayList<>();
 		for (MeteringPriceRespDto meteringPriceRespDto : meteringPriceRespDtoList) {
 			PriceDetail priceDetail = new PriceDetail();
-			if (meteringPriceRespDto.getPrice() != null) {
-				priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
+			if (meteringPriceRespDto.getPrice() == null) {
+				// 价格为空，调过对应数据
+				continue;
 			}
-
+			priceDetail.setElePrice(new BigDecimal(meteringPriceRespDto.getPrice()));
 			String endStr = meteringPriceRespDto.getTimeShareEndDate();
 			if (endStr != null && endStr.length() >= 16) {
 				endStr = endStr.substring(11, 16);

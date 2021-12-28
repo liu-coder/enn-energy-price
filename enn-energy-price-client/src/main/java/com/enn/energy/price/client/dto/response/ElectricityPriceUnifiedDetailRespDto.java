@@ -21,5 +21,5 @@ public class ElectricityPriceUnifiedDetailRespDto extends ElectricityPriceValueD
 	 * 调整电费系数，允许为空
 	 */
 	@ApiModelProperty("电价系数")
-	private BigDecimal priceRate = BigDecimal.ZERO;
+	private BigDecimal priceRate;
 }
