@@ -1,5 +1,8 @@
 package com.enn.energy.price.biz.service.strategy.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +13,7 @@ import com.enn.energy.price.client.dto.response.ElectricityPriceUnifiedDetailRes
 import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
 import com.enn.energy.price.client.service.ElectricityPriceSelectService;
 
+import lombok.extern.slf4j.Slf4j;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
 /**
@@ -17,6 +21,7 @@ import top.rdfa.framework.biz.ro.RdfaResult;
  * @author xinao
  *
  */
+@Slf4j
 @Service("customPriceService")
 public class CustomPriceService implements PriceStrategyService {
 
@@ -35,8 +40,23 @@ public class CustomPriceService implements PriceStrategyService {
 
 	private RdfaResult<ElectricityPriceUnifiedDetailRespDto> converCustom(
 			RdfaResult<ElectricityPriceValueDetailRespDTO> sepecialResult) {
-		// TODO Auto-generated method stub
-		return null;
+		ElectricityPriceValueDetailRespDTO electricityPriceValueDetailRespDTO = sepecialResult.getData();
+		ElectricityPriceUnifiedDetailRespDto electricityPriceUnifiedDetailRespDto = new ElectricityPriceUnifiedDetailRespDto();
+		RdfaResult<ElectricityPriceUnifiedDetailRespDto> rdfaResult = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
+
+		try {
+			BeanUtils.copyProperties(electricityPriceUnifiedDetailRespDto, electricityPriceValueDetailRespDTO);
+			rdfaResult.setCode(sepecialResult.getCode());
+			rdfaResult.setMessage(sepecialResult.getMessage());
+			rdfaResult.setData(electricityPriceUnifiedDetailRespDto);
+			rdfaResult.success(sepecialResult.isSuccess());
+
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			log.error("copy properties error:", e);
+		}
+		
+
+		return rdfaResult;
 	}
 
 	private ElectricityPriceValueReqDTO converReq(EletricityUnifiedReqDto eletricityUnifiedReqDto) {
