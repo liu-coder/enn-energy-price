@@ -29,6 +29,11 @@ public @interface MyCacheable {
 	 * @return
 	 */
 	String key();
+	
+	/**
+	 * 电价设备可能都是批量查询，增加一个随机延时，避免批量失效。随机值为0-random中间的随机值，单位秒
+	 */
+	int random() default 0;
 
 //	Class<T> classType();
 

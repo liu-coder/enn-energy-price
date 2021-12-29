@@ -44,18 +44,23 @@ public class CustomPriceService implements PriceStrategyService {
 		ElectricityPriceUnifiedDetailRespDto electricityPriceUnifiedDetailRespDto = new ElectricityPriceUnifiedDetailRespDto();
 		RdfaResult<ElectricityPriceUnifiedDetailRespDto> rdfaResult = new RdfaResult<ElectricityPriceUnifiedDetailRespDto>();
 
-		try {
-			BeanUtils.copyProperties(electricityPriceUnifiedDetailRespDto, electricityPriceValueDetailRespDTO);
-			rdfaResult.setCode(sepecialResult.getCode());
-			rdfaResult.setMessage(sepecialResult.getMessage());
-			rdfaResult.setData(electricityPriceUnifiedDetailRespDto);
-			rdfaResult.success(sepecialResult.isSuccess());
+		if (sepecialResult.isSuccess() && electricityPriceValueDetailRespDTO != null) {
+			try {
+				BeanUtils.copyProperties(electricityPriceUnifiedDetailRespDto, electricityPriceValueDetailRespDTO);
 
-		} catch (IllegalAccessException | InvocationTargetException e) {
-			log.error("copy properties error:", e);
+				rdfaResult.setSuccess(sepecialResult.isSuccess());
+
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				log.error("copy properties error:", e);
+			}
+		} else {
+			rdfaResult.setSuccess(false);
 		}
-		
 
+		rdfaResult.setCode(sepecialResult.getCode());
+		rdfaResult.setMessage(sepecialResult.getMessage());
+		rdfaResult.setData(electricityPriceUnifiedDetailRespDto);
+		
 		return rdfaResult;
 	}
 

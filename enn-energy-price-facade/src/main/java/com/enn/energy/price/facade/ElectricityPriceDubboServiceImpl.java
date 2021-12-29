@@ -2,6 +2,7 @@ package com.enn.energy.price.facade;
 
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson.JSON;
 import com.enn.energy.price.biz.service.ElectricityPriceService;
 import com.enn.energy.price.biz.service.bo.*;
 import com.enn.energy.price.client.dto.request.*;
@@ -24,12 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
-import javax.validation.constraints.NotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -41,6 +39,7 @@ import java.util.concurrent.locks.Lock;
  **/
 @Api(tags = {"电价同步服务"})
 @RestController
+@Validated
 @Slf4j
 @DubboService(version = "1.0.0", protocol = {"dubbo"})
 public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboService {
@@ -54,8 +53,9 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     @Override
     @PostMapping(value = "/addElectricityPrice")
-    public RdfaResult<String> addElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionDTO electricityPriceVersionDTO) {
+    public RdfaResult<String> addElectricityPrice(ElectricityPriceVersionDTO electricityPriceVersionDTO) {
 
+        log.info("新增电价:{}", JSON.toJSONString(electricityPriceVersionDTO));
         //校验DTO
         RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO, null);
         if (!validateResult.isSuccess()) {
@@ -87,8 +87,9 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     @Override
     @PostMapping(value = "/updateElectricityPrice")
-    public RdfaResult<String> updateElectricityPrice(@RequestBody @NotNull @Validated ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
+    public RdfaResult<String> updateElectricityPrice(ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
+        log.info("修改电价:{}", JSON.toJSONString(electricityPriceVersionUpdateDTO));
         RdfaResult<String> validateResult = validateDTO(null, electricityPriceVersionUpdateDTO);
         if (!validateResult.isSuccess()) {
             return validateResult;
@@ -160,10 +161,68 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
 
     }
 
+    @Override
+    @PostMapping(value = "/batchAddElectricityPrice")
+    public RdfaResult<String> batchAddElectricityPrice(List<ElectricityPriceVersionDTO> electricityPriceVersionDTOList) {
+
+        if (electricityPriceVersionDTOList.size() > 2000) {
+            return RdfaResult.fail(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(), "条数不能超过2000");
+        }
+
+        Set<String> checkRepeat = new HashSet<>();
+        List<ElectricityPriceVersionBO> electricityPriceVersionBOList = new ArrayList<>();
+
+        for (ElectricityPriceVersionDTO electricityPriceVersionDTO : electricityPriceVersionDTOList) {
+            if (checkRepeat.contains(electricityPriceVersionDTO.getSystemCode() + electricityPriceVersionDTO.getElectricityPriceEquipmentDTO().getEquipmentId())) {
+                return RdfaResult.fail(ErrorCodeEnum.CONSTRAINT_VIOLATION_EXCEPTION.getErrorCode(), "存在相同的系统编码和设备id,systemCode:" + electricityPriceVersionDTO.getSystemCode() + ",equipmentId:=" + electricityPriceVersionDTO.getElectricityPriceEquipmentDTO().getEquipmentId());
+            }
+            checkRepeat.add(electricityPriceVersionDTO.getSystemCode() + electricityPriceVersionDTO.getElectricityPriceEquipmentDTO().getEquipmentId());
+
+            //校验DTO
+            RdfaResult<String> validateResult = validateDTO(electricityPriceVersionDTO, null);
+            if (!validateResult.isSuccess()) {
+                validateResult.setMessage("systemCode:" + electricityPriceVersionDTO.getSystemCode() + ",equipmentId:=" + electricityPriceVersionDTO.getElectricityPriceEquipmentDTO().getEquipmentId() + validateResult.getMessage());
+                return validateResult;
+            }
+            ElectricityPriceVersionBO electricityPriceVersionBO = BeanUtil.toBean(electricityPriceVersionDTO, ElectricityPriceVersionBO.class);
+            convertBO(electricityPriceVersionDTO, null, electricityPriceVersionBO);
+            electricityPriceVersionBOList.add(electricityPriceVersionBO);
+        }
+
+        List<Lock> lockList = new ArrayList<>();
+        try {
+            for (int i = 0; i < electricityPriceVersionBOList.size(); i++) {
+                String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + electricityPriceVersionBOList.get(i).getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBOList.get(i).getElectricityPriceEquipmentBO().getEquipmentId();
+                Lock lock = disLockService.tryLock(lockKey, CommonConstant.LOCK_TIME_OUT, CommonConstant.LOCK_LEASE_TIME, CommonConstant.LOCK_REPEAT_TIMES);
+
+                if (lock == null) {
+                    return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
+                }
+                lockList.add(lock);
+                if (i == electricityPriceVersionBOList.size() - 1) {
+                    electricityPriceService.batchAddElectricityPrice(electricityPriceVersionBOList);
+                    return RdfaResult.success(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMessage(), null);
+                }
+            }
+        } catch (PriceException e) {
+            log.error(e.getMessage(), e);
+            return RdfaResult.fail(e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        } finally {
+            for (Lock unLock : lockList) {
+                disLockService.unlock(unLock);
+            }
+        }
+
+        return RdfaResult.fail(ResponseCode.FAIL.getCode(), ResponseCode.FAIL.getMessage());
+    }
+
     private RdfaResult<String> validateDTO(ElectricityPriceVersionDTO electricityPriceVersionDTO, ElectricityPriceVersionUpdateDTO electricityPriceVersionUpdateDTO) {
 
         List<ElectricityPriceRuleDTO> electricityPriceRuleDTOList = electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getElectricityPriceRuleDTOList() : electricityPriceVersionUpdateDTO.getElectricityPriceRuleDTOList();
         String year = String.format("%tY", electricityPriceVersionDTO != null ? electricityPriceVersionDTO.getStartDate() : electricityPriceVersionUpdateDTO.getStartDate());
+
 
         if (null != electricityPriceVersionDTO) {
             String regexp = "^[A-Za-z0-9]+$";
@@ -281,6 +340,6 @@ public class ElectricityPriceDubboServiceImpl implements ElectricityPriceDubboSe
             electricityPriceRuleBO.setElectricityPriceSeasonBOList(electricityPriceSeasonBOList);
             electricityPriceRuleBOList.add(electricityPriceRuleBO);
         }
-
     }
+
 }

@@ -56,6 +56,12 @@ public class ElectricityPriceService {
     @Autowired
     private CacheService cacheService;
 
+    /**
+     * 添加价格版本
+     *
+     * @param electricityPriceVersionBO
+     * @param isUpdate
+     */
     @Transactional(rollbackFor = Exception.class)
     public void addElectricityPrice(ElectricityPriceVersionBO electricityPriceVersionBO, Boolean isUpdate) {
 
@@ -71,22 +77,10 @@ public class ElectricityPriceService {
             List<ElectricityPriceDetail> addPriceDetailList = new ArrayList<>();
             ElectricityPriceEquipment electricityPriceEquipment = new ElectricityPriceEquipment();
             ElectricityPriceVersion electricityPriceVersion = directlyAddElectricityPrice(electricityPriceVersionBO, addPriceVersionCache, addPriceRuleList, addPriceSeasonList, addPriceDetailList, electricityPriceEquipment);
-
             String cacheKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
             Set<Object> hKeys = priceCacheClientImpl.hashKeys(cacheKey, CommonConstant.ELECTRICITY_PRICE);
-
             //调整需要更新版本的缓存field
-            List<String> fullOldFieldList = new ArrayList<>();
-
-            for (ElectricityPriceVersionBO updatePriceVersionBO : updateElectricityPriceVersionList) {
-                for (Object hKey : hKeys) {
-                    String[] fileds = ((String) hKey).split(CommonConstant.VALUE_SPERATOR);
-                    if (fileds.length == 6 && fileds[2].equals(updatePriceVersionBO.getVersionId())) {
-                        fullOldFieldList.add((String) hKey);
-                        addPriceVersionCache.put(fileds[0] + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(updatePriceVersionBO.getEndDate()) + CommonConstant.VALUE_SPERATOR + fileds[2] + CommonConstant.VALUE_SPERATOR + fileds[3] + CommonConstant.VALUE_SPERATOR + fileds[4] + CommonConstant.VALUE_SPERATOR + fileds[5], priceCacheClientImpl.hGet(cacheKey, CommonConstant.ELECTRICITY_PRICE, hKey));
-                    }
-                }
-            }
+            List<String> fullOldFieldList = preUpdateVersionCache(cacheKey, hKeys, updateElectricityPriceVersionList, addPriceVersionCache);
 
             //更新的时候，需要删除老版本缓存
             if (isUpdate) {
@@ -136,7 +130,7 @@ public class ElectricityPriceService {
      * 查找需要更新的版本
      *
      * @param electricityPriceVersionBO
-     * @return
+     * @return updateElectricityPriceVersionList
      */
     private List<ElectricityPriceVersionBO> findPriceVersion(ElectricityPriceVersionBO electricityPriceVersionBO) {
 
@@ -330,14 +324,14 @@ public class ElectricityPriceService {
         //更新删除版本的上一个版本的结束时间
         ElectricityPriceEquVersionView versionView = electricityPriceEquipmentService.selectEquVersionRecentOneValidByCondition(equipmentId, systemCode, versionBO.getStartDate());
         //修改上一个版本的结束时间
-        if (!ObjectUtils.isEmpty(versionView)){//存在上一个版本
+        if (!ObjectUtils.isEmpty(versionView)) {//存在上一个版本
             ElectricityPriceVersion updateVersion = new ElectricityPriceVersion();
             updateVersion.setVersionId(versionView.getVersionId());
             updateVersion.setEndDate(versionBO.getEndDate());
             updateVersion.setUpdateTime(new Date());
             electricityPriceVersionService.updatePriceVersion(updateVersion);
             removeRedisPriceVersionData(equipmentId, systemCode, versionView.getVersionId(), versionId);//清除缓存
-        }else {
+        } else {
             removeRedisPriceVersionData(equipmentId, systemCode, versionId);//清除缓存
         }
 
@@ -356,7 +350,94 @@ public class ElectricityPriceService {
     private boolean isVaLid(ElectricityPriceVersionBO versionBO) {
         //版本生效判定 ： 当前时间 >= 版本生效时间
         Date currentDate = new Date();
-        return currentDate.compareTo(versionBO.getStartDate()) >= 0 ;
+        return currentDate.compareTo(versionBO.getStartDate()) >= 0;
     }
 
+
+    /**
+     * 批量添加价格版本
+     *
+     * @param electricityPriceVersionBOList
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void batchAddElectricityPrice(List<ElectricityPriceVersionBO> electricityPriceVersionBOList) {
+
+        Map<String, List<String>> allOldField = new HashMap<>();
+        List<ElectricityPriceVersionBO> allUpdateVersion = new ArrayList<>();
+        Map<String, Map<String, String>> addVersionCache = new HashMap<>();
+
+        List<ElectricityPriceVersion> addAddVersion = new ArrayList<>();
+        List<ElectricityPriceRule> addAddPriceRule = new ArrayList<>();
+        List<ElectricityPriceDetail> addAddPriceDetail = new ArrayList<>();
+        List<ElectricityPriceSeason> addAddPriceSeason = new ArrayList<>();
+        List<ElectricityPriceEquipment> addAddEquipment = new ArrayList<>();
+
+        for (ElectricityPriceVersionBO electricityPriceVersionBO : electricityPriceVersionBOList) {
+
+            //绑定类型:设备
+            if ("1".equals(electricityPriceVersionBO.getBindType())) {
+
+                String cacheKey = electricityPriceVersionBO.getSystemCode() + CommonConstant.KEY_SPERATOR + electricityPriceVersionBO.getElectricityPriceEquipmentBO().getEquipmentId();
+                List<ElectricityPriceVersionBO> updateElectricityPriceVersionList = findPriceVersion(electricityPriceVersionBO);
+                //新增的版本
+                Map<String, String> addPriceVersionCache = new HashMap<>();
+                ElectricityPriceEquipment electricityPriceEquipment = new ElectricityPriceEquipment();
+                ElectricityPriceVersion electricityPriceVersion = directlyAddElectricityPrice(electricityPriceVersionBO, addPriceVersionCache, addAddPriceRule, addAddPriceSeason, addAddPriceDetail, electricityPriceEquipment);
+                Set<Object> hKeys = priceCacheClientImpl.hashKeys(cacheKey, CommonConstant.ELECTRICITY_PRICE);
+
+                //需要更新版本中需要删除的field
+                List<String> fullOldFieldList = preUpdateVersionCache(cacheKey, hKeys, updateElectricityPriceVersionList, addPriceVersionCache);
+
+                allOldField.put(cacheKey, fullOldFieldList);
+                allUpdateVersion.addAll(updateElectricityPriceVersionList);
+                addVersionCache.put(cacheKey, addPriceVersionCache);
+                addAddVersion.add(electricityPriceVersion);
+                addAddEquipment.add(electricityPriceEquipment);
+            }
+        }
+        //删除需要更新版本的缓存
+        allOldField.forEach((cacheKey, value) -> {
+            for (String fullOldField : value) {
+                priceCacheClientImpl.hDelete(cacheKey, CommonConstant.ELECTRICITY_PRICE, fullOldField);
+            }
+        });
+
+        //批量更新之前的版本
+        if (CollectionUtil.isNotEmpty(allUpdateVersion)) {
+            electricityPriceVersionService.batchUpdatePriceVersion(PriceCollectionUtils.convertEntity(allUpdateVersion, ElectricityPriceVersion.class));
+        }
+
+        electricityPriceVersionService.batchAddElectricityPriceVersion(addAddVersion);
+        electricityPriceEquipmentService.batchAddElectricityPriceEquipment(addAddEquipment);
+        electricityPriceRuleService.batchAddElectricityPriceRule(addAddPriceRule);
+        electricityPriceSeasonService.batchAddElectricityPriceSeason(addAddPriceSeason);
+        electricityPriceDetailService.batchAddElectricityPriceDetail(addAddPriceDetail);
+
+        //添加缓存
+        addVersionCache.forEach((cacheKey, mapValue) -> mapValue.forEach((field, value) -> priceCacheClientImpl.hPut(cacheKey, CommonConstant.ELECTRICITY_PRICE, field, value)));
+    }
+
+    /**
+     * 准备需要更新的版本的缓存
+     *
+     * @param cacheKey
+     * @param hKeys
+     * @param updateElectricityPriceVersionList
+     * @param addPriceVersionCache
+     * @return fullOldFieldList
+     */
+    private List<String> preUpdateVersionCache(String cacheKey, Set<Object> hKeys, List<ElectricityPriceVersionBO> updateElectricityPriceVersionList, Map<String, String> addPriceVersionCache) {
+
+        List<String> fullOldFieldList = new ArrayList<>();
+        for (ElectricityPriceVersionBO updatePriceVersionBO : updateElectricityPriceVersionList) {
+            for (Object hKey : hKeys) {
+                String[] fileds = ((String) hKey).split(CommonConstant.VALUE_SPERATOR);
+                if (fileds.length == 6 && fileds[2].equals(updatePriceVersionBO.getVersionId())) {
+                    fullOldFieldList.add((String) hKey);
+                    addPriceVersionCache.put(fileds[0] + CommonConstant.VALUE_SPERATOR + PriceDateUtils.dayDateToStr(updatePriceVersionBO.getEndDate()) + CommonConstant.VALUE_SPERATOR + fileds[2] + CommonConstant.VALUE_SPERATOR + fileds[3] + CommonConstant.VALUE_SPERATOR + fileds[4] + CommonConstant.VALUE_SPERATOR + fileds[5], priceCacheClientImpl.hGet(cacheKey, CommonConstant.ELECTRICITY_PRICE, hKey));
+                }
+            }
+        }
+        return fullOldFieldList;
+    }
 }
