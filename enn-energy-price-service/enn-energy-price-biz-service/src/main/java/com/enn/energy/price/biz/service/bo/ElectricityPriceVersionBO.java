@@ -71,6 +71,10 @@ public class ElectricityPriceVersionBO implements Serializable, Comparable<Elect
     private String enterprise;
 
     /**
+     * 设备ID
+     */
+    private String equipmentId;
+    /**
      * 系统编码
      */
     private String systemCode;

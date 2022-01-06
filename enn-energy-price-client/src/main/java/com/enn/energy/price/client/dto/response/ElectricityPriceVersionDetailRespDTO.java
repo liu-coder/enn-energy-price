@@ -28,6 +28,7 @@ public class ElectricityPriceVersionDetailRespDTO implements Serializable {
     private String storeCode;
     private String storeName;
     private String bindType;
+    private String equipmentId;
     private String systemCode;
     private String cimName;
     private String province;

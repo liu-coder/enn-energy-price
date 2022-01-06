@@ -194,17 +194,17 @@ public class ElectricityPriceSelectHandler {
             return RdfaResult.fail(ErrorCodeEnum.SELECT_RULE_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_RULE_VALID_ERROR.getErrorMsg());
         }
         //3、根据版本ID、设备ID、cimCode 查询设备信息
-        ElectricityPriceEquipmentBO equipmentBo = null;
-        try {
-            equipmentBo = electricityPriceEquipmentService.selectEquByCondition(equipmentId, versionId, systemCode);
-        }catch (RdfaException e){
-            log.error("通过版本Id、设备ID、cim编码查询设备存在异常 {}",e.getMessage());
-            return RdfaResult.fail(ErrorCodeEnum.SELECT_EQUIPMENT_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_EQUIPMENT_VALID_ERROR.getErrorMsg());
-        }
+//        ElectricityPriceEquipmentBO equipmentBo = null;
+//        try {
+//            equipmentBo = electricityPriceEquipmentService.selectEquByCondition(equipmentId, versionId, systemCode);
+//        }catch (RdfaException e){
+//            log.error("通过版本Id、设备ID、cim编码查询设备存在异常 {}",e.getMessage());
+//            return RdfaResult.fail(ErrorCodeEnum.SELECT_EQUIPMENT_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_EQUIPMENT_VALID_ERROR.getErrorMsg());
+//        }
         //4、根据规则ID查询电价详情ID
         ElectricityPriceVersionDetailRespDTO respDTO = null;
         try {
-            respDTO = convertVersionDetail(versionBo,ruleBos,equipmentBo);
+            respDTO = convertVersionDetail(versionBo,ruleBos,null);
         }catch (RdfaException e){
             log.error(e.getMessage());
             return RdfaResult.fail(ErrorCodeEnum.SELECT_SEASON_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_SEASON_VALID_ERROR.getErrorMsg());
@@ -243,7 +243,8 @@ public class ElectricityPriceSelectHandler {
             }
         }
         respDTO.setVersionDetailList(respDTOList);
-        return RdfaResult.success(respDTO);
+        return CollectionUtils.isEmpty(respDTOList) ? RdfaResult.fail(ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorMsg())
+                                                        : RdfaResult.success(respDTO);
     }
 
     private ElectricityPriceValueDetailRespDTO getDataFromRedis(String key ,ElectricityPriceValueReqDTO requestDto) {
@@ -405,7 +406,7 @@ public class ElectricityPriceSelectHandler {
              ElectricityPriceEquipmentBO equipmentBo) throws RdfaException{
         ElectricityPriceVersionDetailRespDTO respDTO = ElectricityPriceVersionDetailRespDTO.builder().versionId(versionBo.getVersionId()).versionName(versionBo.getVersionName())
                 .startDate(sf_dd.get().format(versionBo.getStartDate())).endDate(sf_dd.get().format(versionBo.getEndDate())).systemCode(versionBo.getSystemCode()).cimName(versionBo.getSystemName())
-                .province(versionBo.getProvince()).provinceCode(versionBo.getProvinceCode()).city(versionBo.getCity()).cityCode(versionBo.getCityCode())
+                .province(versionBo.getProvince()).provinceCode(versionBo.getProvinceCode()).city(versionBo.getCity()).cityCode(versionBo.getCityCode()).equipmentId(versionBo.getEquipmentId())
                 .district(versionBo.getDistrict()).districtCode(versionBo.getDistrictCode()).priceType(versionBo.getPriceType()).enterprise(versionBo.getEnterprise())
                 .bindType(versionBo.getBindType()).build();
         List<ElectricityPriceVersionDetailRespDTO.VersionRuleDTO> ruleDTOS = ruleBos.stream().map(item -> {
