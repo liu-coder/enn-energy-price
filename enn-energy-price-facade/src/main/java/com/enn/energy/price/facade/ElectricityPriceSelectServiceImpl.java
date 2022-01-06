@@ -39,6 +39,12 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
         return electricityPriceSelectHandler.selectElePrice(requestDto);
     }
 
+    @PostMapping(value = "/pointRecord")
+    @Override
+    public RdfaResult<ElectricityPricePointDetailRespDTO> pointRecord(@Validated @RequestBody ElectricityCimPointPriceReq cimPointPriceReq) {
+        return electricityPriceSelectHandler.selectPointRecord(cimPointPriceReq);
+    }
+
     @PostMapping(value = "/selectVersions")
     @Override
     public PagedRdfaResult<ElectricityPriceVersionsRespDTO> selectVersions(@Validated @RequestBody ElectricityPriceVersionsReqDTO requestDto) throws ParseException {

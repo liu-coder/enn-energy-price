@@ -1,9 +1,7 @@
 package com.enn.energy.price.client.service;
 
-import com.enn.energy.price.client.dto.request.ElectricityPriceCurrentVersionDetailReqDTO;
-import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
-import com.enn.energy.price.client.dto.request.ElectricityPriceVersionDetailReqDTO;
-import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
+import com.enn.energy.price.client.dto.request.*;
+import com.enn.energy.price.client.dto.response.ElectricityPricePointDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
@@ -30,6 +28,15 @@ public interface ElectricityPriceSelectService {
     RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(ElectricityPriceValueReqDTO electricityPriceValueReqDTO);
 
     /**
+     * 根据测点查询某天电价
+     * @param cimPointPriceReq
+     * @return
+     */
+    @PostMapping(value = "/price/pointRecord")
+    @ApiOperation("根据测点查询某天电价")
+    RdfaResult<ElectricityPricePointDetailRespDTO> pointRecord(ElectricityCimPointPriceReq cimPointPriceReq);
+
+    /**
      * 查询版本列表
      * @param versionsReqDTO
      * @return
@@ -51,4 +58,6 @@ public interface ElectricityPriceSelectService {
     @PostMapping(value = "/price/currentVersionDetail")
     @ApiOperation("自定义电价版本(当前生效)详情")
     RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(ElectricityPriceCurrentVersionDetailReqDTO reqDTO);
+
+
 }

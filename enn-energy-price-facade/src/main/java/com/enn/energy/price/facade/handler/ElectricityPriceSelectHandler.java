@@ -2,18 +2,29 @@ package com.enn.energy.price.facade.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.enn.energy.price.biz.service.*;
+import com.enn.energy.price.biz.service.aop.MyCacheable;
 import com.enn.energy.price.biz.service.bo.*;
+import com.enn.energy.price.client.dto.request.ElectricityCimPointPriceReq;
 import com.enn.energy.price.client.dto.request.ElectricityPriceCurrentVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
+import com.enn.energy.price.client.dto.response.ElectricityPricePointDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
 import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import com.enn.energy.price.core.service.impl.CacheService;
 import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
+import com.enn.energy.price.integration.cim.client.CimApiClient;
+import com.enn.energy.price.integration.cim.client.CimPriceClient;
+import com.enn.energy.price.integration.cim.dto.CimDayPointPriceResp;
+import com.enn.energy.price.integration.cim.dto.CimPointPriceReq;
+import com.enn.energy.price.integration.cim.dto.CimPriceReq;
+import com.enn.energy.price.integration.cim.dto.CimPriceResp;
+import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
@@ -96,6 +107,8 @@ public class ElectricityPriceSelectHandler {
     @Autowired // 统一封装 redis 操作
     private CacheService cacheService;
     @Autowired
+    private CimPriceClient cimPriceClient;
+    @Autowired
     private CacheClient cacheClient;
 //    @Autowired
 //    private StringRedisTemplate redisTemplate;
@@ -125,6 +138,37 @@ public class ElectricityPriceSelectHandler {
         }
         RdfaResult<ElectricityPriceValueDetailRespDTO> detailFromDB = getPriceDetailFromDB(key, requestDto);
         return detailFromDB;
+    }
+
+    @Autowired
+    private CimApiClient cimApiClient;
+    /**
+     * 根据测点查询某天电价
+     * @param cimPointPriceReq
+     * @return
+     */
+    @MyCacheable(key = "#cimPointPriceReq.systemCode,#cimPointPriceReq.deviceId,#cimPointPriceReq.date", timeout = 24
+            * 60 * 60, random = 300)
+    public RdfaResult<ElectricityPricePointDetailRespDTO> selectPointRecord(ElectricityCimPointPriceReq cimPointPriceReq) {
+//        String redisKey = cimPointPriceReq.getSystemCode() + CommonConstant.KEY_SPERATOR + cimPointPriceReq.getDeviceId() + CommonConstant.KEY_SPERATOR + cimPointPriceReq.getDate();
+//        CimResponse<CimDayPointPriceResp> dayPointRecord = cacheService.getData(redisKey,CommonConstant.ELECTRICITY_PRICE);
+//        if (dayPointRecord != null){
+//            return RdfaResult.success(dayPointRecord.getCode().toString(),dayPointRecord.getMsg(),BeanUtil.map(dayPointRecord.getData(), ElectricityPricePointDetailRespDTO.class));
+//        }
+        CimPointPriceReq priceReq = BeanUtil.map(cimPointPriceReq, CimPointPriceReq.class);
+        CimResponse<CimDayPointPriceResp> dayPointRecord = cimPriceClient.getDayPointRecord(priceReq);
+        if (!Objects.isNull(dayPointRecord) && !Objects.isNull(dayPointRecord.getCode()) && !Objects.isNull(dayPointRecord.getData())){
+            if (ErrorCodeEnum.REQUEST_HANDLER_SUCCESS.getErrorCode().equals(dayPointRecord.getCode().toString())){
+                ElectricityPricePointDetailRespDTO respDTO = BeanUtil.map(dayPointRecord.getData(), ElectricityPricePointDetailRespDTO.class);
+//                cacheService.setData(redisKey,CommonConstant.ELECTRICITY_PRICE,dayPointRecord);
+                List<ElectricityPricePointDetailRespDTO.ElectricityCimPointPriceDetail> priceDetails = BeanUtil.mapList(dayPointRecord.getData().getPriceDataList(), ElectricityPricePointDetailRespDTO.ElectricityCimPointPriceDetail.class);
+                respDTO.setPriceDataList(priceDetails);
+                return RdfaResult.success(dayPointRecord.getCode().toString(),dayPointRecord.getMsg(),respDTO);
+            }else {
+                return RdfaResult.fail(dayPointRecord.getCode().toString(),dayPointRecord.getMsg());
+            }
+        }
+        return RdfaResult.fail(ErrorCodeEnum.REQUEST_HANDLER_FAIL.getErrorCode(),ErrorCodeEnum.REQUEST_HANDLER_FAIL.getErrorMsg());
     }
 
     public PagedRdfaResult<ElectricityPriceVersionsRespDTO> selectVersions(@Validated @RequestBody ElectricityPriceVersionsReqDTO requestDto) throws ParseException {

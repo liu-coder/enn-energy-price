@@ -9,6 +9,8 @@ package com.enn.energy.price.common.error;
  **/
 public enum ErrorCodeEnum {
 
+    REQUEST_HANDLER_SUCCESS("200","请求处理成功"),
+    REQUEST_HANDLER_FAIL("500","系统繁忙,请稍后再试"),
     METHOD_ARGUMENT_VALID_EXCEPTION("1001","方法参数校验异常"),
     VALIDATION_CODE_EXCEPTION("1002","数据校验异常"),
     CONSTRAINT_VIOLATION_EXCEPTION("1003","违法约束异常"),

@@ -33,7 +33,7 @@ public class CacheService {
 
     public <T> T getData(String key, String funcPrefix) {
         T value = (T) this.cacheClient.vGet(key, funcPrefix);
-        logger.info("The getting cache info includes key is {}, funcPrefix is {}, which result is {}. ", key, funcPrefix, value.toString());
+//        logger.info("The getting cache info includes key is {}, funcPrefix is {}, which result is {}. ", key, funcPrefix, value.toString());
         return value;
     }
 
