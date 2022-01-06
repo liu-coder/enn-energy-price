@@ -3,12 +3,14 @@ package com.enn.energy.price.facade;
 import com.enn.energy.price.client.dto.response.*;
 import com.enn.energy.price.client.dto.request.*;
 import com.enn.energy.price.client.service.ElectricityPriceSelectService;
+import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.facade.handler.ElectricityPriceSelectHandler;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,6 +70,17 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
     @Override
     public RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(@Validated @RequestBody ElectricityPriceCurrentVersionDetailReqDTO reqDTO) {
         RdfaResult<ElectricityPriceVersionDetailRespDTO> rdfaResult = electricityPriceSelectHandler.currentVersionDetail(reqDTO);
+        return rdfaResult;
+    }
+
+    @PostMapping(value = "/currentVersionDetailList")
+    @ApiOperation("批量查询自定义电价版本(当前生效)详情")
+    @Override
+    public RdfaResult<ElectricityPriceVersionDetailListRespDTO> currentVersionDetailList(@Validated @RequestBody ElectricityPriceCurrentVersionDetailListReqDTO reqDTOList) {
+        if (CollectionUtils.isEmpty(reqDTOList.getVersionDetailListReq())){
+            return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorMsg());
+        }
+        RdfaResult<ElectricityPriceVersionDetailListRespDTO> rdfaResult = electricityPriceSelectHandler.currentVersionDetailList(reqDTOList.getVersionDetailListReq());
         return rdfaResult;
     }
 

@@ -1,10 +1,7 @@
 package com.enn.energy.price.client.service;
 
 import com.enn.energy.price.client.dto.request.*;
-import com.enn.energy.price.client.dto.response.ElectricityPricePointDetailRespDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
+import com.enn.energy.price.client.dto.response.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +20,7 @@ public interface ElectricityPriceSelectService {
      * @param electricityPriceValueReqDTO
      * @return
      */
-    @PostMapping(value = "/price/electricityPrice")
+    @PostMapping(value = "/electricityPrice")
     @ApiOperation("自定义电价查询")
     RdfaResult<ElectricityPriceValueDetailRespDTO> selectElePrice(ElectricityPriceValueReqDTO electricityPriceValueReqDTO);
 
@@ -32,7 +29,7 @@ public interface ElectricityPriceSelectService {
      * @param cimPointPriceReq
      * @return
      */
-    @PostMapping(value = "/price/pointRecord")
+    @PostMapping(value = "/pointRecord")
     @ApiOperation("根据测点查询某天电价")
     RdfaResult<ElectricityPricePointDetailRespDTO> pointRecord(ElectricityCimPointPriceReq cimPointPriceReq);
 
@@ -41,7 +38,7 @@ public interface ElectricityPriceSelectService {
      * @param versionsReqDTO
      * @return
      */
-    @PostMapping(value = "/price/selectVersions")
+    @PostMapping(value = "/selectVersions")
     @ApiOperation("自定义电价版本列表查询")
     PagedRdfaResult<ElectricityPriceVersionsRespDTO> selectVersions(ElectricityPriceVersionsReqDTO versionsReqDTO) throws ParseException;
 
@@ -51,13 +48,17 @@ public interface ElectricityPriceSelectService {
      * @return
      * @throws ParseException
      */
-    @PostMapping(value = "/price/versionDetail")
+    @PostMapping(value = "/versionDetail")
     @ApiOperation("自定义电价版本详情信息查询")
     RdfaResult<ElectricityPriceVersionDetailRespDTO> versionDetail(ElectricityPriceVersionDetailReqDTO detailReqDTO) throws Exception;
 
-    @PostMapping(value = "/price/currentVersionDetail")
+    @PostMapping(value = "/currentVersionDetail")
     @ApiOperation("自定义电价版本(当前生效)详情")
     RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(ElectricityPriceCurrentVersionDetailReqDTO reqDTO);
+
+    @PostMapping(value = "/currentVersionDetailList")
+    @ApiOperation("批量查询自定义电价版本(当前生效)详情")
+    RdfaResult<ElectricityPriceVersionDetailListRespDTO> currentVersionDetailList(ElectricityPriceCurrentVersionDetailListReqDTO reqDTO);
 
 
 }

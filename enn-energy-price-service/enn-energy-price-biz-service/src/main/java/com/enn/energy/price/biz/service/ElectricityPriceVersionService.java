@@ -6,6 +6,7 @@ import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import com.enn.energy.price.dal.mapper.ext.ElectricityPriceVersionExtMapper;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -128,12 +129,13 @@ public class ElectricityPriceVersionService {
         return versionBos.get(0);
     }
 
-    public List<ElectricityPriceVersionBO> selectVersionByVersionIdList(List<String> versionIds) {
+    public ElectricityPriceEquVersionView selectNearestVersionByCondition(String equipmentId, String systemCode, Date activeTime) {
         Map<String, Object> map = new HashMap<>();
-        map.put("versionIds", versionIds);
-        map.put("state", 0);
-        List<ElectricityPriceVersion> electricityPriceVersions = electricityPriceVersionExtMapper.selectVersionByCondition(map);
-        List<ElectricityPriceVersionBO> versionBos = BeanUtil.mapList(electricityPriceVersions, ElectricityPriceVersionBO.class);
+        map.put("equipmentId", equipmentId);
+        map.put("systemCode", systemCode);
+        map.put("startDate",activeTime);
+        map.put("state",0);
+        ElectricityPriceEquVersionView versionBos = electricityPriceVersionExtMapper.selectNearestVersion(map);
         return versionBos;
     }
 

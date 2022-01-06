@@ -200,5 +200,10 @@
             and (#{versionId} is null or ver.version_id = #{versionId})
         order by ver.start_date desc
     </select>
+    <select id="selectNearestVersion" resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView">
+        select version_id, start_date from electricity_price_version
+        where equipment_id = #{equipmentId} and system_code = #{systemCode} and start_date &lt;= #{startDate} and end_date >= #{startDate}
+                and state = #{state}
+    </select>
 
 </mapper>

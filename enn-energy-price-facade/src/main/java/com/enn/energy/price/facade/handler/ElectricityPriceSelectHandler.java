@@ -8,10 +8,7 @@ import com.enn.energy.price.client.dto.request.ElectricityCimPointPriceReq;
 import com.enn.energy.price.client.dto.request.ElectricityPriceCurrentVersionDetailReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceValueReqDTO;
 import com.enn.energy.price.client.dto.request.ElectricityPriceVersionsReqDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPricePointDetailRespDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPriceValueDetailRespDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPriceVersionDetailRespDTO;
-import com.enn.energy.price.client.dto.response.ElectricityPriceVersionsRespDTO;
+import com.enn.energy.price.client.dto.response.*;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.utils.BeanUtil;
@@ -229,12 +226,30 @@ public class ElectricityPriceSelectHandler {
     public RdfaResult<ElectricityPriceVersionDetailRespDTO> currentVersionDetail(ElectricityPriceCurrentVersionDetailReqDTO reqDTO) {
         Date activeTime = new Date();
         //获取当前设备生效版本
-        ElectricityPriceEquVersionView equVersionView = electricityPriceEquipmentService.selectEquVersionLastOneValidByTime(reqDTO.getEquipmentId(), reqDTO.getSystemCode(),activeTime);
+        ElectricityPriceEquVersionView equVersionView = electricityPriceVersionService.selectNearestVersionByCondition(reqDTO.getEquipmentId(), reqDTO.getSystemCode(),activeTime);
         if (Objects.isNull(equVersionView)){
             return RdfaResult.fail(ErrorCodeEnum.SELECT_CURRENT_VERSION_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_CURRENT_VERSION_VALID_ERROR.getErrorMsg());
         }
         RdfaResult<ElectricityPriceVersionDetailRespDTO> rdfaResult = versionDetail(reqDTO.getEquipmentId(), reqDTO.getSystemCode(), equVersionView.getVersionId());
         return rdfaResult;
+    }
+
+    /**
+     *
+     * @param reqDTOList
+     */
+    public RdfaResult<ElectricityPriceVersionDetailListRespDTO> currentVersionDetailList(List<ElectricityPriceCurrentVersionDetailReqDTO> reqDTOList) {
+        //1、根据 设备ID、系统Code、当前时间 查询生效版本
+        ElectricityPriceVersionDetailListRespDTO respDTO = new ElectricityPriceVersionDetailListRespDTO();
+        List<ElectricityPriceVersionDetailRespDTO> respDTOList = new ArrayList<>();
+        for (ElectricityPriceCurrentVersionDetailReqDTO reqDTO : reqDTOList){
+            RdfaResult<ElectricityPriceVersionDetailRespDTO> rdfaResult = currentVersionDetail(reqDTO);
+            if (rdfaResult.isSuccess()){
+                respDTOList.add(rdfaResult.getData());
+            }
+        }
+        respDTO.setVersionDetailList(respDTOList);
+        return RdfaResult.success(respDTO);
     }
 
     private ElectricityPriceValueDetailRespDTO getDataFromRedis(String key ,ElectricityPriceValueReqDTO requestDto) {

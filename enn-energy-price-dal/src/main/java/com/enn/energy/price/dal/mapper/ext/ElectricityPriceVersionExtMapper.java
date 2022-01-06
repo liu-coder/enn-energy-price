@@ -1,6 +1,7 @@
 package com.enn.energy.price.dal.mapper.ext;
 
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface ElectricityPriceVersionExtMapper {
     List<ElectricityPriceVersion> selectVersionByCondition(Map<String,Object> map);
 
     List<ElectricityPriceVersion> selectEquVersionsByCondition(Map<String,Object> map);
+
+    ElectricityPriceEquVersionView selectNearestVersion(Map<String, Object> map);
 }
