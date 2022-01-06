@@ -147,17 +147,11 @@ public class ElectricityPriceSelectHandler {
     @MyCacheable(key = "#cimPointPriceReq.systemCode,#cimPointPriceReq.deviceId,#cimPointPriceReq.date", timeout = 24
             * 60 * 60, random = 300)
     public RdfaResult<ElectricityPricePointDetailRespDTO> selectPointRecord(ElectricityCimPointPriceReq cimPointPriceReq) {
-//        String redisKey = cimPointPriceReq.getSystemCode() + CommonConstant.KEY_SPERATOR + cimPointPriceReq.getDeviceId() + CommonConstant.KEY_SPERATOR + cimPointPriceReq.getDate();
-//        CimResponse<CimDayPointPriceResp> dayPointRecord = cacheService.getData(redisKey,CommonConstant.ELECTRICITY_PRICE);
-//        if (dayPointRecord != null){
-//            return RdfaResult.success(dayPointRecord.getCode().toString(),dayPointRecord.getMsg(),BeanUtil.map(dayPointRecord.getData(), ElectricityPricePointDetailRespDTO.class));
-//        }
         CimPointPriceReq priceReq = BeanUtil.map(cimPointPriceReq, CimPointPriceReq.class);
         CimResponse<CimDayPointPriceResp> dayPointRecord = cimPriceClient.getDayPointRecord(priceReq);
         if (!Objects.isNull(dayPointRecord) && !Objects.isNull(dayPointRecord.getCode()) && !Objects.isNull(dayPointRecord.getData())){
             if (ErrorCodeEnum.REQUEST_HANDLER_SUCCESS.getErrorCode().equals(dayPointRecord.getCode().toString())){
                 ElectricityPricePointDetailRespDTO respDTO = BeanUtil.map(dayPointRecord.getData(), ElectricityPricePointDetailRespDTO.class);
-//                cacheService.setData(redisKey,CommonConstant.ELECTRICITY_PRICE,dayPointRecord);
                 List<ElectricityPricePointDetailRespDTO.ElectricityCimPointPriceDetail> priceDetails = BeanUtil.mapList(dayPointRecord.getData().getPriceDataList(), ElectricityPricePointDetailRespDTO.ElectricityCimPointPriceDetail.class);
                 respDTO.setPriceDataList(priceDetails);
                 return RdfaResult.success(dayPointRecord.getCode().toString(),dayPointRecord.getMsg(),respDTO);
