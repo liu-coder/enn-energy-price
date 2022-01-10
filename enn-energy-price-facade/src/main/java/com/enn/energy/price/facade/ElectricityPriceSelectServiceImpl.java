@@ -80,6 +80,9 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
         if (CollectionUtils.isEmpty(reqDTOList.getVersionDetailListReq())){
             return RdfaResult.fail(ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorCode(), ErrorCodeEnum.METHOD_ARGUMENT_VALID_EXCEPTION.getErrorMsg());
         }
+        if (reqDTOList.getVersionDetailListReq().size() > 20){
+            return RdfaResult.fail(ErrorCodeEnum.SELECT_VERSION_SIZE_ERROR.getErrorCode(), ErrorCodeEnum.SELECT_VERSION_SIZE_ERROR.getErrorMsg());
+        }
         RdfaResult<ElectricityPriceVersionDetailListRespDTO> rdfaResult = electricityPriceSelectHandler.currentVersionDetailList(reqDTOList.getVersionDetailListReq());
         return rdfaResult;
     }
