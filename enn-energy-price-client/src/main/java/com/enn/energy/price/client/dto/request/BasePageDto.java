@@ -32,6 +32,7 @@ public class BasePageDto implements Serializable {
         return pageNum;
     }
 
+
     public void setPageNum(Integer pageNum) {
         this.pageNum = pageNum;
     }
