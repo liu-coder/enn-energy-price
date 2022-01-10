@@ -79,8 +79,11 @@ public class ElectricityPriceVersionDetailRespDTO implements Serializable {
         private String endStep;
     }
     @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class VersionEquipmentDTO implements Serializable {
-        private String cimSystem;
+        private String systemCode;
         private String equipmentId;
         private String equipmentName;
         private String tenant;

@@ -404,11 +404,14 @@ public class ElectricityPriceSelectHandler {
     private ElectricityPriceVersionDetailRespDTO convertVersionDetail
             (ElectricityPriceVersionBO versionBo, List<ElectricityPriceRuleBO> ruleBos,
              ElectricityPriceEquipmentBO equipmentBo) throws RdfaException{
+        ElectricityPriceVersionDetailRespDTO.VersionEquipmentDTO electricityPriceEquipmentDTO = ElectricityPriceVersionDetailRespDTO.VersionEquipmentDTO.builder().equipmentId(versionBo.getEquipmentId()).systemCode(versionBo.getSystemCode()).build();
         ElectricityPriceVersionDetailRespDTO respDTO = ElectricityPriceVersionDetailRespDTO.builder().versionId(versionBo.getVersionId()).versionName(versionBo.getVersionName())
                 .startDate(sf_dd.get().format(versionBo.getStartDate())).endDate(sf_dd.get().format(versionBo.getEndDate())).systemCode(versionBo.getSystemCode()).cimName(versionBo.getSystemName())
-                .province(versionBo.getProvince()).provinceCode(versionBo.getProvinceCode()).city(versionBo.getCity()).cityCode(versionBo.getCityCode()).equipmentId(versionBo.getEquipmentId())
+                .province(versionBo.getProvince()).provinceCode(versionBo.getProvinceCode()).city(versionBo.getCity()).cityCode(versionBo.getCityCode()).electricityPriceEquipmentDTO(electricityPriceEquipmentDTO)
                 .district(versionBo.getDistrict()).districtCode(versionBo.getDistrictCode()).priceType(versionBo.getPriceType()).enterprise(versionBo.getEnterprise())
                 .bindType(versionBo.getBindType()).build();
+
+
         List<ElectricityPriceVersionDetailRespDTO.VersionRuleDTO> ruleDTOS = ruleBos.stream().map(item -> {
             ElectricityPriceVersionDetailRespDTO.VersionRuleDTO ruleDTO = ElectricityPriceVersionDetailRespDTO.VersionRuleDTO.builder().ruleId(item.getRuleId()).strategy(item.getStrategy())
                     .transformerCapacityPrice(item.getTransformerCapacityPrice()).maxCapacityPrice(item.getMaxCapacityPrice())
