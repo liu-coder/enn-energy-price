@@ -237,6 +237,9 @@ public class ElectricityPriceSelectHandler {
         ElectricityPriceVersionDetailListRespDTO respDTO = new ElectricityPriceVersionDetailListRespDTO();
         List<ElectricityPriceVersionDetailRespDTO> respDTOList = new ArrayList<>();
         for (ElectricityPriceCurrentVersionDetailReqDTO reqDTO : reqDTOList){
+            if (StringUtils.isBlank(reqDTO.getEquipmentId()) || StringUtils.isBlank(reqDTO.getSystemCode())){
+                continue;
+            }
             RdfaResult<ElectricityPriceVersionDetailRespDTO> rdfaResult = currentVersionDetail(reqDTO);
             if (rdfaResult.isSuccess()){
                 respDTOList.add(rdfaResult.getData());
