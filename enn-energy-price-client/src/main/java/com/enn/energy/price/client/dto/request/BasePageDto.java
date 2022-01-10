@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * @author ：chenchangtong
  * @date ：Created 2021/11/2 10:15
- * @description：快乐工作每一天 ce
+ * @description：快乐工作每一天
  */
 @ApiModel("分页基类")
 public class BasePageDto implements Serializable {
