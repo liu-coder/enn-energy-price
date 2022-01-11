@@ -43,6 +43,12 @@
                     #{item}
                 </foreach>
             </if>
+            <if test="systemCode != null">
+                and system_code = #{systemCode}
+            </if>
+            <if test="equipmentId != null">
+                and equipment_id = #{equipmentId}
+            </if>
             <if test="state != null">
                 and state = #{state}
             </if>
