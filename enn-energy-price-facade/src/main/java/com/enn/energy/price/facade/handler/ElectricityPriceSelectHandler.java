@@ -184,7 +184,7 @@ public class ElectricityPriceSelectHandler {
 
     public RdfaResult<ElectricityPriceVersionDetailRespDTO> versionDetail(String equipmentId,String systemCode,String versionId){
         //1、根据版本号查询版本信息
-        ElectricityPriceVersionBO versionBo = electricityPriceVersionService.selectVersionByVersionId(equipmentId,systemCode,versionId);
+        ElectricityPriceVersionBO versionBo = electricityPriceVersionService.selectVersionByCondition(equipmentId,systemCode,versionId);
         if (versionBo == null){
             return RdfaResult.fail(ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_VERSION_VALID_ERROR.getErrorMsg());
         }

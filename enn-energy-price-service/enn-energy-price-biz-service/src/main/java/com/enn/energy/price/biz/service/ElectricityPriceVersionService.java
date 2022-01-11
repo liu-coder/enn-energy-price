@@ -139,7 +139,19 @@ public class ElectricityPriceVersionService {
         return versionBos;
     }
 
-    public ElectricityPriceVersionBO selectVersionByVersionId(String equipmentId,String systemCode,String versionId){
+    public ElectricityPriceVersionBO selectVersionByVersionId(String versionId){
+        Map<String, Object> map = new HashMap<>();
+        map.put("versionId", versionId);
+        map.put("state", 0);
+        List<ElectricityPriceVersion> priceVersions = electricityPriceVersionExtMapper.selectVersionByCondition(map);
+        if (CollectionUtils.isEmpty(priceVersions)) {
+            return null;
+        }
+        List<ElectricityPriceVersionBO> versionBos = BeanUtil.mapList(priceVersions, ElectricityPriceVersionBO.class);
+        return versionBos.get(0);
+    }
+
+    public ElectricityPriceVersionBO selectVersionByCondition(String equipmentId,String systemCode,String versionId){
         Map<String, Object> map = new HashMap<>();
         map.put("versionId", versionId);
         map.put("equipmentId", equipmentId);
