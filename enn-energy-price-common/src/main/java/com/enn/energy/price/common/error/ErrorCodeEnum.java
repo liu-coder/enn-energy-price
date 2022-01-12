@@ -55,4 +55,5 @@ public enum ErrorCodeEnum {
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
     }
+
 }
