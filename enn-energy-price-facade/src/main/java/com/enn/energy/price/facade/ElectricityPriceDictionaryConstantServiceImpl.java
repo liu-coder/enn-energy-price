@@ -66,6 +66,7 @@ public class ElectricityPriceDictionaryConstantServiceImpl implements Electricit
         ElectricityPriceDictionaryBO bo = BeanUtil.map(priceDictionaryDTO,ElectricityPriceDictionaryBO.class);
         int result = electricityPriceDictionaryService.editDictionary(bo);
         return result > 0 ? RdfaResult.success(""):RdfaResult.fail("E2001","更新失败");
+
     }
 
 
