@@ -24,6 +24,7 @@ public interface ElectricityPriceDictionaryConstantService {
      * 查询
      * @param priceDictionaryDTO
      * @return
+     *
      */
     public RdfaResult<ElectricityPriceDictionarySelectRespDTO> findDictionary(ElectricityPriceDictionarySelectDTO priceDictionaryDTO);
 
