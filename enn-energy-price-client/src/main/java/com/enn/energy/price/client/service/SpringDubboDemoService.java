@@ -11,4 +11,5 @@ public interface SpringDubboDemoService {
     RdfaResult<HelloDubboDto> helloDubbo(HelloDubboDto helloDubboDto);
 
     RdfaResult<String> helloSentinel();
+
 }
