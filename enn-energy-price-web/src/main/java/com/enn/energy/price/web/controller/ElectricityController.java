@@ -35,8 +35,8 @@ public class ElectricityController {
     @ApiOperation("统一电价接口，统一自定义电价，目录电价查询")
 	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(
 			@Valid @RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto) {
-    	
-    	return electricityPriceUnifiedService.queryUnifiedPrice(eletricityUnifiedReqDto);
+
+    	   	return electricityPriceUnifiedService.queryUnifiedPrice(eletricityUnifiedReqDto);
     }
 
 }
