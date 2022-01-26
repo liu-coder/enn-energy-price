@@ -7,7 +7,6 @@ import top.rdfa.framework.biz.ro.RdfaResult;
 * 如果为分页结果，请使用PagedRdfaResult
 */
 
-
 public interface SpringDubboDemoService {
 
     RdfaResult<HelloDubboDto> helloDubbo(HelloDubboDto helloDubboDto);
