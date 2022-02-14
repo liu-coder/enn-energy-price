@@ -9,6 +9,7 @@ import top.rdfa.framework.biz.ro.RdfaResult;
 
 /**
  * @author huhul
+ * 所属行业、电压等级、定价策略等
  */
 public interface ElectricityPriceDictionaryConstantService {
 
