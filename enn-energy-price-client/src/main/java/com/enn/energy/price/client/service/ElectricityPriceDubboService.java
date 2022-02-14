@@ -36,7 +36,7 @@ public interface ElectricityPriceDubboService {
     RdfaResult<String> delElectricityPrice(ElectricityPriceVersionDelDTO delDTO);
 
     @PostMapping(value = "/delElectricityPriceForCommon")
-    @ApiOperation("删除自定义电价版本(通用)")
+    @ApiOperation("删除自定义电价版本(通用,所有版本都可删除)")
     RdfaResult<String> delElectricityPriceForCommon(ElectricityPriceVersionDelDTO delDTO);
 
     @PostMapping(value = "/batchAddElectricityPrice")
