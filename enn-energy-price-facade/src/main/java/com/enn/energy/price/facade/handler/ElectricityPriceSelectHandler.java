@@ -125,7 +125,7 @@ public class ElectricityPriceSelectHandler {
         if (StringUtils.isBlank(timeStr)){
             return RdfaResult.fail(ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorCode(),ErrorCodeEnum.SELECT_PARAM_TIME_ERROR.getErrorMsg());
         }
-        //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库
+        //先从redis中获取，如果获取成功，就直接返回，如果不成功，则查询数据库,查询条件:系统编码+设备id,
         requestDto.setEffectiveTime(timeStr);
         String key = requestDto.getSystemCode() + CommonConstant.KEY_SPERATOR + requestDto.getEquipmentId();
         ElectricityPriceValueDetailRespDTO resp = getDataFromRedis(key,requestDto);
