@@ -18,8 +18,8 @@ import top.rdfa.framework.biz.ro.RdfaResult;
 
 
 
-@RestController
-@RequestMapping()
+//@RestController
+//@RequestMapping()
 public class ElectricityController {
 
 	@Autowired

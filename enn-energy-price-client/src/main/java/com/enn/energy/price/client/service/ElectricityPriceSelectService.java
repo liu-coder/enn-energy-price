@@ -5,9 +5,11 @@ import com.enn.energy.price.client.dto.response.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
+import javax.validation.Valid;
 import java.text.ParseException;
 
 /**
@@ -60,5 +62,6 @@ public interface ElectricityPriceSelectService {
     @ApiOperation("批量查询自定义电价版本(当前生效)详情")
     RdfaResult<ElectricityPriceVersionDetailListRespDTO> currentVersionDetailList(ElectricityPriceCurrentVersionDetailListReqDTO reqDTO);
 
+    RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(@Valid @RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto);
 
 }

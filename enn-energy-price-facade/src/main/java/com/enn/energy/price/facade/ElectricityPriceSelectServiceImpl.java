@@ -1,5 +1,6 @@
 package com.enn.energy.price.facade;
 
+import com.enn.energy.price.biz.service.ElectricityPriceUnifiedService;
 import com.enn.energy.price.client.dto.response.*;
 import com.enn.energy.price.client.dto.request.*;
 import com.enn.energy.price.client.service.ElectricityPriceSelectService;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.rdfa.framework.biz.ro.PagedRdfaResult;
 import top.rdfa.framework.biz.ro.RdfaResult;
+
+import javax.validation.Valid;
 import java.text.ParseException;
 
 /**
@@ -34,6 +37,9 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
 
     @Autowired
     private ElectricityPriceSelectHandler electricityPriceSelectHandler;
+
+    @Autowired
+    ElectricityPriceUnifiedService electricityPriceUnifiedService;
 
     @PostMapping("/electricityPrice")
     @Override
@@ -87,5 +93,11 @@ public class ElectricityPriceSelectServiceImpl implements ElectricityPriceSelect
         return rdfaResult;
     }
 
+    @PostMapping("/queryElectricity")
+    @ApiOperation("统一电价接口，统一自定义电价，目录电价查询")
+    @Override
+    public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(@Valid @RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto) {
+        return electricityPriceUnifiedService.queryUnifiedPrice(eletricityUnifiedReqDto);
+    }
 
 }
