@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 统一电价查询dto接口
  * @author wenjianping
@@ -18,7 +20,7 @@ import lombok.Data;
  */
 @Data
 @ApiModel(description = "统一电价查询入参")
-public class EletricityUnifiedReqDto {
+public class EletricityUnifiedReqDto implements Serializable {
 
 	/**
 	 * 电价类型
