@@ -85,6 +85,7 @@ public class CimPriceService implements  PriceStrategyService{
 			response.setBaseCapacityPrice(cimPriceResp.getDemandPrice());
 			response.setMaxCapacityPrice(cimPriceResp.getDemandPrice());
 			response.setPriceRate(cimPriceResp.getPriceRate());
+			response.setPricingMethod(cimPriceResp.getPriceType());
 			List<PriceDetail> priceDetailList = convertPriceDetail(cimPriceResp.getPriceDataList());
 			if (priceDetailList.size() == 0) {
 				//没有数据

@@ -62,6 +62,7 @@ public interface ElectricityPriceSelectService {
     @ApiOperation("批量查询自定义电价版本(当前生效)详情")
     RdfaResult<ElectricityPriceVersionDetailListRespDTO> currentVersionDetailList(ElectricityPriceCurrentVersionDetailListReqDTO reqDTO);
 
+    @PostMapping(value = "/queryElectricity")
     @ApiOperation("电价融合接口(自定义、目录、用能系统单一电价)")
     RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryElectricity(@Valid @RequestBody EletricityUnifiedReqDto eletricityUnifiedReqDto);
 

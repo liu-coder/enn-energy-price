@@ -15,7 +15,9 @@ public class CimPriceResp {
 	private BigDecimal demandPrice;
 	
 	private String idType;
-	
+
+	private String priceType;
+
 	private BigDecimal priceRate;
 	
 	private String respDataCode;
