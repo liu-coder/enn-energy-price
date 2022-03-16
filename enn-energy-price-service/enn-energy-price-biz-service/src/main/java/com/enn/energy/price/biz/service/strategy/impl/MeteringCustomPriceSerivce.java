@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enn.energy.price.common.constants.CommonConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +77,7 @@ public class MeteringCustomPriceSerivce implements PriceStrategyService {
 		result.setMessage(cimRespDto.getMsg());
 		response.setPriceDetails(priceDetailList);
 		result.setData(response);
+		response.setPricingMethod(CommonConstant.PRICE_METHOD_P);
 		return result;
 	}
 

@@ -28,6 +28,7 @@ public class CustomPriceService implements PriceStrategyService {
 	@Autowired
 	ElectricityPriceSelectService electricityPriceSelectService;
 
+	@Override
 	public RdfaResult<ElectricityPriceUnifiedDetailRespDto> queryPrice(
 			EletricityUnifiedReqDto eletricityUnifiedReqDto) {
 

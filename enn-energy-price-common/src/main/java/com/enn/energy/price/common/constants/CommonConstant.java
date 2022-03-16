@@ -73,4 +73,5 @@ public class CommonConstant {
     public static String LEAP_YEAR_FEB_END = "02-29";
     public static String NOLEAP_YEAR_FEB_END = "02-28";
 
+    public final static String PRICE_METHOD_P = "p";
 }
