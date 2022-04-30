@@ -8,8 +8,8 @@
         <plugin type="com.itfsw.mybatis.generator.plugins.BatchInsertPlugin"/>
         <!--        <plugin type="org.mybatis.generator.plugins.MySQLLimitPlugin"/>-->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.39.201.254:3306/db_price?tinyInt1isBit=false&amp;useUnicode=true&amp;characterEncoding=utf8"
-                        userId="db_price_rw" password="!=WC^oGayb$=1bay6bEy7l)KM+jk"/>
+                        connectionURL="jdbc:mysql://10.39.30.21:3306/db_price?tinyInt1isBit=false&amp;useUnicode=true&amp;characterEncoding=utf8"
+                        userId="fn_db_test" password="fn_db_test20180411"/>
 
         <javaModelGenerator targetPackage="com.enn.energy.price.dal.po.mbg" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
@@ -30,7 +30,7 @@
             enableUpdateByExample（默认true）：MyBatis3Simple为false，指定是否生成动态修改语句（只修改对象中不为空的属性）；
          -->
 
-        <table tableName="electricity_price_version" enableCountByExample="false"
+        <table tableName="electricity_time_section" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <!-- false 不使用数据表column名，而使用驼峰命名 -->
@@ -57,14 +57,14 @@
 <!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
 <!--        </table>-->
 
-        <table tableName="electricity_price_equipment" enableCountByExample="false"
+        <!--<table tableName="electricity_price_equipment" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
-            <!-- false 不使用数据表column名，而使用驼峰命名 -->
+            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;
             <property name="useActualColumnNames" value="false"/>
-            <!-- 自增主键列 -->
+            &lt;!&ndash; 自增主键列 &ndash;&gt;
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
+        </table>-->
 
 <!--        <table tableName="electricity_price_dictionary" enableCountByExample="false"-->
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
