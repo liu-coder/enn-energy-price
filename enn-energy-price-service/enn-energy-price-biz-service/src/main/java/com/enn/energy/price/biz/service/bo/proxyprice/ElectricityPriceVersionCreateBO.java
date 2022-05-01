@@ -12,62 +12,38 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 电价版本请求VO
+ * 电价版本BO
  *
  * @author sunjidong
  * @date 2022/4/30
  **/
 
-@ApiModel("电价版本请求VO")
-public class ElectricityPriceVersionReqBO implements Serializable {
+public class ElectricityPriceVersionCreateBO implements Serializable {
 
     private static final long serialVersionUID = 7566019418409200305L;
 
-    @ApiModelProperty(value = "版本名称", required = true, dataType = "string")
-    @NotBlank(message = "版本名称不能为空")
-    @Length(min = 1, max = 50)
     private String versionName;
 
-    @ApiModelProperty(value = "省编码code", required = true, dataType = "string")
-    @NotBlank(message = "省编码code不能为空")
     private String provinceCode;
 
-    @ApiModelProperty(value = "省名称", required = true, dataType = "string")
-    @NotBlank(message = "省名称不能为空")
     private String province;
 
-    @ApiModelProperty(value = "租户id", required = true, dataType = "string")
-    @NotBlank(message = "租户id不能为空")
     private String tenantId;
 
-    @ApiModelProperty(value = "租户名称", required = true, dataType = "string")
-    @NotBlank(message = "租户名称不能为空")
     private String tenantName;
 
-    @ApiModelProperty(value = "系统编码", required = true, dataType = "string")
     private String systemCode;
 
-    @ApiModelProperty(value = "系统名称", required = true, dataType = "string")
     private String systemName;
 
-    @ApiModelProperty(value = "设备id", required = true, dataType = "string")
     private String equipmentId;
 
-    @ApiModelProperty(value = "设备名称", required = true, dataType = "string")
     private String equipmentName;
 
-    @ApiModelProperty(value = "版本生效期", required = true, dataType = "date")
-    @NotNull
-    @FutureOrPresent(message = "生效日期必须为未来时")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
-    @ApiModelProperty(value = "电价类型,0:目录电价;1:自定义电价;3:代购电价", required = true, dataType = "string")
-    @NotBlank(message = "电价类型不能为空")
     private String priceType;
 
-    @ApiModelProperty(value = "绑定类型,0:企业;1:设备;2:行政区域", required = true, dataType = "string")
-    @NotBlank(message = "电价类型不能为空")
     private String bindType;
 
     public String getVersionName() {

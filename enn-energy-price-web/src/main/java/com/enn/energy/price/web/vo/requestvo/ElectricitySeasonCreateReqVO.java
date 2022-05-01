@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -7,7 +8,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 季节名称请求VO
@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2022/4/30
  **/
 @ApiModel("季节名称请求VO")
-public class ElectricitySeasonReqVO implements Serializable {
+public class ElectricitySeasonCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = -4213396806536606042L;
 
@@ -24,9 +24,9 @@ public class ElectricitySeasonReqVO implements Serializable {
     @NotBlank(message = "季节名称不能为空")
     private String seasonSectionName;
 
-    @NotEmpty(message = "必须配置季节区间")
+    @NotEmpty(message = "季节区间不能为空")
     @Valid
-    private ValidationList<ElectricitySeasonSectionReqVO> seasonSectionReqVOList;
+    private ValidationList<ElectricitySeasonSectionCreateReqVO> seasonSectionCreateReqVOList;
 
     public String getSeasonSectionName() {
         return seasonSectionName;
@@ -36,19 +36,19 @@ public class ElectricitySeasonReqVO implements Serializable {
         this.seasonSectionName = seasonSectionName;
     }
 
-    public ValidationList<ElectricitySeasonSectionReqVO> getSeasonSectionReqVOList() {
-        return seasonSectionReqVOList;
+    public ValidationList<ElectricitySeasonSectionCreateReqVO> getSeasonSectionCreateReqVOList() {
+        return seasonSectionCreateReqVOList;
     }
 
-    public void setSeasonSectionReqVOList(ValidationList<ElectricitySeasonSectionReqVO> seasonSectionReqVOList) {
-        this.seasonSectionReqVOList = seasonSectionReqVOList;
+    public void setSeasonSectionCreateReqVOList(ValidationList<ElectricitySeasonSectionCreateReqVO> seasonSectionCreateReqVOList) {
+        this.seasonSectionCreateReqVOList = seasonSectionCreateReqVOList;
     }
 
     @Override
     public String toString() {
-        return "ElectricitySeasonReqVO{" +
+        return "ElectricitySeasonCreateReqVO{" +
                 "seasonSectionName='" + seasonSectionName + '\'' +
-                ", seasonSectionReqVOList=" + seasonSectionReqVOList +
+                ", seasonSectionCreateReqVOList=" + seasonSectionCreateReqVOList +
                 '}';
     }
 }

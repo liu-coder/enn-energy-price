@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,7 +16,7 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("季节分时对应的体系请求VO")
-public class ElectricityPriceStructureRuleReqVO implements Serializable {
+public class ElectricityPriceStructureRuleCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = -5758432421217592203L;
 
@@ -31,9 +32,9 @@ public class ElectricityPriceStructureRuleReqVO implements Serializable {
     @NotBlank(message = "电压等级不能为空,多个使用,拼接")
     private String voltageLevels;
 
-    @NotNull
+    @NotNull(message = "季节不能为空")
     @Valid
-    private ValidationList<ElectricitySeasonReqVO> seasonReqVOList;
+    private ValidationList<ElectricitySeasonCreateReqVO> seasonCreateReqVOList;
 
     public String getIndustries() {
         return industries;
@@ -59,21 +60,21 @@ public class ElectricityPriceStructureRuleReqVO implements Serializable {
         this.voltageLevels = voltageLevels;
     }
 
-    public ValidationList<ElectricitySeasonReqVO> getSeasonReqVOList() {
-        return seasonReqVOList;
+    public ValidationList<ElectricitySeasonCreateReqVO> getSeasonCreateReqVOList() {
+        return seasonCreateReqVOList;
     }
 
-    public void setSeasonReqVOList(ValidationList<ElectricitySeasonReqVO> seasonReqVOList) {
-        this.seasonReqVOList = seasonReqVOList;
+    public void setSeasonCreateReqVOList(ValidationList<ElectricitySeasonCreateReqVO> seasonCreateReqVOList) {
+        this.seasonCreateReqVOList = seasonCreateReqVOList;
     }
 
     @Override
     public String toString() {
-        return "ElectricityPriceStructureRuleReqVO{" +
+        return "ElectricityPriceStructureRuleCreateReqVO{" +
                 "industries='" + industries + '\'' +
                 ", strategies='" + strategies + '\'' +
                 ", voltageLevels='" + voltageLevels + '\'' +
-                ", seasonReqVOList=" + seasonReqVOList +
+                ", seasonCreateReqVOList=" + seasonCreateReqVOList +
                 '}';
     }
 }

@@ -1,8 +1,9 @@
-package com.enn.energy.price.biz.service.bo.proxyprice;
+package com.enn.energy.price.web.vo.requestvo;
 
+import cn.hutool.core.date.DatePattern;
+import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -13,16 +14,18 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("分时区间请求VO")
-public class ElectricityTimeSectionReqBO implements Serializable {
+public class ElectricityTimeSectionCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = -8679059488910647014L;
 
     @ApiModelProperty(value = "开始时间", required = true, dataType = "string")
-    @NotBlank(message = "开始时间不能为空,格式HH:mm:ss")
+    @NotBlank(message = "开始时间不能为空")
+    @DateValue(format = DatePattern.NORM_TIME_PATTERN, message = "请求时间格式有误")
     private String startTime;
 
     @ApiModelProperty(value = "结束时间", required = true, dataType = "string")
-    @NotBlank(message = "结束时间不能为空,格式HH:mm:ss")
+    @NotBlank(message = "结束时间不能为空")
+    @DateValue(format = "DatePattern.NORM_TIME_PATTERN", message = "请求时间格式有误")
     private String endTime;
 
     @ApiModelProperty(value = "时段，0:尖;1:峰;2:平;3:谷", required = true, dataType = "string")

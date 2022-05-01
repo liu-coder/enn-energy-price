@@ -9,23 +9,18 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**
- * 季节名称请求VO
+ * 季节名称BO
  *
  * @author sunjidong
  * @date 2022/4/30
  **/
-@ApiModel("季节名称请求VO")
-public class ElectricitySeasonReqBO implements Serializable {
+public class ElectricitySeasonCreateBO implements Serializable {
 
     private static final long serialVersionUID = -4213396806536606042L;
 
-    @ApiModelProperty(value = "季节名称", required = true, dataType = "string")
-    @NotBlank(message = "季节名称不能为空")
     private String seasonSectionName;
 
-    @NotEmpty(message = "必须配置季节区间")
-    @Valid
-    private ValidationList<ElectricitySeasonSectionReqBO> seasonSectionReqVOList;
+    private ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList;
 
     public String getSeasonSectionName() {
         return seasonSectionName;
@@ -35,19 +30,19 @@ public class ElectricitySeasonReqBO implements Serializable {
         this.seasonSectionName = seasonSectionName;
     }
 
-    public ValidationList<ElectricitySeasonSectionReqBO> getSeasonSectionReqVOList() {
-        return seasonSectionReqVOList;
+    public ValidationList<ElectricitySeasonSectionCreateBO> getSeasonSectionCreateBOList() {
+        return seasonSectionCreateBOList;
     }
 
-    public void setSeasonSectionReqVOList(ValidationList<ElectricitySeasonSectionReqBO> seasonSectionReqVOList) {
-        this.seasonSectionReqVOList = seasonSectionReqVOList;
+    public void setSeasonSectionCreateBOList(ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList) {
+        this.seasonSectionCreateBOList = seasonSectionCreateBOList;
     }
 
     @Override
     public String toString() {
-        return "ElectricitySeasonReqVO{" +
+        return "ElectricitySeasonCreateBO{" +
                 "seasonSectionName='" + seasonSectionName + '\'' +
-                ", seasonSectionReqVOList=" + seasonSectionReqVOList +
+                ", seasonSectionCreateBOList=" + seasonSectionCreateBOList +
                 '}';
     }
 }

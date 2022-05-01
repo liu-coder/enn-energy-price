@@ -1,5 +1,8 @@
-package com.enn.energy.price.biz.service.bo.proxyprice;
+package com.enn.energy.price.web.vo.requestvo;
 
+import cn.hutool.core.date.DatePattern;
+import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
+import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,20 +17,22 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("季节区间请求VO")
-public class ElectricitySeasonSectionReqBO implements Serializable {
+public class ElectricitySeasonSectionCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = 175221351557008274L;
 
     @ApiModelProperty(value = "开始日期", required = true, dataType = "string")
-    @NotBlank(message = "开始日期不能为空,格式MM-dd")
+    @NotBlank(message = "开始日期不能为空")
+    @DateValue(format = "MM-dd", message = "请求时间格式有误")
     private String seaStartDate;
 
     @ApiModelProperty(value = "结束日期", required = true, dataType = "string")
-    @NotBlank(message = "结束日期不能为空,格式MM-dd")
+    @NotBlank(message = "结束日期不能为空")
+    @DateValue(format = "MM-dd", message = "请求时间格式有误")
     private String seaEndDate;
 
     @Valid
-    private ValidationList<ElectricityTimeSectionReqBO> timeSectionReqVOList;
+    private ValidationList<ElectricityTimeSectionCreateReqVO> timeSectionCreateReqVOList;
 
     public String getSeaStartDate() {
         return seaStartDate;
@@ -45,20 +50,20 @@ public class ElectricitySeasonSectionReqBO implements Serializable {
         this.seaEndDate = seaEndDate;
     }
 
-    public ValidationList<ElectricityTimeSectionReqBO> getTimeSectionReqVOList() {
-        return timeSectionReqVOList;
+    public ValidationList<ElectricityTimeSectionCreateReqVO> getTimeSectionCreateReqVOList() {
+        return timeSectionCreateReqVOList;
     }
 
-    public void setTimeSectionReqVOList(ValidationList<ElectricityTimeSectionReqBO> timeSectionReqVOList) {
-        this.timeSectionReqVOList = timeSectionReqVOList;
+    public void setTimeSectionCreateReqVOList(ValidationList<ElectricityTimeSectionCreateReqVO> timeSectionCreateReqVOList) {
+        this.timeSectionCreateReqVOList = timeSectionCreateReqVOList;
     }
 
     @Override
     public String toString() {
-        return "ElectricitySeasonSectionReqVO{" +
+        return "ElectricitySeasonSectionCreateReqVO{" +
                 "seaStartDate='" + seaStartDate + '\'' +
                 ", seaEndDate='" + seaEndDate + '\'' +
-                ", timeSectionReqVOList=" + timeSectionReqVOList +
+                ", timeSectionCreateReqVOList=" + timeSectionCreateReqVOList +
                 '}';
     }
 }

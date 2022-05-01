@@ -7,30 +7,21 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
- * 电价体系请求VO
+ * 电价体系BO
  *
  * @author sunjidong
  * @date 2022/4/30
  **/
-@ApiModel("电价体系请求VO")
-public class ElectricityPriceStructureReqBO implements Serializable {
+public class ElectricityPriceStructureCreateBO implements Serializable {
 
     private static final long serialVersionUID = 511905937266179017L;
 
-    @ApiModelProperty(value = "体系名称", required = true, dataType = "string")
-    @NotBlank(message = "体系名称不能为空")
     private String structureName;
 
-    @ApiModelProperty(value = "省编码code", required = true, dataType = "string")
-    @NotBlank(message = "省编码code不能为空")
     private String provinceCode;
 
-    @ApiModelProperty(value = "市编码code，以,拼接", required = true, dataType = "string")
-    @NotBlank(message = "市编码code")
     private String cityCodes;
 
-    @ApiModelProperty(value = "区编码code，以,拼接", required = true, dataType = "string")
-    @NotBlank(message = "区编码code")
     private String districtCodes;
 
     public String getStructureName() {

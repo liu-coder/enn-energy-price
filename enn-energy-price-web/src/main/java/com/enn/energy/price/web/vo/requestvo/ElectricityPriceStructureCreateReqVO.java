@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("电价体系请求VO")
-public class ElectricityPriceStructureReqVO implements Serializable {
+public class ElectricityPriceStructureCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = 511905937266179017L;
 

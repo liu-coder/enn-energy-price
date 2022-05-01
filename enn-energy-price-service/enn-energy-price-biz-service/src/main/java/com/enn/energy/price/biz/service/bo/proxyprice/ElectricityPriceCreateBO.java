@@ -1,39 +1,32 @@
-package com.enn.energy.price.web.vo.requestvo;
+package com.enn.energy.price.biz.service.bo.proxyprice;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 
 /**
- * 规则电价明细请求VO
+ * 规则电价明细BO
  *
  * @author sunjidong
  * @date 2022/4/30
  **/
-@ApiModel("规则电价明细请求VO")
-public class ElectricityPriceReqVO implements Serializable {
+public class ElectricityPriceCreateBO implements Serializable {
 
     private static final long serialVersionUID = -5187909940116643626L;
 
-    @ApiModelProperty(value = "电度用电价格", required = false, dataType = "string")
     private String consumptionPrice;
 
-    @ApiModelProperty(value = "电度输配价格", required = false, dataType = "string")
     private String distributionPrice;
 
-    @ApiModelProperty(value = "政府附加价格", required = false, dataType = "string")
     private String govAddPrice;
 
-    @ApiModelProperty(value = "尖价", required = false, dataType = "string")
     private String sharpPrice;
 
-    @ApiModelProperty(value = "峰价", required = false, dataType = "string")
     private String peakPrice;
 
-    @ApiModelProperty(value = "平价", required = false, dataType = "string")
     private String levelPrice;
 
-    @ApiModelProperty(value = "谷价", required = false, dataType = "string")
     private String valleyPrice;
 
     public String getConsumptionPrice() {

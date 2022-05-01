@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("电价规则请求VO")
-public class ElectricityPriceRuleCreateVO implements Serializable {
+public class ElectricityPriceRuleCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = -583011369969060471L;
 
@@ -44,9 +44,9 @@ public class ElectricityPriceRuleCreateVO implements Serializable {
     @ApiModelProperty(value = "最大需量", required = false, dataType = "string")
     private String maxCapacityPrice;
 
-    @NotNull
+    @NotNull(message = "电价不能为空")
     @Valid
-    private ElectricityPriceReqVO electricityPriceReqVO;
+    private ElectricityPriceCreateReqVO electricityPriceCreateReqVO;
 
     public String getTenantId() {
         return tenantId;
@@ -104,17 +104,17 @@ public class ElectricityPriceRuleCreateVO implements Serializable {
         this.maxCapacityPrice = maxCapacityPrice;
     }
 
-    public ElectricityPriceReqVO getElectricityPriceReqVO() {
-        return electricityPriceReqVO;
+    public ElectricityPriceCreateReqVO getElectricityPriceCreateReqVO() {
+        return electricityPriceCreateReqVO;
     }
 
-    public void setElectricityPriceReqVO(ElectricityPriceReqVO electricityPriceReqVO) {
-        this.electricityPriceReqVO = electricityPriceReqVO;
+    public void setElectricityPriceCreateReqVO(ElectricityPriceCreateReqVO electricityPriceCreateReqVO) {
+        this.electricityPriceCreateReqVO = electricityPriceCreateReqVO;
     }
 
     @Override
     public String toString() {
-        return "ElectricityPriceRuleReqVO{" +
+        return "ElectricityPriceRuleCreateReqVO{" +
                 "tenantId='" + tenantId + '\'' +
                 ", tenantName='" + tenantName + '\'' +
                 ", industry='" + industry + '\'' +
@@ -122,6 +122,7 @@ public class ElectricityPriceRuleCreateVO implements Serializable {
                 ", voltageLevel='" + voltageLevel + '\'' +
                 ", transformerCapacityPrice='" + transformerCapacityPrice + '\'' +
                 ", maxCapacityPrice='" + maxCapacityPrice + '\'' +
+                ", electricityPriceCreateReqVO=" + electricityPriceCreateReqVO +
                 '}';
     }
 }

@@ -1,8 +1,7 @@
-package com.enn.energy.price.biz.service.bo.proxyprice;
+package com.enn.energy.price.web.vo.requestvo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.io.Serializable;
 
 /**
@@ -12,7 +11,7 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("规则电价明细请求VO")
-public class ElectricityPriceReqBO implements Serializable {
+public class ElectricityPriceCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = -5187909940116643626L;
 

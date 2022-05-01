@@ -19,7 +19,7 @@ import java.util.Date;
  **/
 
 @ApiModel("电价版本请求VO")
-public class ElectricityPriceVersionReqVO implements Serializable {
+public class ElectricityPriceVersionCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = 7566019418409200305L;
 

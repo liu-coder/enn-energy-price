@@ -1,39 +1,29 @@
-package com.enn.energy.price.web.vo.requestvo;
+package com.enn.energy.price.biz.service.bo.proxyprice;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 /**
- * 分时区间请求VO
+ * 分时区间BO
  *
  * @author sunjidong
  * @date 2022/4/30
  **/
-@ApiModel("分时区间请求VO")
-public class ElectricityTimeSectionReqVO implements Serializable {
+public class ElectricityTimeSectionCreateBO implements Serializable {
 
     private static final long serialVersionUID = -8679059488910647014L;
 
-    @ApiModelProperty(value = "开始时间", required = true, dataType = "string")
-    @NotBlank(message = "开始时间不能为空,格式HH:mm:ss")
     private String startTime;
 
-    @ApiModelProperty(value = "结束时间", required = true, dataType = "string")
-    @NotBlank(message = "结束时间不能为空,格式HH:mm:ss")
     private String endTime;
 
-    @ApiModelProperty(value = "时段，0:尖;1:峰;2:平;3:谷", required = true, dataType = "string")
-    @NotBlank(message = "时段不能为空")
     private String periods;
 
-    @ApiModelProperty(value = "0:等于;-1:小于;1:大于;-10:小于等于;10:大于等于", required = true, dataType = "string")
-    @NotBlank(message = "温度比较符号不能为空")
     private String compare;
 
-    @ApiModelProperty(value = "温度:单位摄氏度", required = true, dataType = "string")
-    @NotBlank(message = "温度不能为空")
     private String temperature;
 
     public String getStartTime() {
