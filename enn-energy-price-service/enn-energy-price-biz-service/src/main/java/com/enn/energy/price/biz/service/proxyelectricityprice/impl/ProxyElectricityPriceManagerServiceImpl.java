@@ -135,7 +135,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private Boolean judgeCityCover(String cityCodesBefore, String cityCodesNow) {
 
-
+        return false;
     }
 
 
