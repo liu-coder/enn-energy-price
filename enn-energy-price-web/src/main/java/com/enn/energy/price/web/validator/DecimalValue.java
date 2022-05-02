@@ -11,7 +11,7 @@ import java.lang.annotation.*;
  * @author wanglongab
  */
 @Documented
-@Constraint(validatedBy = {com.enn.billing.api.client.validator.DecimalValueValidator.class})
+@Constraint(validatedBy = {com.enn.energy.price.web.validator.DecimalValueValidator.class})
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @ReportAsSingleViolation

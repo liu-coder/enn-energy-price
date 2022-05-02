@@ -1,16 +1,16 @@
 package com.enn.energy.price.web.vo.requestvo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import cn.hutool.core.date.DatePattern;
+import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author liujin
@@ -29,14 +29,12 @@ public class ElectricityTimeSectionUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "分时区间名称",required = true)
     @NotBlank(message = "分时区间名称不能为空")
     private String periods;
-    @ApiModelProperty(value = "分时区间开始时间",required = true)
-    @NotBlank(message = "分时区间开始时间不能为空")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date startTime;
-    @ApiModelProperty(value = "分时区间结束时间",required = true)
+    @ApiModelProperty(value = "分时区间开始时间,时间格式HH:mm",required = true)
+    @NotNull(message = "分时区间开始时间不能为空")
+    @DateValue(format = "HH:mm", message = "分时区间开始时间格式有误")
+    private String startTime;
+    @ApiModelProperty(value = "分时区间结束时间,时间格式HH:mm",required = true)
     @NotBlank(message = "分时区间结束不能为空")
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date endTime;
+    @DateValue(format = "HH:mm", message = "分时区间结束时间格式有误")
+    private String endTime;
 }

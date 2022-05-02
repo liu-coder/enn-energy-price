@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,10 +20,12 @@ import java.util.List;
 public class ElectricityPriceVersionUpdateBO implements Serializable {
     private static final long serialVersionUID = -6507351604437158608L;
 
-    private Integer id;
+    private Long id;
     private String versionName;
     private String province;
     private String tenantId;
     private String tenantName;
+    private String startDate;
+    private String endDate;
     private List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList;
 }

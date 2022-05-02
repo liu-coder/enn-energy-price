@@ -1,5 +1,7 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import cn.hutool.core.date.DatePattern;
+import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,6 +42,15 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "租户名称",required = true)
     @NotBlank(message = "租户名称不能为空")
     private String tenantName;
+    @ApiModelProperty(value = "电价版本开始时间,时间格式yyyy-MM-dd",required = true)
+    @NotNull(message = "电价版本开始时间不能为空")
+    @DateValue(format = DatePattern.NORM_DATE_PATTERN, message = "电价版本开始时间格式有误")
+    private String startDate;
+    @ApiModelProperty(value = "电价版本结束时间,时间格式yyyy-MM-dd",required = true)
+    @NotNull(message = "电价版本结束时间不能为空")
+    @DateValue(format = DatePattern.NORM_DATE_PATTERN, message = "电价版本结束时间格式有误")
+    private String endDate;
+
     @ApiModelProperty(value = "电价体系列表",required = true)
     @NotEmpty(message = "电价体系不能为空")
     @Valid

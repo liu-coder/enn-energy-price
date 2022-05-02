@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ElectricityPriceStructureUpdateBO implements Serializable {
     private static final long serialVersionUID = 5420388115986723646L;
-    private Integer id;
+    private String id;
     private String structureName;
     private String cityCodes;
     private String districtCodes;
