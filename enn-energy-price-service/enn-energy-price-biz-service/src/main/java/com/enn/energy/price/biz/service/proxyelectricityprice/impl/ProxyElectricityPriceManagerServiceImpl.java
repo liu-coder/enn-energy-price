@@ -1,13 +1,32 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice.impl;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.IdUtil;
+import com.enn.energy.price.biz.service.bo.proxyprice.*;
+import com.enn.energy.price.biz.service.convertMapper.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
+import com.enn.energy.price.common.enums.BoolLogic;
+import com.enn.energy.price.common.enums.ResponseEum;
+import com.enn.energy.price.common.enums.StateEum;
+import com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceEquipmentExtMapper;
+import com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceStructureExtMapper;
+import com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceVersionExtMapper;
+import com.enn.energy.price.dal.mapper.mbg.*;
+import com.enn.energy.price.dal.po.mbg.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import top.rdfa.framework.biz.ro.RdfaResult;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 代购电价service实现
@@ -18,18 +37,24 @@ import javax.annotation.Resource;
 @Service
 @Slf4j
 public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricityPriceManagerService {
+
     @Autowired
+    ElectricityPriceVersionExtMapper electricityPriceVersionExtMapper;
+
+    @Autowired
+    ElectricityPriceStructureExtMapper electricityPriceStructureExtMapper;
+
+    @Autowired
+    ElectricityPriceEquipmentExtMapper electricityPriceEquipmentExtMapper;
+
+    @Resource
     ElectricityPriceVersionMapper electricityPriceVersionMapper;
-    @Autowired
+
+    @Resource
     ElectricityPriceStructureMapper electricityPriceStructureMapper;
-    @Autowired
+
+    @Resource
     ElectricityPriceEquipmentMapper electricityPriceEquipmentMapper;
-
-    @Resource
-    private ElectricityPriceVersionMapper priceVersionMapper;
-
-    @Resource
-    private ElectricityPriceStructureMapper priceStructureMapper;
 
     @Resource
     private ElectricityPriceStructureRuleMapper priceStructureRuleMapper;
@@ -64,7 +89,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         ElectricityPriceVersion priceVersionPO = ElectricityPriceVersionCreateBOMapper.INSTANCE.priceVersionCreateBOToPO(priceVersionCreateBO);
         priceVersionPO.setVersionId(versionId);
         priceVersionPO.setState(0);
-        priceVersionMapper.insert(priceVersionPO);
+        electricityPriceVersionMapper.insert(priceVersionPO);
         //2、创建所有体系以及对应的季节分时区间以及电价规则
         ValidationList<ElectricityPriceStructureAndRuleAndSeasonCreateBO> priceStructureAndRuleAndSeasonCreateBOList = priceVersionStructuresCreateBO.getPriceStructureAndRuleAndSeasonCreateBOList();
         priceStructureAndRuleAndSeasonCreateBOList.forEach(priceStructureAndRuleAndSeasonCreateBO -> {
@@ -78,7 +103,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             electricityPriceStructure.setState(BoolLogic.NO.getCode());
             electricityPriceStructure.setVersionId(versionId);
             electricityPriceStructure.setCreateTime(createTime);
-            priceStructureMapper.insert(electricityPriceStructure);
+            electricityPriceStructureMapper.insert(electricityPriceStructure);
             //2.2、创建体系季节对应的三要素、季节以及分时
             ValidationList<ElectricityPriceStructureRuleCreateBO> priceStructureRuleCreateBOList = priceStructureAndRuleAndSeasonCreateBO.getPriceStructureRuleCreateBOList();
             priceStructureRuleCreateBOList.forEach(priceStructureRuleCreateBO -> {
@@ -159,8 +184,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * @describtion 通过匹配季节三要素与规则三要素，生成规则电价明细
      * @author sunjidong
      * @date 2022/5/3 9:07
-     * @param
-     * @return
+     * @param priceStructureRuleList,priceRuleList
      */
     private void generatePriceRuleDetail(List<ElectricityPriceStructureRule> priceStructureRuleList,
                                          List<ElectricityPriceRule> priceRuleList){
@@ -179,7 +203,6 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             }
             return false;
         }).collect(Collectors.toList());
-
         //更新电价规则
         toBeUpdatedPriceRuleList.forEach(toBeUpdatedPriceRule -> {
             priceRuleMapper.insert(toBeUpdatedPriceRule);
@@ -202,7 +225,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         if(DateUtil.compare(DateUtil.parse(electricityPriceVersionUpdateBO.getStartDate(),
                 DatePattern.NORM_DATE_PATTERN ),DateUtil.parse(DateUtil.today(), DatePattern.NORM_DATE_PATTERN))<0){
             //获取到删除与修改的体系的id,进行判断是否绑定了设备
-            List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentMapper.queryEquipmentBinding( String.valueOf( electricityPriceVersionUpdateBO.getId() ) );
+            List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentExtMapper.queryEquipmentBinding( String.valueOf( electricityPriceVersionUpdateBO.getId() ) );
             //判断删除的版本是否绑定了设备
             List<Object> delete = stringObjectLinkedMultiValueMap.get( "delete" );
             List<String> existEquipmentIds= electricityPriceEquipments.stream().map( ElectricityPriceEquipment::getStructureId ).collect( Collectors.toList() );
@@ -222,7 +245,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 //获取传入的需要修改体系且已经绑定区域的体系信息
                 List<ElectricityPriceStructureUpdateBO> nowList = electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList().stream().filter( t -> updateAndBindingList.contains( t.getId() ) ).collect( Collectors.toList() );
                 //查询需要比对区域信息的体系信息，进行区域比对
-                List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureMapper.batchQueryStructureListByIds( updateAndBindingList );
+                List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.batchQueryStructureListByIds( updateAndBindingList );
                 List<String> noCoverStructureIds=new ArrayList<>();
                 electricityPriceStructures.forEach( t->{
                     nowList.forEach( f->{
@@ -253,7 +276,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         electricityPriceVersion.setUpdator(electricityPriceVersionUpdateBO.getTenantId()  );
         electricityPriceVersion.setUpdateTime( DateUtil.date());
         electricityPriceVersion.setState( StateEum.NORMAL.getValue());
-        int i = electricityPriceVersionMapper.updateElectricityPriceVersionById( electricityPriceVersion );
+        int i = electricityPriceVersionExtMapper.updateElectricityPriceVersionById( electricityPriceVersion );
         if(i==0){
             return RdfaResult.fail( ResponseEum.VERSION_UPDATE_FAIL.getCode(),ResponseEum.VERSION_UPDATE_FAIL.getMsg() );
         }
@@ -289,7 +312,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
 
     LinkedMultiValueMap<String,Object> judgeStructureChange(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO){
         //根据版本id查找当前版本下的所有体系id,与现有进行比较,判断出哪些删除了,哪些修改了,哪些新增了
-        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureMapper.queryListByVersionId( String.valueOf( electricityPriceVersionUpdateBO.getId() ) );
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.queryListByVersionId( String.valueOf( electricityPriceVersionUpdateBO.getId() ) );
         LinkedMultiValueMap<String,Object> map= new LinkedMultiValueMap<>();
         List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList = electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList();
 

@@ -4,7 +4,7 @@ import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface ElectricityPriceVersionMapper {
+public interface ElectricityPriceVersionExtMapper {
     /**
      * 更新电价版本信息根据id
      * @param electricityPriceVersion
