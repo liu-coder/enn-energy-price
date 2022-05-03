@@ -6,7 +6,7 @@ import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpd
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionStructuresCreateReqVOMapper;
+import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateMapper;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
@@ -47,7 +47,7 @@ public class ProxyElectricityPriceManagerController {
     private ProxyElectricityPriceManagerService proxyElectricityPriceManagerService;
 
     @Resource
-    private ElectricityPriceVersionStructuresCreateReqVOMapper versionStructuresCreateReqVOMapper;
+    private ElectricityPriceVersionCreateBOConvertMapper priceVersionCreateBOConvertMapper;
 
     @Resource
     private RedissonRedDisLock redDisLock;
@@ -70,7 +70,7 @@ public class ProxyElectricityPriceManagerController {
             if (ObjectUtil.isNull(lock)) {
                 return RdfaResult.fail(ErrorCodeEnum.REPEAT_REQUEST.getErrorCode(), ErrorCodeEnum.REPEAT_REQUEST.getErrorMsg());
             }
-            ElectricityPriceVersionStructuresCreateBO versionStructuresCreateBO = versionStructuresCreateReqVOMapper.priceVersionStructuresCreateReqVOToBO(priceVersionStructuresCreateVO);
+            ElectricityPriceVersionStructuresCreateBO versionStructuresCreateBO = priceVersionCreateBOConvertMapper.priceVersionStructuresCreateReqVOToBO(priceVersionStructuresCreateVO);
             versionStructuresCreateBO.getPriceVersionCreateBO().setTenantId(tenantId);
             versionStructuresCreateBO.getPriceVersionCreateBO().setTenantName(tenantName);
             Boolean ifSuccess = proxyElectricityPriceManagerService.createPriceVersionStructures(versionStructuresCreateBO);

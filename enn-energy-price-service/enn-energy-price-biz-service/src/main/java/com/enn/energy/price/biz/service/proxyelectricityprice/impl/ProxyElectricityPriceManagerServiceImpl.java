@@ -89,7 +89,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //1、创建版本
         ElectricityPriceVersionCreateBO priceVersionCreateBO = priceVersionStructuresCreateBO.getPriceVersionCreateBO();
         String versionId = IdUtil.simpleUUID();
-        ElectricityPriceVersion priceVersionPO = ElectricityPriceVersionCreateBOMapper.INSTANCE.priceVersionCreateBOToPO(priceVersionCreateBO);
+        ElectricityPriceVersion priceVersionPO = ElectricityPriceVersionBOConvertMapper.INSTANCE.priceVersionCreateBOToPO(priceVersionCreateBO);
         priceVersionPO.setVersionId(versionId);
         priceVersionPO.setState(0);
         electricityPriceVersionMapper.insert(priceVersionPO);
@@ -100,7 +100,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             List<ElectricityPriceRule> priceRuleList = new ArrayList<>();
             //2.1、先创建具体的体系
             ElectricityPriceStructureCreateBO priceStructureCreateBO = priceStructureAndRuleAndSeasonCreateBO.getPriceStructureCreateBO();
-            ElectricityPriceStructure electricityPriceStructure = ElectricityPriceStructureCreateBOMapper.INSTANCE.priceStructureCreateBOToPO(priceStructureCreateBO);
+            ElectricityPriceStructure electricityPriceStructure = ElectricityPriceVersionBOConvertMapper.INSTANCE.priceStructureCreateBOToPO(priceStructureCreateBO);
             String structureId = IdUtil.simpleUUID();
             electricityPriceStructure.setStructureId(structureId);
             electricityPriceStructure.setState(BoolLogic.NO.getCode());
@@ -110,7 +110,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             //2.2、创建体系季节对应的三要素、季节以及分时
             ValidationList<ElectricityPriceStructureRuleCreateBO> priceStructureRuleCreateBOList = priceStructureAndRuleAndSeasonCreateBO.getPriceStructureRuleCreateBOList();
             priceStructureRuleCreateBOList.forEach(priceStructureRuleCreateBO -> {
-                ElectricityPriceStructureRule priceStructureRule = ElectricityPriceStructureRuleCreateBOMapper.INSTANCE.priceStructureRuleCreateBOToPO(priceStructureRuleCreateBO);
+                ElectricityPriceStructureRule priceStructureRule = ElectricityPriceVersionBOConvertMapper.INSTANCE.priceStructureRuleCreateBOToPO(priceStructureRuleCreateBO);
                 String structureRuleId = IdUtil.simpleUUID();
                 priceStructureRule.setStructureId(structureId);
                 priceStructureRule.setStructureRuleId(structureRuleId);
@@ -126,7 +126,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     //季节区间
                     ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList = seasonCreateBO.getSeasonSectionCreateBOList();
                     seasonSectionCreateBOList.forEach(seasonSectionCreateBO -> {
-                        ElectricitySeasonSection seasonSection = ElectricitySeasonSectionCreateBOMapper.INSTANCE.seasonSectionCreateBOToPO(seasonSectionCreateBO);
+                        ElectricitySeasonSection seasonSection = ElectricityPriceVersionBOConvertMapper.INSTANCE.seasonSectionCreateBOToPO(seasonSectionCreateBO);
                         seasonSection.setSeasonSectionId(seasonSectionId);
                         seasonSection.setStructureId(structureId);
                         seasonSection.setStructureRuleId(structureRuleId);
@@ -138,7 +138,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     //构建分时区间
                     ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList = seasonCreateBO.getTimeSectionCreateBOList();
                     timeSectionCreateBOList.forEach(timeSectionCreateBO -> {
-                        ElectricityTimeSection timeSection = ElectricityTimeSectionCreateBOMapper.INSTANCE.timeSectionCreateBOToPO(timeSectionCreateBO);
+                        ElectricityTimeSection timeSection = ElectricityPriceVersionBOConvertMapper.INSTANCE.timeSectionCreateBOToPO(timeSectionCreateBO);
                         String timeSectionId = IdUtil.simpleUUID();
                         timeSection.setSeasonSectionId(seasonSectionId);
                         timeSection.setTimeSectionId(timeSectionId);
@@ -153,7 +153,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             ValidationList<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = priceStructureAndRuleAndSeasonCreateBO.getPriceRuleCreateBOList();
             priceRuleCreateBOList.forEach(priceRuleCreateBO -> {
                 //构建电价规则
-                ElectricityPriceRule electricityPriceRule = ElectricityPriceRuleCreateBOMapper.INSTANCE.priceRuleCreateBOToPO(priceRuleCreateBO);
+                ElectricityPriceRule electricityPriceRule = ElectricityPriceVersionBOConvertMapper.INSTANCE.priceRuleCreateBOToPO(priceRuleCreateBO);
                 String priceRuleId = IdUtil.simpleUUID();
                 electricityPriceRule.setRuleId(priceRuleId);
                 electricityPriceRule.setVersionId(versionId);
@@ -166,7 +166,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 priceRuleList.add(electricityPriceRule);
                 //构建电价明细
                 ElectricityPriceCreateBO electricityPriceCreateBO = priceRuleCreateBO.getElectricityPriceCreateBO();
-                ElectricityPrice electricityPrice = ElectricityPriceCreateBOMapper.INSTANCE.priceReqCreateBOToPO(electricityPriceCreateBO);
+                ElectricityPrice electricityPrice = ElectricityPriceVersionBOConvertMapper.INSTANCE.priceCreateBOToPO(electricityPriceCreateBO);
                 String detailId = IdUtil.simpleUUID();
                 electricityPrice.setDetailId(detailId);
                 electricityPrice.setRuleId(priceRuleId);
