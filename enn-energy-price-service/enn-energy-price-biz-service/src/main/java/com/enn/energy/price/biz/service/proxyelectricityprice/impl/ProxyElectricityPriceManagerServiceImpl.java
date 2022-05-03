@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -7,9 +8,11 @@ import cn.hutool.core.util.IdUtil;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.convertMapper.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
+import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.BoolLogic;
 import com.enn.energy.price.common.enums.ResponseEum;
 import com.enn.energy.price.common.enums.StateEum;
+import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceEquipmentExtMapper;
 import com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceStructureExtMapper;
 import com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceVersionExtMapper;
@@ -188,21 +191,35 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private void generatePriceRuleDetail(List<ElectricityPriceStructureRule> priceStructureRuleList,
                                          List<ElectricityPriceRule> priceRuleList){
-        List<ElectricityPriceRule> toBeUpdatedPriceRuleList = priceRuleList.stream().filter(priceRule -> {
+        //先找到默认类型
+        ElectricityPriceStructureRule defaultPriceStructureRule = priceStructureRuleList.stream().filter(priceStructureRule -> {
+            if (CommonConstant.DEFAULT_TYPE.equals(priceStructureRule.getIndustries())) {
+                return true;
+            }
+            return false;
+        }).collect(Collectors.toList()).get(0);
+
+        List<ElectricityPriceRule> toBeUpdatedPriceRuleList = priceRuleList.stream().map(priceRule -> {
             String industry = priceRule.getIndustry();
             String strategy = priceRule.getStrategy();
             String voltageLevel = priceRule.getVoltageLevel();
+            boolean matchFail = true;
             for (ElectricityPriceStructureRule priceStructureRule : priceStructureRuleList) {
                 String industries = priceStructureRule.getIndustries();
                 String strategies = priceStructureRule.getStrategies();
                 String voltageLevels = priceStructureRule.getVoltageLevels();
                 if (industries.contains(industry) && strategies.contains(strategy) && voltageLevels.contains(voltageLevel)) {
                     priceRule.setStructureRuleId(priceStructureRule.getStructureRuleId());
-                    return true;
+                    matchFail = false;
+                    break;
                 }
             }
-            return false;
+            if(matchFail){
+                priceRule.setStructureRuleId(defaultPriceStructureRule.getStructureRuleId());
+            }
+            return priceRule;
         }).collect(Collectors.toList());
+
         //更新电价规则
         toBeUpdatedPriceRuleList.forEach(toBeUpdatedPriceRule -> {
             priceRuleMapper.insert(toBeUpdatedPriceRule);

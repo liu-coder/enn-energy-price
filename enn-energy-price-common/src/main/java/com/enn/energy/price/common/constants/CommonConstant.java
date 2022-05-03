@@ -75,6 +75,8 @@ public class CommonConstant {
 
     public final static String PRICE_METHOD_P = "p";
 
+    public final static String DEFAULT_TYPE = "默认";
+
     /**
      * redis key
      */
