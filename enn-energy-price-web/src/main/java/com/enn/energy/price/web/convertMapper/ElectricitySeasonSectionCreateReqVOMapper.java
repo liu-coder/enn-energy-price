@@ -12,12 +12,11 @@ import org.mapstruct.factory.Mappers;
  * @author sunjidong
  * @date 2022/5/1
  **/
-@Mapper(uses = {ElectricityTimeSectionCreateReqVOMapper.class})
+@Mapper
 public interface ElectricitySeasonSectionCreateReqVOMapper {
 
     ElectricitySeasonSectionCreateReqVOMapper INSTANCE = Mappers.getMapper(ElectricitySeasonSectionCreateReqVOMapper.class);
 
-    @Mapping(source = "seasonSectionCreateReqVO.timeSectionCreateReqVOList", target = "timeSectionCreateBOList")
     ElectricitySeasonSectionCreateBO seasonSectionCreateReqVOToBO(ElectricitySeasonSectionCreateReqVO seasonSectionCreateReqVO);
 
 }

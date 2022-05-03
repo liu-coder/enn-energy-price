@@ -22,6 +22,8 @@ public class ElectricitySeasonCreateBO implements Serializable {
 
     private ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList;
 
+    private ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList;
+
     public String getSeasonSectionName() {
         return seasonSectionName;
     }
@@ -38,11 +40,20 @@ public class ElectricitySeasonCreateBO implements Serializable {
         this.seasonSectionCreateBOList = seasonSectionCreateBOList;
     }
 
+    public ValidationList<ElectricityTimeSectionCreateBO> getTimeSectionCreateBOList() {
+        return timeSectionCreateBOList;
+    }
+
+    public void setTimeSectionCreateBOList(ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList) {
+        this.timeSectionCreateBOList = timeSectionCreateBOList;
+    }
+
     @Override
     public String toString() {
         return "ElectricitySeasonCreateBO{" +
                 "seasonSectionName='" + seasonSectionName + '\'' +
                 ", seasonSectionCreateBOList=" + seasonSectionCreateBOList +
+                ", timeSectionCreateBOList=" + timeSectionCreateBOList +
                 '}';
     }
 }

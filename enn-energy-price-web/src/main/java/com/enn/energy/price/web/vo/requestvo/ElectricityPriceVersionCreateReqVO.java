@@ -36,14 +36,6 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
     @NotBlank(message = "省名称不能为空")
     private String province;
 
-    @ApiModelProperty(value = "租户id", required = true, dataType = "string")
-    @NotBlank(message = "租户id不能为空")
-    private String tenantId;
-
-    @ApiModelProperty(value = "租户名称", required = true, dataType = "string")
-    @NotBlank(message = "租户名称不能为空")
-    private String tenantName;
-
     @ApiModelProperty(value = "系统编码", required = true, dataType = "string")
     private String systemCode;
 
@@ -70,6 +62,10 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
     @NotBlank(message = "电价类型不能为空")
     private String bindType;
 
+    @ApiModelProperty(value = "父版本id", required = true, dataType = "string")
+    @NotBlank(message = "父版本id不能为空")
+    private String lastVersionId;
+
     public String getVersionName() {
         return versionName;
     }
@@ -92,22 +88,6 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
 
     public void setProvince(String province) {
         this.province = province;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getTenantName() {
-        return tenantName;
-    }
-
-    public void setTenantName(String tenantName) {
-        this.tenantName = tenantName;
     }
 
     public String getSystemCode() {
@@ -166,14 +146,20 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
         this.bindType = bindType;
     }
 
+    public String getLastVersionId() {
+        return lastVersionId;
+    }
+
+    public void setLastVersionId(String lastVersionId) {
+        this.lastVersionId = lastVersionId;
+    }
+
     @Override
     public String toString() {
-        return "ElectricityPriceVersionReqVO{" +
+        return "ElectricityPriceVersionCreateReqVO{" +
                 "versionName='" + versionName + '\'' +
                 ", provinceCode='" + provinceCode + '\'' +
                 ", province='" + province + '\'' +
-                ", tenantId='" + tenantId + '\'' +
-                ", tenantName='" + tenantName + '\'' +
                 ", systemCode='" + systemCode + '\'' +
                 ", systemName='" + systemName + '\'' +
                 ", equipmentId='" + equipmentId + '\'' +
@@ -181,6 +167,7 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
                 ", startDate=" + startDate +
                 ", priceType='" + priceType + '\'' +
                 ", bindType='" + bindType + '\'' +
+                ", lastVersionId='" + lastVersionId + '\'' +
                 '}';
     }
 }

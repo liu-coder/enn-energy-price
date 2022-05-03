@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import com.enn.energy.price.web.validator.DecimalValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.Valid;
@@ -18,14 +19,6 @@ public class ElectricityPriceRuleCreateReqVO implements Serializable {
 
     private static final long serialVersionUID = -583011369969060471L;
 
-    @ApiModelProperty(value = "租户id", required = true, dataType = "string")
-    @NotBlank(message = "租户id不能为空")
-    private String tenantId;
-
-    @ApiModelProperty(value = "租户名称", required = true, dataType = "string")
-    @NotBlank(message = "租户名称不能为空")
-    private String tenantName;
-
     @ApiModelProperty(value = "用电分类", required = true, dataType = "string")
     @NotBlank(message = "用电分类不能为空")
     private String industry;
@@ -39,30 +32,16 @@ public class ElectricityPriceRuleCreateReqVO implements Serializable {
     private String voltageLevel;
 
     @ApiModelProperty(value = "变压器容量", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String transformerCapacityPrice;
 
     @ApiModelProperty(value = "最大需量", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String maxCapacityPrice;
 
     @NotNull(message = "电价不能为空")
     @Valid
     private ElectricityPriceCreateReqVO electricityPriceCreateReqVO;
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getTenantName() {
-        return tenantName;
-    }
-
-    public void setTenantName(String tenantName) {
-        this.tenantName = tenantName;
-    }
 
     public String getIndustry() {
         return industry;
@@ -115,9 +94,7 @@ public class ElectricityPriceRuleCreateReqVO implements Serializable {
     @Override
     public String toString() {
         return "ElectricityPriceRuleCreateReqVO{" +
-                "tenantId='" + tenantId + '\'' +
-                ", tenantName='" + tenantName + '\'' +
-                ", industry='" + industry + '\'' +
+                "industry='" + industry + '\'' +
                 ", strategy='" + strategy + '\'' +
                 ", voltageLevel='" + voltageLevel + '\'' +
                 ", transformerCapacityPrice='" + transformerCapacityPrice + '\'' +

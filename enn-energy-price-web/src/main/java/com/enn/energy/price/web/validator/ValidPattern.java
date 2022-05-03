@@ -6,5 +6,5 @@ package com.enn.energy.price.web.validator;
  * @author wanglongab
  */
 public interface ValidPattern {
-    String DECIMAL = "\\d+(\\.\\d{1,2})?";
+    String DECIMAL = "^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$";
 }

@@ -25,7 +25,7 @@ public class ElectricityTimeSectionCreateReqVO implements Serializable {
 
     @ApiModelProperty(value = "结束时间", required = true, dataType = "string")
     @NotBlank(message = "结束时间不能为空")
-    @DateValue(format = "DatePattern.NORM_TIME_PATTERN", message = "请求时间格式有误")
+    @DateValue(format = DatePattern.NORM_TIME_PATTERN, message = "请求时间格式有误")
     private String endTime;
 
     @ApiModelProperty(value = "时段，0:尖;1:峰;2:平;3:谷", required = true, dataType = "string")

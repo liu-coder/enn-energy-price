@@ -31,9 +31,6 @@ public class ElectricitySeasonSectionCreateReqVO implements Serializable {
     @DateValue(format = "MM-dd", message = "请求时间格式有误")
     private String seaEndDate;
 
-    @Valid
-    private ValidationList<ElectricityTimeSectionCreateReqVO> timeSectionCreateReqVOList;
-
     public String getSeaStartDate() {
         return seaStartDate;
     }
@@ -50,20 +47,11 @@ public class ElectricitySeasonSectionCreateReqVO implements Serializable {
         this.seaEndDate = seaEndDate;
     }
 
-    public ValidationList<ElectricityTimeSectionCreateReqVO> getTimeSectionCreateReqVOList() {
-        return timeSectionCreateReqVOList;
-    }
-
-    public void setTimeSectionCreateReqVOList(ValidationList<ElectricityTimeSectionCreateReqVO> timeSectionCreateReqVOList) {
-        this.timeSectionCreateReqVOList = timeSectionCreateReqVOList;
-    }
-
     @Override
     public String toString() {
         return "ElectricitySeasonSectionCreateReqVO{" +
                 "seaStartDate='" + seaStartDate + '\'' +
                 ", seaEndDate='" + seaEndDate + '\'' +
-                ", timeSectionCreateReqVOList=" + timeSectionCreateReqVOList +
                 '}';
     }
 }

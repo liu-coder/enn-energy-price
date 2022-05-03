@@ -9,13 +9,25 @@ import lombok.AllArgsConstructor;
  */
 @AllArgsConstructor
 public enum PriceType {
-	//自定义电价
-	custom(1), 
-	//目录电价
+	/**
+	 * 自定义电价
+	 */
+	custom(1),
+
+	/**
+	 * 目录电价
+	 */
 	catalogue(2),
-	
-	//单一电价(自定义电价)
-	meteringCustom(3);
+
+	/**
+	 * 单一电价(自定义电价)
+	 */
+	meteringCustom(3),
+
+	/**
+	 * 代购电价
+	 */
+	proxy(4);
 	
 	private final int priceType;
 

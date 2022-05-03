@@ -4,8 +4,10 @@ import com.enn.energy.price.biz.service.bo.proxyprice.ElectricitySeasonCreateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricitySeasonSectionCreateBO;
 import com.enn.energy.price.web.vo.requestvo.ElectricitySeasonCreateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricitySeasonSectionCreateReqVO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityTimeSectionCreateReqVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -14,12 +16,19 @@ import org.mapstruct.factory.Mappers;
  * @author sunjidong
  * @date 2022/5/1
  **/
-@Mapper(uses = {ElectricitySeasonSectionCreateReqVOMapper.class})
+@Mapper(uses = {
+                ElectricitySeasonSectionCreateReqVOMapper.class,
+                ElectricityTimeSectionCreateReqVOMapper.class
+               }
+        )
 public interface ElectricitySeasonCreateReqVOMapper {
 
     ElectricitySeasonSectionCreateReqVOMapper INSTANCE = Mappers.getMapper(ElectricitySeasonSectionCreateReqVOMapper.class);
 
-    @Mapping(source = "seasonCreateReqVO.seasonSectionCreateReqVOList", target = "seasonSectionCreateBOList")
+    @Mappings({
+            @Mapping(source = "seasonCreateReqVO.seasonSectionCreateReqVOList", target = "seasonSectionCreateBOList"),
+            @Mapping(source = "seasonCreateReqVO.timeSectionCreateReqVOList", target = "timeSectionCreateBOList"),
+    })
     ElectricitySeasonCreateBO seasonCreateReqVOToBO(ElectricitySeasonCreateReqVO seasonCreateReqVO);
 
 }

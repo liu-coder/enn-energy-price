@@ -28,6 +28,9 @@ public class ElectricitySeasonCreateReqVO implements Serializable {
     @Valid
     private ValidationList<ElectricitySeasonSectionCreateReqVO> seasonSectionCreateReqVOList;
 
+    @Valid
+    private ValidationList<ElectricityTimeSectionCreateReqVO> timeSectionCreateReqVOList;
+
     public String getSeasonSectionName() {
         return seasonSectionName;
     }
@@ -44,11 +47,20 @@ public class ElectricitySeasonCreateReqVO implements Serializable {
         this.seasonSectionCreateReqVOList = seasonSectionCreateReqVOList;
     }
 
+    public ValidationList<ElectricityTimeSectionCreateReqVO> getTimeSectionCreateReqVOList() {
+        return timeSectionCreateReqVOList;
+    }
+
+    public void setTimeSectionCreateReqVOList(ValidationList<ElectricityTimeSectionCreateReqVO> timeSectionCreateReqVOList) {
+        this.timeSectionCreateReqVOList = timeSectionCreateReqVOList;
+    }
+
     @Override
     public String toString() {
         return "ElectricitySeasonCreateReqVO{" +
                 "seasonSectionName='" + seasonSectionName + '\'' +
                 ", seasonSectionCreateReqVOList=" + seasonSectionCreateReqVOList +
+                ", timeSectionCreateReqVOList=" + timeSectionCreateReqVOList +
                 '}';
     }
 }

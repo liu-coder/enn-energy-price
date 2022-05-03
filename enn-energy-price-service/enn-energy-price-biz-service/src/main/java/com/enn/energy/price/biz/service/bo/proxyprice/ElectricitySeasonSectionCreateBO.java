@@ -21,9 +21,6 @@ public class ElectricitySeasonSectionCreateBO implements Serializable {
 
     private String seaEndDate;
 
-    @Valid
-    private ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList;
-
     public String getSeaStartDate() {
         return seaStartDate;
     }
@@ -40,20 +37,11 @@ public class ElectricitySeasonSectionCreateBO implements Serializable {
         this.seaEndDate = seaEndDate;
     }
 
-    public ValidationList<ElectricityTimeSectionCreateBO> getTimeSectionCreateBOList() {
-        return timeSectionCreateBOList;
-    }
-
-    public void setTimeSectionCreateBOList(ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList) {
-        this.timeSectionCreateBOList = timeSectionCreateBOList;
-    }
-
     @Override
     public String toString() {
         return "ElectricitySeasonSectionCreateBO{" +
                 "seaStartDate='" + seaStartDate + '\'' +
                 ", seaEndDate='" + seaEndDate + '\'' +
-                ", timeSectionCreateBOList=" + timeSectionCreateBOList +
                 '}';
     }
 }

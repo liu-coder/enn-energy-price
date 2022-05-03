@@ -17,10 +17,6 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
 
     private static final long serialVersionUID = -583011369969060471L;
 
-    private String tenantId;
-
-    private String tenantName;
-
     private String industry;
 
     private String strategy;
@@ -32,22 +28,6 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
     private String maxCapacityPrice;
 
     private ElectricityPriceCreateBO electricityPriceCreateBO;
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getTenantName() {
-        return tenantName;
-    }
-
-    public void setTenantName(String tenantName) {
-        this.tenantName = tenantName;
-    }
 
     public String getIndustry() {
         return industry;
@@ -100,9 +80,7 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
     @Override
     public String toString() {
         return "ElectricityPriceRuleCreateBO{" +
-                "tenantId='" + tenantId + '\'' +
-                ", tenantName='" + tenantName + '\'' +
-                ", industry='" + industry + '\'' +
+                "industry='" + industry + '\'' +
                 ", strategy='" + strategy + '\'' +
                 ", voltageLevel='" + voltageLevel + '\'' +
                 ", transformerCapacityPrice='" + transformerCapacityPrice + '\'' +

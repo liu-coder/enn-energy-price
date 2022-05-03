@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -32,7 +33,7 @@ public class ElectricityPriceStructureRuleCreateReqVO implements Serializable {
     @NotBlank(message = "电压等级不能为空,多个使用,拼接")
     private String voltageLevels;
 
-    @NotNull(message = "季节不能为空")
+    @NotEmpty(message = "季节不能为空")
     @Valid
     private ValidationList<ElectricitySeasonCreateReqVO> seasonCreateReqVOList;
 

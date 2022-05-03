@@ -24,6 +24,8 @@ public class ElectricityPriceStructureCreateBO implements Serializable {
 
     private String districtCodes;
 
+    private String parentId;
+
     public String getStructureName() {
         return structureName;
     }
@@ -56,13 +58,22 @@ public class ElectricityPriceStructureCreateBO implements Serializable {
         this.districtCodes = districtCodes;
     }
 
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     @Override
     public String toString() {
-        return "ElectricityPriceStructureReqVO{" +
+        return "ElectricityPriceStructureCreateBO{" +
                 "structureName='" + structureName + '\'' +
                 ", provinceCode='" + provinceCode + '\'' +
                 ", cityCodes='" + cityCodes + '\'' +
                 ", districtCodes='" + districtCodes + '\'' +
+                ", parentId='" + parentId + '\'' +
                 '}';
     }
 }

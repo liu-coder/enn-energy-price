@@ -17,8 +17,8 @@ public interface ElectricityPriceRuleCreateReqVOMapper {
 
     ElectricityPriceRuleCreateReqVOMapper INSTANCE = Mappers.getMapper(ElectricityPriceRuleCreateReqVOMapper.class);
 
-    @Mapping(source = "priceRuleCreateVO.electricityPriceReqVO", target = "electricityPriceReqVO")
-    ElectricityPriceRuleCreateBO priceRuleCreateVOToBO(ElectricityPriceRuleCreateReqVO priceRuleCreateReqVO);
+    @Mapping(source = "priceRuleCreateReqVO.electricityPriceCreateReqVO", target = "electricityPriceCreateBO")
+    ElectricityPriceRuleCreateBO priceRuleCreateReqVOToBO(ElectricityPriceRuleCreateReqVO priceRuleCreateReqVO);
 
 
 }

@@ -46,6 +46,8 @@ public class ElectricityPriceVersionCreateBO implements Serializable {
 
     private String bindType;
 
+    private String lastVersionId;
+
     public String getVersionName() {
         return versionName;
     }
@@ -142,9 +144,17 @@ public class ElectricityPriceVersionCreateBO implements Serializable {
         this.bindType = bindType;
     }
 
+    public String getLastVersionId() {
+        return lastVersionId;
+    }
+
+    public void setLastVersionId(String lastVersionId) {
+        this.lastVersionId = lastVersionId;
+    }
+
     @Override
     public String toString() {
-        return "ElectricityPriceVersionReqVO{" +
+        return "ElectricityPriceVersionCreateBO{" +
                 "versionName='" + versionName + '\'' +
                 ", provinceCode='" + provinceCode + '\'' +
                 ", province='" + province + '\'' +
@@ -157,6 +167,7 @@ public class ElectricityPriceVersionCreateBO implements Serializable {
                 ", startDate=" + startDate +
                 ", priceType='" + priceType + '\'' +
                 ", bindType='" + bindType + '\'' +
+                ", lastVersionId='" + lastVersionId + '\'' +
                 '}';
     }
 }

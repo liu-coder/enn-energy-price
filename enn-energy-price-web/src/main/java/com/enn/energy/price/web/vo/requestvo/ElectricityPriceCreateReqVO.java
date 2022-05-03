@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import com.enn.energy.price.web.validator.DecimalValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -16,24 +17,31 @@ public class ElectricityPriceCreateReqVO implements Serializable {
     private static final long serialVersionUID = -5187909940116643626L;
 
     @ApiModelProperty(value = "电度用电价格", required = false, dataType = "string")
+    @DecimalValue
     private String consumptionPrice;
 
     @ApiModelProperty(value = "电度输配价格", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String distributionPrice;
 
     @ApiModelProperty(value = "政府附加价格", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String govAddPrice;
 
     @ApiModelProperty(value = "尖价", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String sharpPrice;
 
     @ApiModelProperty(value = "峰价", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String peakPrice;
 
     @ApiModelProperty(value = "平价", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String levelPrice;
 
     @ApiModelProperty(value = "谷价", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String valleyPrice;
 
     public String getConsumptionPrice() {

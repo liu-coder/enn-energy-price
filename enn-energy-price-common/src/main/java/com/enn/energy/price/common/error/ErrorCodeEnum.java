@@ -30,7 +30,8 @@ public enum ErrorCodeEnum {
     SELECT_SERVICE_UNACCESS_ERROR("E20008","后端电价服务不可达，暂时无法查询"),
     SELECT_VERSION_SIZE_ERROR("E20009","批量查询版本数量过多，请效验查询数量"),
     
-    REIDS_LOCK_ERROR("E30001","获取redis red lock 失败")
+    REIDS_LOCK_ERROR("E30001","获取redis red lock 失败"),
+    REPEAT_REQUEST("A0506", "用户重复请求")
     ;
     private String errorCode;
     private String errorMsg;

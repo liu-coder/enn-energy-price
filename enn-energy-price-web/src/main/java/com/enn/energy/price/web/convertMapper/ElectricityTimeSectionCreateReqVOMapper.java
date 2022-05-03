@@ -16,6 +16,6 @@ public interface ElectricityTimeSectionCreateReqVOMapper {
 
     ElectricityTimeSectionCreateReqVOMapper INSTANCE = Mappers.getMapper(ElectricityTimeSectionCreateReqVOMapper.class);
 
-    ElectricityTimeSectionCreateBO timeSectionCreateReqVOMapperToBO(ElectricityTimeSectionCreateReqVO timeSectionCreateReqVO);
+    ElectricityTimeSectionCreateBO timeSectionCreateReqVOToBO(ElectricityTimeSectionCreateReqVO timeSectionCreateReqVO);
 
 }

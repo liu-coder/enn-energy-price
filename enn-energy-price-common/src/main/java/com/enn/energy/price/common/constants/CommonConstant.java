@@ -74,4 +74,11 @@ public class CommonConstant {
     public static String NOLEAP_YEAR_FEB_END = "02-28";
 
     public final static String PRICE_METHOD_P = "p";
+
+    /**
+     * redis key
+     */
+    public static class RedisKey {
+        public final static String LOCK_PROXY_PRICE_VERSION_CREATE_PREFIX = "proxyprice:lock:version:create";
+    }
 }
