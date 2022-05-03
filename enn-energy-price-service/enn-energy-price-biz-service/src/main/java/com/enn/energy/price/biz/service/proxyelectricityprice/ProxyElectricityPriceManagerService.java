@@ -1,6 +1,8 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpdateBO;
+import top.rdfa.framework.biz.ro.RdfaResult;
 
 /**
  * 代购电价service
@@ -18,5 +20,11 @@ public interface ProxyElectricityPriceManagerService {
      * @return Boolean
      */
     Boolean createPriceVersionStructures(ElectricityPriceVersionStructuresCreateBO priceVersionStructuresCreateBO);
+
+    /**
+     * params  体系对象
+     * @return boolean
+     */
+    RdfaResult updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO);
 
 }

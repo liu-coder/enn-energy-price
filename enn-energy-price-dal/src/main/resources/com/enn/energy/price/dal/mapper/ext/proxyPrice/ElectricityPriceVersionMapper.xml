@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyPrice.ElectricityPriceVersionMapper">
+
+    <update id="updateElectricityPriceVersionById">
+        update electricity_price_version set
+        version_name = #{versionName,jdbcType=VARCHAR},
+        updator = #{updator,jdbcType=VARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        where tenant_id = #{updator,jdbcType=VARCHAR}
+        and  state = #{state,jdbcType=INTEGER}
+        and  id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>
