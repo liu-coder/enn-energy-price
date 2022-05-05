@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,6 +35,12 @@ public class ElectricityPriceStructureUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "区县编码不能为空,多个用,拼接",required = true)
     @NotBlank(message = "区县编码不能为空")
     private String districtCodes;
+
+    @ApiModelProperty(value = "变更类型,0:增加 1:删除 2:修改 3:无变化")
+    @NotNull(message = "变更类型不能为空")
+    private Integer changeType;
+
+
     @ApiModelProperty(value = "电价价格列表",required = true)
     @NotEmpty(message = "电价价格列表不能为空")
     @Valid

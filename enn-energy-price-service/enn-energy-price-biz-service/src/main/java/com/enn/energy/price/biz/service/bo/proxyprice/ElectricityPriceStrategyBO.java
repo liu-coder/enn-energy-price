@@ -2,6 +2,7 @@ package com.enn.energy.price.biz.service.bo.proxyprice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -15,8 +16,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class ElectricityPriceStrategyBO implements Serializable {
     private static final long serialVersionUID = 6502612562096991373L;
+    private String strategyName;
     private String compare;
     private String temperature;
     private List<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOList;

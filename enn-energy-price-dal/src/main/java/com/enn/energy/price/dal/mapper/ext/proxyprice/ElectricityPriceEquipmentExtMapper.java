@@ -1,4 +1,4 @@
-package com.enn.energy.price.dal.mapper.ext.proxyPrice;
+package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
 import org.apache.ibatis.annotations.Mapper;

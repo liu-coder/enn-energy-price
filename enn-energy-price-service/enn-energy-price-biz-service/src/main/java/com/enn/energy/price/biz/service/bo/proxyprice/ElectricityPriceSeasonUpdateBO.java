@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -24,10 +25,16 @@ import java.util.List;
 @NoArgsConstructor
 public class ElectricityPriceSeasonUpdateBO implements Serializable {
     private static final long serialVersionUID = 3323637832408269048L;
-    private Integer seasonId;
+    private Long seasonSectionId;
     private String seasonName;
-    private Date seaStartDate;
-    private Date seaEndDate;
+    private List<SeasonDate> seasonDateList;
     private List<ElectricityPriceStrategyBO> electricityPriceStrategyBOList;
 
+    @Data
+    @AllArgsConstructor
+    @Getter
+    public class SeasonDate implements Serializable{
+        private String seaStartDate;
+        private String seaEndDate;
+    }
 }

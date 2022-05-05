@@ -20,7 +20,7 @@ import java.util.List;
 public class ElectricityPriceVersionUpdateBO implements Serializable {
     private static final long serialVersionUID = -6507351604437158608L;
 
-    private Long id;
+    private String id;
     private String versionName;
     private String province;
     private String tenantId;

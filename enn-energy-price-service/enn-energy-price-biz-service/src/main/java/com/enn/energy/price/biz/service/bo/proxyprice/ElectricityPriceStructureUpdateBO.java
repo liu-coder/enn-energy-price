@@ -19,8 +19,10 @@ public class ElectricityPriceStructureUpdateBO implements Serializable {
     private static final long serialVersionUID = 5420388115986723646L;
     private String id;
     private String structureName;
+    private String provinceCode;
     private String cityCodes;
     private String districtCodes;
+    private Integer changeType;
     private List<ElectricityPriceUpdateBO> electricityPriceUpdateBOList;
     private List<ElectricityPriceSeasonRuleUpdateBO> electricityPriceSeasonRuleUpdateBOList;
 }

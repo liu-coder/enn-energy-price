@@ -23,6 +23,6 @@ public class ElectricityTimeSectionUpdateBO implements Serializable {
     private static final long serialVersionUID = -6215969465976610323L;
     private Integer timeSectionId;
     private String periods;
-    private Date startTime;
-    private Date endTime;
+    private String startTime;
+    private String endTime;
 }

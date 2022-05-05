@@ -1,6 +1,7 @@
 package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
+import com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure;
 import com.enn.energy.price.web.vo.requestvo.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

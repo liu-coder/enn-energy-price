@@ -21,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ElectricityPriceSeasonRuleUpdateBO implements Serializable {
     private static final long serialVersionUID = -9126779565518348911L;
-    private Integer structureRuleId;
+    private Integer id;
     private String industries;
     private String strategies;
     private String voltageLevels;
