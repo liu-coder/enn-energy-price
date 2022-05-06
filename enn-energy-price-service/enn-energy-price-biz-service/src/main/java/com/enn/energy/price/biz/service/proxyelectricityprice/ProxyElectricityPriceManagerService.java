@@ -25,6 +25,6 @@ public interface ProxyElectricityPriceManagerService {
      * params  体系对象
      * @return boolean
      */
-    RdfaResult updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO);
+    RdfaResult<Boolean> updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO);
 
 }

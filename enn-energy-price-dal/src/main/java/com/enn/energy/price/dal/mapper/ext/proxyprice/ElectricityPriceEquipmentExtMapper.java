@@ -19,4 +19,11 @@ public interface ElectricityPriceEquipmentExtMapper {
      * @return
      */
     List<ElectricityPriceEquipment> queryEquipmentBinding(@Param( "versionId" ) String versionId);
+
+    /**
+     * 查询体系下的设备绑定关系
+     * @param structureId
+     * @return
+     */
+    List<ElectricityPriceEquipment> queryEquipmentBindingByStructureId(@Param( "structureId" ) String structureId);
 }

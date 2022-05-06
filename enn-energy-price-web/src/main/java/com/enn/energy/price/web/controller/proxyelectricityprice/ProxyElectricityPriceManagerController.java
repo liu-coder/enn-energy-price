@@ -85,8 +85,8 @@ public class ProxyElectricityPriceManagerController {
 
     @PostMapping("/updatePriceVersion")
     @ApiOperation( "修改电价版本" )
-    public RdfaResult updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
+    public RdfaResult<Boolean> updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
         ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
-        return  proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
+        return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
     }
 }

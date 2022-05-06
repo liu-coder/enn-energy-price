@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -30,21 +31,18 @@ import java.util.List;
 public class ElectricityPriceSeasonUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 6708324781222848894L;
     @ApiModelProperty(value = "季节id,新增的不传,修改的需要")
-    private Integer seasonId;
+    private Long seasonSectionId;
     @ApiModelProperty(value = "季节名称")
     private String seasonName;
-    @ApiModelProperty(value = "季节开始时间,时间格式MM-dd",required = true)
-    @DateValue(format = "MM-dd", message = "季节开始时间格式有误")
-    @NotBlank(message = "季节开始时间不能为空")
-    private String seaStartDate;
-    @ApiModelProperty(value ="季节结束时间,时间格式MM-dd",required = true )
-    @DateValue(format = "MM-dd", message = "季节结束时间格式有误")
-    @NotBlank(message = "季节结束时间不能为空")
-    private String seaEndDate;
+
+    @ApiModelProperty("季节时间列表")
+    @NotEmpty(message = "季节时间列表不能为空")
+    @Valid
+    private List<SeasonDateVO> seasonDateVO;
+
     @ApiModelProperty(value = "修正策略列表")
     @NotEmpty(message = "修正策略列表不能为空")
     @Valid
     private List<ElectricityPriceStrategyReqVO> electricityPriceStrategyReqVOList;
-
 
 }

@@ -1,6 +1,6 @@
 package com.enn.energy.price.biz.service.convertMapper;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonRuleUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureRuleUpdateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonUpdateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureUpdateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceUpdateBO;
@@ -25,7 +25,7 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
      * @param electricityPriceStructureRuleUpdateBo
      * @return
      */
-    ElectricityPriceStructureRule electricityPriceStructureRuleBOTOPO(ElectricityPriceSeasonRuleUpdateBO electricityPriceStructureRuleUpdateBo);
+    ElectricityPriceStructureRule electricityPriceStructureRuleBOTOPO(ElectricityPriceStructureRuleUpdateBO electricityPriceStructureRuleUpdateBo);
 
 
     /**
@@ -46,4 +46,5 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
      */
 
     ElectricityPrice electricityPriceBOTOPO(ElectricityPriceUpdateBO electricityPriceUpdateBO);
+
 }
