@@ -12,4 +12,11 @@ public interface ElectricityPriceVersionExtMapper {
      */
     int updateElectricityPriceVersionById(ElectricityPriceVersion electricityPriceVersion);
 
+
+    /**
+     * 查询当前版本的前一个版本
+     * @param electricityPriceVersion
+     * @return
+     */
+    ElectricityPriceVersion queryBeforePriceVersion(ElectricityPriceVersion electricityPriceVersion);
 }

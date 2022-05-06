@@ -26,4 +26,12 @@ public interface ElectricityPriceEquipmentExtMapper {
      * @return
      */
     List<ElectricityPriceEquipment> queryEquipmentBindingByStructureId(@Param( "structureId" ) String structureId);
+
+
+    /**
+     * 删除设备绑定关系
+     * @param versionId
+     * @return
+     */
+    int deleteEquipmentBindingByVersionId(@Param( "versionId" ) String versionId);
 }
