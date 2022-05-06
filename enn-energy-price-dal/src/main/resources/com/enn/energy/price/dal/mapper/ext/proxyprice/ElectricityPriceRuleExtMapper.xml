@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceRuleExtMapper">
+    <sql id="Base_Column_List">
+        id, rule_id, version_id, structure_id, structure_rule_id, tenant_id, tenant_name,
+        industry, strategy, voltage_level, transformer_capacity_price, max_capacity_price,
+        state, create_time, update_time
+    </sql>
+
+
+    <update id="bacthDeletePriceRuleByRuleIds">
+        update electricity_price_rule set state=1 WHERE id IN
+        <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
+            #{ruleId}
+        </foreach>
+    </update>
+    <select id="queryRuleListByStructureId" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceRule">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price_rule
+        where structure_id = #{structureId}
+    </select>
+</mapper>

@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -35,6 +34,8 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     @NotBlank(message = "版本名不能为空")
     @Length(max = 50,message = "电价体系名称最长50个字符")
     private String versionName;
+    @ApiModelProperty(value = "省编码",required = true)
+    @NotBlank(message = "省编码不能为空")
     private String province;
     @ApiModelProperty(value = "租户id",required = true)
     @NotBlank(message = "租户id不能为空")

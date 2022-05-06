@@ -10,7 +10,7 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_structure
-        where version_id = #{versionId}
+        where version_id = #{versionId} and state=0
 
 
     </select>
@@ -24,4 +24,18 @@
             #{id}
         </foreach>
     </select>
+
+
+
+    <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
+        update electricity_price_structure
+        set
+        structure_name = #{structureName,jdbcType=VARCHAR},
+        province_code = #{provinceCode,jdbcType=VARCHAR},
+        city_codes = #{cityCodes,jdbcType=VARCHAR},
+        district_codes = #{districtCodes,jdbcType=VARCHAR},
+        updator = #{updator,jdbcType=VARCHAR},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=BIGINT} and  state = #{state,jdbcType=TINYINT},
+    </update>
 </mapper>

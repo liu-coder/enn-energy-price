@@ -27,14 +27,7 @@ public class ElectricityPriceSeasonUpdateBO implements Serializable {
     private static final long serialVersionUID = 3323637832408269048L;
     private Long seasonSectionId;
     private String seasonName;
-    private List<SeasonDate> seasonDateList;
+    private List<SeansonDateBO> seasonDateList;
     private List<ElectricityPriceStrategyBO> electricityPriceStrategyBOList;
 
-    @Data
-    @AllArgsConstructor
-    @Getter
-    public class SeasonDate implements Serializable{
-        private String seaStartDate;
-        private String seaEndDate;
-    }
 }

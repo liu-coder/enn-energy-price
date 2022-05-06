@@ -5,12 +5,28 @@
         id, structure_id, structure_rule_id, season_section_id, season_section_name, sea_start_date,
         sea_end_date, state, create_time, update_time
     </sql>
+    <update id="batchDeleteSeasonSectionByIds">
+        update electricity_season_section set state=1 where id in
+        <foreach collection="seansonIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
 
-    <select id="selectSeasonSectionListBySeasonSectionId"
+    <select id="querySeasonSectionListBySeasonSectionId"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">
         select
         <include refid="Base_Column_List" />
         from electricity_season_section
         where season_section_id=#{seasonSectionId}
+    </select>
+    <select id="querySeasonSectionIdsByStructureRuleIds"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_season_section
+        where structure_rule_id in
+        <foreach collection="structureRuleIds" item="structureRuleId" open="(" close=")" separator=",">
+            #{structureRuleId}
+        </foreach>
     </select>
 </mapper>

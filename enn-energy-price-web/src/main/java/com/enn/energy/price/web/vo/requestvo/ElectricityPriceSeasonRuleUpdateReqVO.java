@@ -24,7 +24,7 @@ import java.util.List;
 public class ElectricityPriceSeasonRuleUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 6708324781222848894L;
     @ApiModelProperty(value = "体系规则id,新增的不传id,原有的传id")
-    private Integer structureRuleId;
+    private String id;
     @ApiModelProperty(value = "用电行业,多个用电行业用,进行分割",required = true)
     @NotBlank(message = "用电行业不能为空")
     private String industries;

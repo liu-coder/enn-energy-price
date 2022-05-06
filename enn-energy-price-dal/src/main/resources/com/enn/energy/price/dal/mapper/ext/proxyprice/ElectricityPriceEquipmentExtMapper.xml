@@ -8,6 +8,12 @@
     <select id="queryEquipmentBinding" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
         <include refid="Base_Column_List" />
-        from electricity_price_equipment where version_id=#{versionId}
+        from electricity_price_equipment where version_id=#{versionId} and state=0
+    </select>
+    <select id="queryEquipmentBindingByStructureId"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price_equipment where structure_id=#{structureId} and state=0
     </select>
 </mapper>

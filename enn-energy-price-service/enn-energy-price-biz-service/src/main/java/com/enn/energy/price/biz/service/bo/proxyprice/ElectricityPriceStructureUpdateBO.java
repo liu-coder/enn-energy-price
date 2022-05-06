@@ -24,5 +24,5 @@ public class ElectricityPriceStructureUpdateBO implements Serializable {
     private String districtCodes;
     private Integer changeType;
     private List<ElectricityPriceUpdateBO> electricityPriceUpdateBOList;
-    private List<ElectricityPriceSeasonRuleUpdateBO> electricityPriceSeasonRuleUpdateBOList;
+    private List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList;
 }
