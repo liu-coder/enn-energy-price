@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice.impl;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
@@ -262,36 +263,74 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //1.1根据是否有id区分是否新增
         List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList = electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList();
         List<ElectricityPriceStructureUpdateBO> addCollect = electricityPriceStructureUpdateBOList.stream().filter( t -> StringUtils.isEmpty( t.getId() ) ).collect( Collectors.toList() );
-        //1.2查询版本下面的体系列表比对哪些缺失
-        List<Long> deleteIdList = queryDeleteStructureIds( electricityPriceStructureUpdateBOList, electricityPriceVersionUpdateBO.getId() );
-        //1.3根据changeType判断是否修改
+        //1.2根据changeType判断是否修改
         List<ElectricityPriceStructureUpdateBO> updateCollect = electricityPriceStructureUpdateBOList.stream().filter( t -> t.getChangeType().equals( changeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
-        //1.2 增加体系直接增加
-
         String lockKey =  String.format("%s:%s:%s", CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX,
                 tenantId, electricityPriceVersionUpdateBO.getId());
         Lock lock = null;
         try {
             lock = redDisLock.lock(lockKey  );
             if (ObjectUtil.isNull( lock )) {
-                return RdfaResult.fail( ErrorCodeEnum.REPEAT_REQUEST.getErrorCode(), ErrorCodeEnum.REPEAT_REQUEST.getErrorMsg() );
+                return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
             }
+            //1.3查询版本下面的体系列表比对哪些缺失
+            List<Long> deleteIdList = queryDeleteStructureIds( electricityPriceStructureUpdateBOList, electricityPriceVersionUpdateBO.getId() );
+            //2.1 增加体系直接增加
             addCollect.forEach( t->{
                 createStructure(t,electricityPriceVersionUpdateBO.getId());
             } );
-            //1.3 删除体系直接删除
+            //2.2 删除体系直接删除
             deleteIdList.forEach( this::deleteStructure );
-            //1.4 修改体系
+            //2.3 修改体系(暂行覆盖)
             updateCollect.forEach( t->{
                 updateStructure(t,electricityPriceVersionUpdateBO.getId());
             } );
         } catch (LockFailException e) {
-            return RdfaResult.fail(ErrorCodeEnum.REPEAT_REQUEST.getErrorCode(), ErrorCodeEnum.REPEAT_REQUEST.getErrorMsg());
+            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
         }finally {
             redDisLock.unlock(lockKey);
         }
         return RdfaResult.success( true );
 
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public RdfaResult<Boolean> deletePriceVersion(ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO) {
+        String lockKey =  String.format("%s:%s:%s", CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX,
+                tenantId, electricityPriceVersionDeleteBO.getId());
+        Lock lock = null;
+        try {
+            lock = redDisLock.lock( lockKey );
+            if (ObjectUtil.isNull( lock )) {
+                return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
+            }
+            //根据电价版本id查询电价体系id
+            List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.queryListByVersionId( electricityPriceVersionDeleteBO.getId() );
+            //根据电价体系id删除
+            electricityPriceStructures.forEach( t->{
+                deleteStructure( t.getId() );
+            } );
+            //根据版本id删除电价体系与设备的关联关系
+            electricityPriceEquipmentExtMapper.deleteEquipmentBindingByVersionId(electricityPriceVersionDeleteBO.getId());
+            //查询当前版本的上个版本
+            ElectricityPriceVersion electricityPriceVersion=new ElectricityPriceVersion();
+            electricityPriceVersion.setProvince( electricityPriceVersionDeleteBO.getProvinceCode() );
+            electricityPriceVersion.setStartDate( DateUtil.parse(electricityPriceVersionDeleteBO.getStartDate(), DatePattern.NORM_DATE_PATTERN) );
+            electricityPriceVersion.setEndDate(  DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN));
+            ElectricityPriceVersion beforePriceVersion = electricityPriceVersionExtMapper.queryBeforePriceVersion( electricityPriceVersion );
+            //更新上一个版本 并删除当前版本
+            beforePriceVersion.setEndDate( DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN) );
+            beforePriceVersion.setUpdator( tenantId );
+            beforePriceVersion.setUpdateTime( DateUtil.date() );
+            electricityPriceVersionMapper.updateByPrimaryKey( beforePriceVersion );
+            electricityPriceVersionMapper.deleteByPrimaryKey( Long.valueOf( electricityPriceVersionDeleteBO.getId() ) );
+        } catch (LockFailException e) {
+            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
+        }finally {
+            redDisLock.unlock(lockKey);
+        }
+        return RdfaResult.success(true);
     }
 
     /**

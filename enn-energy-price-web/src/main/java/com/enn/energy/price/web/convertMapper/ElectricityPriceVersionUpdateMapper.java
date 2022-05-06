@@ -65,4 +65,10 @@ public interface ElectricityPriceVersionUpdateMapper {
      * @return
      */
     SeansonDateBO seasonDateVOTOBO(SeasonDateVO seasonDateVO);
+
+    /**
+     * @param electricityPriceVersionUpdateReqVO
+     * @return bo
+     */
+    ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOTOBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionUpdateReqVO);
 }

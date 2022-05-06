@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice;
 
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionDeleteBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpdateBO;
 import top.rdfa.framework.biz.ro.RdfaResult;
@@ -27,4 +28,11 @@ public interface ProxyElectricityPriceManagerService {
      */
     RdfaResult<Boolean> updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO);
 
+
+    /**
+     * 删除电价版本
+     * @param electricityPriceVersionDeleteBO
+     * @return
+     */
+    RdfaResult<Boolean> deletePriceVersion(ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO);
 }

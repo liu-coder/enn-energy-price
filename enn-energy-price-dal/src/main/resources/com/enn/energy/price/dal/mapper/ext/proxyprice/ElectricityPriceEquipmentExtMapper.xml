@@ -5,6 +5,9 @@
         id, equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
         structure_rule_id, system_code, adjust, state, creator, updator, create_time, update_time
     </sql>
+    <update id="deleteEquipmentBindingByVersionId">
+        update electricity_price_equipment set state=1 where version_id=#{versionId}
+    </update>
     <select id="queryEquipmentBinding" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
         <include refid="Base_Column_List" />

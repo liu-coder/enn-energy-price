@@ -1,6 +1,7 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionDeleteBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpdateBO;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
@@ -8,16 +9,15 @@ import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateMapper;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionDeleteReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
@@ -89,4 +89,14 @@ public class ProxyElectricityPriceManagerController {
         ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
         return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
     }
+
+    @PostMapping("/deletePriceVersion")
+    @ApiOperation( "删除电价版本" )
+    public RdfaResult<Boolean> deletePriceVersion(@RequestBody @Valid ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO){
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionDeleteReqVOTOBO( electricityPriceVersionDeleteReqVO );
+        return proxyElectricityPriceManagerService.deletePriceVersion(electricityPriceVersionDeleteBO);
+    }
+
+
+
 }
