@@ -6,8 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum StateEum {
-    NORMAL(1,"正常"),
-    DELETE(0,"删除");
+    NORMAL(0,"正常"),
+    DELETE(1,"删除");
     private int value;
     private String description;
 

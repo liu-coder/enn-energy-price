@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityTimeSectionExtMapper">
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityTimeSectionCustomMapper">
 
     <delete id="batchDeleteTimeSectionBySeasonSectionIds">
         update electricity_time_section set state=0 WHERE season_section_id IN

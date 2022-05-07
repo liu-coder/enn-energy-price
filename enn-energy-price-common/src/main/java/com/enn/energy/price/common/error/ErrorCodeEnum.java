@@ -31,8 +31,11 @@ public enum ErrorCodeEnum {
     SELECT_VERSION_SIZE_ERROR("E20009","批量查询版本数量过多，请效验查询数量"),
     
     REIDS_LOCK_ERROR("E30001","获取redis red lock 失败"),
-    REPEAT_REQUEST("A0506", "用户重复请求"),
-    RETRY_AFTER("E30002","稍后重试"),
+    REPEAT_REQUEST("E30002", "用户重复请求"),
+    REPEAT_VERSION("E30003","版本已存在"),
+    STRUCTURE_NOT_EXISTS("E30004","该省下体系未配置，请确认"),
+    VALIDATE_FAIL("E30005","校验不通过，请确认"),
+    RETRY_AFTER("E30006","稍后重试")
     ;
     private String errorCode;
     private String errorMsg;

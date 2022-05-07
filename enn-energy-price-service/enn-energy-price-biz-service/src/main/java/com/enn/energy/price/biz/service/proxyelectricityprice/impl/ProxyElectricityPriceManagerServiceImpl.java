@@ -11,7 +11,6 @@ import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionUpd
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.BoolLogic;
-import com.enn.energy.price.common.enums.ResponseEum;
 import com.enn.energy.price.common.enums.changeTypeEum;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.dal.mapper.ext.proxyprice.*;
@@ -23,11 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
-
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,28 +44,28 @@ import java.util.stream.Collectors;
 public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricityPriceManagerService {
 
     @Autowired
-    ElectricityPriceVersionExtMapper electricityPriceVersionExtMapper;
+    ElectricityPriceVersionCustomMapper electricityPriceVersionExtMapper;
 
     @Autowired
-    ElectricityPriceStructureExtMapper electricityPriceStructureExtMapper;
+    ElectricityPriceStructureCustomMapper electricityPriceStructureExtMapper;
 
     @Autowired
-    ElectricityPriceEquipmentExtMapper electricityPriceEquipmentExtMapper;
+    ElectricityPriceEquipmentCustomMapper electricityPriceEquipmentExtMapper;
 
     @Autowired
-    ElectricityPriceStructureRuleExtMapper electricityPriceStructureRuleExtMapper;
+    ElectricityPriceStructureRuleCustomMapper electricityPriceStructureRuleExtMapper;
 
     @Autowired
-    ElectricityPriceSeasonSectionExtMapper electricityPriceSeasonSectionExtMapper;
+    ElectricityPriceSeasonSectionCustomMapper electricityPriceSeasonSectionExtMapper;
 
     @Autowired
-    ElectricityTimeSectionExtMapper electricityTimeSectionExtMapper;
+    ElectricityTimeSectionCustomMapper electricityTimeSectionExtMapper;
 
     @Autowired
-    ElectricityPriceRuleExtMapper electricityPriceRuleExtMapper;
+    ElectricityPriceRuleCustomMapper electricityPriceRuleExtMapper;
 
     @Autowired
-    ElectricityPriceExtMapper electricityPriceExtMapper;
+    ElectricityPriceCustomMapper electricityPriceExtMapper;
 
     @Resource
     ElectricityPriceVersionMapper electricityPriceVersionMapper;
