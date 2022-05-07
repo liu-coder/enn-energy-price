@@ -1,28 +1,34 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.poi.excel.ExcelFileUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerBakService;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateMapper;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStructureAndRuleValidateReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionDeleteReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
+import com.enn.energy.price.web.vo.requestvo.*;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureAndRuleValidateRespVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -121,5 +127,39 @@ public class ProxyElectricityPriceManagerController {
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
 
+    /**
+     * @describtion 下载模板
+     * @author sunjidong
+     * @date 2022/5/7 20:38
+     * @param response
+     * @return
+     */
+    @GetMapping("/downLoadTemplate")
+    public void downLoadTemplate(HttpServletResponse response){
+        ExcelWriter excelWriter = priceManagerBakService.downLoadTemplate();
+        try {
+            excelWriter.flush(response.getOutputStream());
+        } catch (IOException e) {
+            throw new PriceException(ErrorCodeEnum.DOWNLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.DOWNLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
+        }
+    }
+
+    /**
+     * @describtion 导入模板
+     * @author sunjidong
+     * @date 2022/5/7 20:38
+     * @param 
+     * @return
+     */
+    @PostMapping("/uploadTemplate")
+    public void uploadTemplate(List<ElectricityPriceRuleCreateReqVO> priceRuleReqVOList, @RequestParam("fileName") MultipartFile file){
+        ExcelReader reader;
+        try {
+            reader = ExcelUtil.getReader(file.getInputStream());
+        } catch (IOException e) {
+            throw new PriceException(ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
+        }
+        List<List<Object>> read = reader.read(2);
+    }
 
 }

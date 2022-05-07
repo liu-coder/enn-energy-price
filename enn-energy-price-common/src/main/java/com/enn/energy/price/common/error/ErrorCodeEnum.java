@@ -35,7 +35,9 @@ public enum ErrorCodeEnum {
     REPEAT_VERSION("E30003","版本已存在"),
     STRUCTURE_NOT_EXISTS("E30004","该省下体系未配置，请确认"),
     VALIDATE_FAIL("E30005","校验不通过，请确认"),
-    RETRY_AFTER("E30006","稍后重试")
+    RETRY_AFTER("E30006","稍后重试"),
+    DOWNLOAD_TEMPLATE_EXCEPTION("E30007","模板下载异常"),
+    UPLOAD_TEMPLATE_EXCEPTION("E30008","模板上传异常")
     ;
     private String errorCode;
     private String errorMsg;

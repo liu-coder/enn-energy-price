@@ -8,6 +8,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionBOConvertMapper;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionViewConvertMapper;
@@ -304,10 +305,6 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         //更新电价规则
         priceRuleMapper.insert(priceRule);
     }
-
-
-
-
 
     /**
      * @describtion 校验电价体系以及电价规则
@@ -910,6 +907,38 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         }).map(notExistRule -> {
             return notExistRule.getSerialNo();
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * @describtion
+     * @author sunjidong
+     * @date 2022/5/7 20:45
+     * @param 下载模板
+     * @return
+     */
+    @Override
+    public ExcelWriter downLoadTemplate() {
+        ExcelWriter excelWriter = new ExcelWriter();
+        excelWriter.merge(0, 1, 0, 0, CommonConstant.INDUSTRY_CHINA, true);
+        excelWriter.merge(0, 1, 1, 1, CommonConstant.STRATEGY_CHINA, true);
+        excelWriter.merge(0, 1, 2, 2, CommonConstant.VOLTAGELEVEL_CHINA, true);
+        excelWriter.merge(0, 1, 3, 3, CommonConstant.CONSUMPTION_CHINA, true);
+
+        excelWriter.merge(0, 0, 4, 5, CommonConstant.OTHER_CHINA, true);
+        excelWriter.writeCellValue(4, 1, CommonConstant.DISTRIBUTION_CHINA);
+        excelWriter.writeCellValue(5, 1, CommonConstant.GOV_ADD_CHINA);
+
+        excelWriter.merge(0, 0, 6, 9, CommonConstant.TIME_SECTION_CHINA, true);
+        excelWriter.writeCellValue(6, 1, CommonConstant.SHARP_CHINA);
+        excelWriter.writeCellValue(7, 1, CommonConstant.PEEK_CHINA);
+        excelWriter.writeCellValue(8, 1, CommonConstant.LEVEL_CHINA);
+        excelWriter.writeCellValue(9, 1, CommonConstant.VALLY_CHINA);
+
+        excelWriter.merge(0, 0, 10, 11, CommonConstant.CAPACITY_CHINA, true);
+        excelWriter.writeCellValue(10, 1, CommonConstant.MAX_CAPACITY_CHINA);
+        excelWriter.writeCellValue(11, 1, CommonConstant.TRANSFORMER_CAPACITY_CHINA);
+        excelWriter.autoSizeColumnAll();
+        return excelWriter;
     }
 
     public static void main(String[] args) {

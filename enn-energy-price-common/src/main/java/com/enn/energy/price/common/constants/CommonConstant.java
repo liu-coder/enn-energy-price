@@ -159,6 +159,82 @@ public class CommonConstant {
      * 2022-12-31 11:59:59
      */
     public static final String VOLTAGELEVEL = "voltageLevel";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String INDUSTRY_CHINA = "用电分类";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String STRATEGY_CHINA = "定价类型";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String VOLTAGELEVEL_CHINA = "电压等级";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String CONSUMPTION_CHINA = "电度用电价格(元/千瓦时)";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String OTHER_CHINA = "其它(元/千瓦时)";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String DISTRIBUTION_CHINA = "电度输配";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String GOV_ADD_CHINA = "政府性附加";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String TIME_SECTION_CHINA = "分时电度用电价格(元/千瓦时)";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String SHARP_CHINA = "尖";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String PEEK_CHINA = "峰";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String LEVEL_CHINA = "平";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String VALLY_CHINA = "谷";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String CAPACITY_CHINA = "按容(需)电价格(元/千瓦·月)";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String MAX_CAPACITY_CHINA = "最大需量";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String TRANSFORMER_CAPACITY_CHINA = "变压器容量";
+
     /**
      * redis key
      */

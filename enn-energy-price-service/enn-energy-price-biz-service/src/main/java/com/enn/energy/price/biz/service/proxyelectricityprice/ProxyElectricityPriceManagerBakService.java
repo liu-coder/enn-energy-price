@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice;
 
+import cn.hutool.poi.excel.ExcelWriter;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureAndRuleValidateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureAndRuleValidateRespBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
@@ -29,5 +30,7 @@ public interface ProxyElectricityPriceManagerBakService {
      * @return ElectricityPriceStructureAndRuleValidateRespBO
      */
     ElectricityPriceStructureAndRuleValidateRespBO validateStructureAndRule(ElectricityPriceStructureAndRuleValidateBO structureAndRuleValidateBO);
+
+    ExcelWriter downLoadTemplate();
 
 }
