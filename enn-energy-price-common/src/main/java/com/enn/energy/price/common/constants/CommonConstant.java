@@ -64,6 +64,26 @@ public class CommonConstant {
      */
     public static final int LOCK_REPEAT_TIMES = 3;
 
+    /**
+     * 尖
+     */
+    public static final String SHARP = "0";
+
+    /**
+     * 峰
+     */
+    public static final String PEEK = "1";
+
+    /**
+     * 平
+     */
+    public static final String LEVEL = "2";
+
+    /**
+     * 谷
+     */
+    public static final String VALLEY = "3";
+
 
     public static Integer VERSION_HISTORY = 1;
     public static Integer VERSION_CURRENT = 2;
@@ -77,6 +97,68 @@ public class CommonConstant {
 
     public final static String DEFAULT_TYPE = "默认";
 
+    /**
+     * 日期间隔符
+     */
+    public static final String DATE_SPLIT = "-";
+    /**
+     * 一年的第一天
+     */
+    public static final String FIRST_DAY_OF_YEAR = "01-01";
+    /**
+     * 一年的最后一天
+     */
+    public static final String LAST_DAY_OF_YEAR = "12-31";
+
+    /**
+     * 2022-12-31
+     */
+    public static final String DAY_EXAMPLE = "2022-12-31 ";
+
+    /**
+     * 2022-12-31
+     */
+    public static final String TIME_ZERO_SPLIT = ":00";
+
+    /**
+     * :59
+     */
+    public static final String TIME_NINE = ":59";
+
+    /**
+     * 时间分隔符
+     */
+    public static final String TIME_SPLIT = ":";
+
+    /**
+     * 00
+     */
+    public static final String TIME_ZERO = "00";
+
+    /**
+     * 2022-12-31 00:00:00
+     */
+    public static final String DAY_EXAMPLE_ZERO = "2022-12-31 00:00:00";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String DAY_EXAMPLE_NINE = "2022-12-31 11:59:59";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String INDUSTRY = "industry";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String STRATEGY = "strategy";
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final String VOLTAGELEVEL = "voltageLevel";
     /**
      * redis key
      */

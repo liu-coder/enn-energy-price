@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
  * @author Xinao
  */
 @Mapper
-public interface ElectricityTimeSectionExtMapper {
+public interface ElectricityTimeSectionCustomMapper {
     /**
      * 批量删除季节分时信息根据季节区间id(uuid)
      */

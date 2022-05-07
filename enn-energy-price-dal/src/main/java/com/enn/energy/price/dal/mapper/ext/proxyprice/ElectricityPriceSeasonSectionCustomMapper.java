@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ElectricityPriceSeasonSectionExtMapper {
+public interface ElectricityPriceSeasonSectionCustomMapper {
     /**
      * 根据季节区间id查询对应的季节分时信息列表
      * @return

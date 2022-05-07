@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface ElectricityPriceExtMapper {
+public interface ElectricityPriceCustomMapper {
 
     /**
      * 根据价格ids删除价格

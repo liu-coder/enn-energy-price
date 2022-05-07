@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceStructureExtMapper">
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceStructureCustomMapper">
     <sql id="Base_Column_List">
         id, structure_id, structure_name, province_code, city_codes, district_codes, state,
         parentId, version_id, creator, updator, create_time, update_time

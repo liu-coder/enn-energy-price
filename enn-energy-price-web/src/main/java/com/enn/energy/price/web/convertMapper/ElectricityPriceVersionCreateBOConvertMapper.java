@@ -2,6 +2,7 @@ package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.web.vo.requestvo.*;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureAndRuleValidateRespVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -45,7 +46,6 @@ public interface ElectricityPriceVersionCreateBOConvertMapper {
             @Mapping(source = "priceStructureAndRuleAndSeasonCreateReqVO.priceStructureRuleCreateReqVOList", target = "priceStructureRuleCreateBOList"),
             @Mapping(source = "priceStructureAndRuleAndSeasonCreateReqVO.priceRuleCreateReqVOList", target = "priceRuleCreateBOList")
     })
-
     ElectricityPriceStructureAndRuleAndSeasonCreateBO structureAndRuleAndSeasonCreateReqVOToBO(ElectricityPriceStructureAndRuleAndSeasonCreateReqVO priceStructureAndRuleAndSeasonCreateReqVO);
 
     @Mappings({
@@ -54,4 +54,12 @@ public interface ElectricityPriceVersionCreateBOConvertMapper {
     })
     ElectricityPriceVersionStructuresCreateBO priceVersionStructuresCreateReqVOToBO(ElectricityPriceVersionStructuresCreateReqVO priceVersionStructuresReqVO);
 
+
+    @Mappings({
+            @Mapping(source = "validateReqVO.priceStructureRuleValidateReqVOList", target = "priceStructureRuleValidateReqVOList"),
+            @Mapping(source = "validateReqVO.priceRuleValidateReqVOList", target = "priceRuleValidateReqVOList")
+    })
+    ElectricityPriceStructureAndRuleValidateBO structureAndRuleValidateVOToBO(ElectricityPriceStructureAndRuleValidateReqVO validateReqVO);
+
+     ElectricityPriceStructureAndRuleValidateRespVO priceStructureAndRuleValidateRespBOToVO(ElectricityPriceStructureAndRuleValidateRespBO validateRespBO);
 }

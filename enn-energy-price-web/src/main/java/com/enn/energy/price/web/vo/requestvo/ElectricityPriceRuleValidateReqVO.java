@@ -1,40 +1,57 @@
-package com.enn.energy.price.biz.service.bo.proxyprice;
+package com.enn.energy.price.web.vo.requestvo;
 
+import com.enn.energy.price.web.validator.DecimalValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
- * 电价规则BO
+ * 电价规则请求VO
  *
  * @author sunjidong
  * @date 2022/4/30
  **/
-public class ElectricityPriceRuleCreateBO implements Serializable {
+@ApiModel("电价规则请求VO")
+public class ElectricityPriceRuleValidateReqVO implements Serializable {
 
     private static final long serialVersionUID = -583011369969060471L;
 
+    @ApiModelProperty(value = "主键id", required = false, dataType = "string")
     private Long id;
 
+    @ApiModelProperty(value = "规则id", required = false, dataType = "string")
     private String ruleId;
 
+    @ApiModelProperty(value = "当前规则所在的行号", required = true, dataType = "string")
     private String serialNo;
 
+    @ApiModelProperty(value = "用电分类", required = true, dataType = "string")
+    @NotBlank(message = "用电分类不能为空")
     private String industry;
 
+    @ApiModelProperty(value = "定价类型 0:单一制;1:双部制", required = true, dataType = "string")
+    @NotBlank(message = "定价类型不能为空")
     private String strategy;
 
+    @ApiModelProperty(value = "电压等级", required = true, dataType = "string")
+    @NotBlank(message = "电压等级不能为空")
     private String voltageLevel;
 
+    @ApiModelProperty(value = "变压器容量", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String transformerCapacityPrice;
 
+    @ApiModelProperty(value = "最大需量", required = false, dataType = "string")
+    @DecimalValue(message = "必须填写正数")
     private String maxCapacityPrice;
 
-    private ElectricityPriceCreateBO electricityPriceCreateBO;
+    @NotNull(message = "电价不能为空")
+    @Valid
+    private ElectricityPriceValidateReqVO electricityPriceValidateVO;
 
     public String getIndustry() {
         return industry;
@@ -76,14 +93,6 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
         this.maxCapacityPrice = maxCapacityPrice;
     }
 
-    public ElectricityPriceCreateBO getElectricityPriceCreateBO() {
-        return electricityPriceCreateBO;
-    }
-
-    public void setElectricityPriceCreateBO(ElectricityPriceCreateBO electricityPriceCreateBO) {
-        this.electricityPriceCreateBO = electricityPriceCreateBO;
-    }
-
     public Long getId() {
         return id;
     }
@@ -100,6 +109,14 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
         this.ruleId = ruleId;
     }
 
+    public ElectricityPriceValidateReqVO getElectricityPriceValidateVO() {
+        return electricityPriceValidateVO;
+    }
+
+    public void setElectricityPriceValidateVO(ElectricityPriceValidateReqVO electricityPriceValidateVO) {
+        this.electricityPriceValidateVO = electricityPriceValidateVO;
+    }
+
     public String getSerialNo() {
         return serialNo;
     }
@@ -110,7 +127,7 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
 
     @Override
     public String toString() {
-        return "ElectricityPriceRuleCreateBO{" +
+        return "ElectricityPriceRuleValidateReqVO{" +
                 "id=" + id +
                 ", ruleId='" + ruleId + '\'' +
                 ", serialNo='" + serialNo + '\'' +
@@ -119,20 +136,7 @@ public class ElectricityPriceRuleCreateBO implements Serializable {
                 ", voltageLevel='" + voltageLevel + '\'' +
                 ", transformerCapacityPrice='" + transformerCapacityPrice + '\'' +
                 ", maxCapacityPrice='" + maxCapacityPrice + '\'' +
-                ", electricityPriceCreateBO=" + electricityPriceCreateBO +
+                ", electricityPriceValidateVO=" + electricityPriceValidateVO +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ElectricityPriceRuleCreateBO that = (ElectricityPriceRuleCreateBO) o;
-        return getIndustry().equals(that.getIndustry()) && getStrategy().equals(that.getStrategy()) && getVoltageLevel().equals(that.getVoltageLevel());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIndustry(), getStrategy(), getVoltageLevel());
     }
 }

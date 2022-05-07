@@ -2,9 +2,9 @@ package com.enn.energy.price.web.vo.requestvo;
 
 import cn.hutool.core.date.DatePattern;
 import com.enn.energy.price.web.validator.DateValue;
-import com.enn.energy.price.web.validator.DecimalTemperatureValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @date 2022/4/30
  **/
 @ApiModel("分时区间请求VO")
-public class ElectricityTimeSectionCreateReqVO implements Serializable {
+public class ElectricityTimeSectionValidateReqVO implements Serializable {
 
     private static final long serialVersionUID = -8679059488910647014L;
 
@@ -39,7 +39,6 @@ public class ElectricityTimeSectionCreateReqVO implements Serializable {
 
     @ApiModelProperty(value = "温度:单位摄氏度", required = true, dataType = "string")
     @NotBlank(message = "温度不能为空")
-    @DecimalTemperatureValue(message = "温度格式异常")
     private String temperature;
 
     public String getStartTime() {
