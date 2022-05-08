@@ -12,7 +12,7 @@ import java.util.List;
  * @Date 2022/5/2 16:05
  */
 @Mapper
-public interface ElectricityPriceEquipmentExtMapper {
+public interface ProxyElectricityPriceEquipmentExtMapper {
     /**
      * 查询版本下的设备绑定关系
      * @param versionId

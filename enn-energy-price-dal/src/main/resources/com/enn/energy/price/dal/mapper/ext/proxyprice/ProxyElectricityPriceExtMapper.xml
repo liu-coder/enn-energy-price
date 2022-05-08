@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ProxyElectricityPriceExtMapper">
+
+    <update id="batchDeletePriceByPriceIds">
+        update electricity_price set state=0 WHERE id IN
+        <foreach collection="priceIds" item="priceId" open="(" close=")" separator=",">
+            #{priceId}
+        </foreach>
+    </update>
+    <update id="batchDeletePriceByRuleIds">
+        update electricity_price set state=0 WHERE rule_id IN
+        <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
+            #{ruleId}
+        </foreach>
+    </update>
+    <select id="getPriceDetailListByStructureId"
+            resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO">
+        select
+               t.ruleId as ruleId,t.voltageLevel as voltageLevel,t.industry as industry,t.strategy as strategy,
+               e.transformer_capacity_price as  transformerCapacityPrice, e.max_capacity_price as maxCapacityPrice,
+               e.consumption_price as consumptionPrice,e.distribution_price as distributionPrice,
+               e.gov_add_price as govAddPrice ,e.sharp_price as sharpPrice, e.peak_price as peakPrice,
+               e.level_price as levelPrice,e.valley_price as valleyPrice
+        from (select r.id as ruleId,r.industry,r.strategy,r.voltage_level as voltageLevel
+              from electricity_price_rule r where r.structure_id=#{structureId} and r.state=0) t
+        left join electricity_price e on t.rule_id=e.rule_id and r.state=0
+    </select>
+</mapper>

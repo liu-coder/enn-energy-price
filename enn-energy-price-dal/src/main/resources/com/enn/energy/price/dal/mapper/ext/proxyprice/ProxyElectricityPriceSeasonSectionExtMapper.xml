@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceSeasonSectionExtMapper">
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ProxyElectricityPriceSeasonSectionExtMapper">
     <sql id="Base_Column_List">
         id, structure_id, structure_rule_id, season_section_id, season_section_name, sea_start_date,
         sea_end_date, state, create_time, update_time
     </sql>
-    <update id="batchDeleteSeasonSectionByIds">
-        update electricity_season_section set state=1 where id in
-        <foreach collection="seansonIds" item="id" open="(" close=")" separator=",">
+    <update id="batchDeleteSeasonSectionBySectionIds">
+        update electricity_season_section set state=1 where season_section_id in
+        <foreach collection="seasonSectionIds" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
     </update>
@@ -17,14 +17,14 @@
         select
         <include refid="Base_Column_List" />
         from electricity_season_section
-        where season_section_id=#{seasonSectionId}
+        where season_section_id=#{seasonSectionId} and state=0
     </select>
     <select id="querySeasonSectionIdsByStructureRuleIds"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">
         select
         <include refid="Base_Column_List" />
         from electricity_season_section
-        where structure_rule_id in
+        where state=0 and  structure_rule_id in
         <foreach collection="structureRuleIds" item="structureRuleId" open="(" close=")" separator=",">
             #{structureRuleId}
         </foreach>

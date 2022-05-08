@@ -11,8 +11,8 @@ import org.mapstruct.factory.Mappers;
  * @Date 2022/5/1 17:23
  */
 @Mapper
-public interface ElectricityPriceVersionUpdateMapper {
-    ElectricityPriceVersionUpdateMapper INSTANCE = Mappers.getMapper( ElectricityPriceVersionUpdateMapper.class );
+public interface ElectricityPriceVersionUpdateConverMapper {
+    ElectricityPriceVersionUpdateConverMapper INSTANCE = Mappers.getMapper( ElectricityPriceVersionUpdateConverMapper.class );
 
     /**
      * @param electricityPriceStructureUpdateReqVO vo
@@ -71,4 +71,6 @@ public interface ElectricityPriceVersionUpdateMapper {
      * @return bo
      */
     ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOTOBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionUpdateReqVO);
+
+
 }

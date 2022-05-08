@@ -1,14 +1,12 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionDeleteBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateMapper;
+import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConverMapper;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionDeleteReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
@@ -86,17 +84,36 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/updatePriceVersion")
     @ApiOperation( "修改电价版本" )
     public RdfaResult<Boolean> updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
-        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
+        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
         return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
     }
 
     @PostMapping("/deletePriceVersion")
     @ApiOperation( "删除电价版本" )
     public RdfaResult<Boolean> deletePriceVersion(@RequestBody @Valid ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO){
-        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionDeleteReqVOTOBO( electricityPriceVersionDeleteReqVO );
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOTOBO( electricityPriceVersionDeleteReqVO );
         return proxyElectricityPriceManagerService.deletePriceVersion(electricityPriceVersionDeleteBO);
     }
 
 
+    @GetMapping("/getVersionList/{provinceCode}")
+    @ApiOperation("获取版本列表")
+    public RdfaResult<ElectricityPriceVersionListBO> getVersionList(@PathVariable("provinceCode") @ApiParam(required = true, name = "provinceCode", value = "省编码") String provinceCode){
+        RdfaResult<ElectricityPriceVersionListBO> electricityPriceVersionList = proxyElectricityPriceManagerService.queryPriceVersionList( provinceCode );
+        return electricityPriceVersionList ;
+    }
 
+
+    @GetMapping("/getVersionStructureList/{versionId}")
+    @ApiOperation( "获取版本体系列表" )
+    public RdfaResult<ElectricityPriceStructureListBO> getVersionStructureList(@PathVariable("versionId") @ApiParam(required = true, name = "versionId", value = "版本id") String versionId){
+        RdfaResult<ElectricityPriceStructureListBO> electricityPriceStructureList = proxyElectricityPriceManagerService.queryPriceVersionStructureList( versionId );
+        return electricityPriceStructureList;
+    }
+
+    @GetMapping("/getStructureDetail/{structureId}")
+    @ApiOperation("获取体系详情")
+    public RdfaResult getStructureDetail (@PathVariable("structureId") @ApiParam(required = true, name = "structureId", value = "体系id") String structureId){
+        return proxyElectricityPriceManagerService.getStructureDetail(structureId);
+    }
 }

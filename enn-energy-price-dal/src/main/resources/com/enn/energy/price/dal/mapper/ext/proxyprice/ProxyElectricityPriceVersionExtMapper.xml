@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceVersionExtMapper">
+<mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ProxyElectricityPriceVersionExtMapper">
     <sql id="Base_Column_List">
         id, version_id, version_name, province_code, province, city_code, city, district_code,
         district, tenant_id, tenant_name, system_code, system_name, equipment_id, equipment_name,
@@ -24,7 +24,13 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_version
-        where province_code=#{province} and state=0 and start_date &lt; #{startDate}
+        where province_code=#{provinceCode} and state=0 and start_date &lt; #{startDate}
         order by start_date desc limit 1
+    </select>
+    <select id="queryPriceVersionList" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price_version
+        where province_code=#{provinceCode} and state=0 order by create_time asc
     </select>
 </mapper>

@@ -1,8 +1,6 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionDeleteBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
 /**
@@ -35,4 +33,27 @@ public interface ProxyElectricityPriceManagerService {
      * @return
      */
     RdfaResult<Boolean> deletePriceVersion(ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO);
+
+
+    /**
+     * 根据省编码查询价格版本列表
+     * @param provinceCode
+     * @return
+     */
+    RdfaResult<ElectricityPriceVersionListBO> queryPriceVersionList(String provinceCode);
+
+
+    /**
+     * 根据版本id查询体系列表
+     * @param versionId
+     * @return
+     */
+    RdfaResult<ElectricityPriceStructureListBO> queryPriceVersionStructureList(String versionId);
+
+
+    /**
+     * 根据体系id查询体系详情
+     * @param structuredId
+     */
+    RdfaResult<ElectricityPriceStructureDetailBO> getStructureDetail(String structuredId);
 }

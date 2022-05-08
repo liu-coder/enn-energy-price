@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ElectricityPriceRuleExtMapper {
+public interface ProxyElectricityPriceRuleExtMapper {
     /**
      * 批量删除电价规则根据规则ids
      * @param ruleIds

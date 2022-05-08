@@ -30,7 +30,16 @@
             enableUpdateByExample（默认true）：MyBatis3Simple为false，指定是否生成动态修改语句（只修改对象中不为空的属性）；
          -->
 
-        <table tableName="electricity_time_section" enableCountByExample="false"
+        <!--<table tableName="city_code" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;
+            <property name="useActualColumnNames" value="false"/>
+            &lt;!&ndash; 自增主键列 &ndash;&gt;
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
+        </table>-->
+
+        <table tableName="city_code" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <!-- false 不使用数据表column名，而使用驼峰命名 -->
@@ -38,15 +47,6 @@
             <!-- 自增主键列 -->
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-
-<!--        <table tableName="electricity_price_rule" enableCountByExample="false"-->
-<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
-<!--               enableSelectByExample="false" selectByExampleQueryId="false">-->
-<!--            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;-->
-<!--            <property name="useActualColumnNames" value="false"/>-->
-<!--            &lt;!&ndash; 自增主键列 &ndash;&gt;-->
-<!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
-<!--        </table>-->
 
 <!--        <table tableName="electricity_price_detail" enableCountByExample="false"-->
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
