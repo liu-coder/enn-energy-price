@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ProxyElectricityPriceVersionExtMapper {
+public interface ElectricityPriceVersionMapper {
     /**
      * 更新电价版本信息根据id
      * @param electricityPriceVersion

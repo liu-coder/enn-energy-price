@@ -10,7 +10,7 @@ import java.util.List;
  * @author Xinao
  */
 @Mapper
-public interface ProxyElectricityTimeSectionExtMapper {
+public interface ElectricityTimeSectionCustomMapper {
     /**
      * 批量删除季节分时信息根据季节区间id(uuid)
      */

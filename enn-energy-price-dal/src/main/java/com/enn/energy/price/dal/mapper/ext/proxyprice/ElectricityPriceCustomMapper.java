@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ProxyElectricityPriceExtMapper {
+public interface ElectricityPriceCustomMapper {
 
     /**
      * 根据价格ids删除价格
