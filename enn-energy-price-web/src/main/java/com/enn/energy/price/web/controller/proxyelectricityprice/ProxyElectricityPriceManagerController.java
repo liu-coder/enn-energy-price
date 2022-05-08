@@ -1,6 +1,7 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
@@ -10,6 +11,8 @@ import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConve
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionDeleteReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVOList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +24,7 @@ import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 /**
@@ -113,7 +117,19 @@ public class ProxyElectricityPriceManagerController {
 
     @GetMapping("/getStructureDetail/{structureId}")
     @ApiOperation("获取体系详情")
-    public RdfaResult getStructureDetail (@PathVariable("structureId") @ApiParam(required = true, name = "structureId", value = "体系id") String structureId){
+    public RdfaResult<ElectricityPriceStructureDetailBO> getStructureDetail (@PathVariable("structureId") @ApiParam(required = true, name = "structureId", value = "体系id") String structureId){
         return proxyElectricityPriceManagerService.getStructureDetail(structureId);
     }
+
+
+    @ApiOperation( "查询电价字典" )
+    @GetMapping("/getDictionarys/{type}")
+    public RdfaResult<ElectricityPriceDictionaryRespVOList> getElectricityPriceDictionarys(@PathVariable("type") @ApiParam(required = true, name = "type", value = "类型 0:用电行业 1:电压等级") String type){
+        List<ElectricityPriceDictionaryBO> priceElectricityDictionarys = proxyElectricityPriceManagerService.getPriceElectricityDictionarys( type );
+        List<ElectricityPriceDictionaryRespVO> electricityPriceDictionaryRespVOS = ElectricityPriceVersionUpdateConverMapper.INSTANCE.ElectricityPriceDictionaryBOListToVOList( priceElectricityDictionarys );
+        ElectricityPriceDictionaryRespVOList electricityPriceDictionaryRespVOList = new ElectricityPriceDictionaryRespVOList();
+        electricityPriceDictionaryRespVOList.setElectricityPriceDictionaryRespVOList( electricityPriceDictionaryRespVOS );
+        return RdfaResult.success( electricityPriceDictionaryRespVOList );
+    }
+
 }

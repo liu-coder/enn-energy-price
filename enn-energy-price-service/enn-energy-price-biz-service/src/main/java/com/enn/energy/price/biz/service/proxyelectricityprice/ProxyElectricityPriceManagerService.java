@@ -1,7 +1,10 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice;
 
+import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import top.rdfa.framework.biz.ro.RdfaResult;
+
+import java.util.List;
 
 /**
  * 代购电价service
@@ -56,4 +59,11 @@ public interface ProxyElectricityPriceManagerService {
      * @param structuredId
      */
     RdfaResult<ElectricityPriceStructureDetailBO> getStructureDetail(String structuredId);
+
+
+    /**
+     * 根据类型获取对应的字典列表
+     * @param type
+     */
+    List<ElectricityPriceDictionaryBO> getPriceElectricityDictionarys(String type);
 }

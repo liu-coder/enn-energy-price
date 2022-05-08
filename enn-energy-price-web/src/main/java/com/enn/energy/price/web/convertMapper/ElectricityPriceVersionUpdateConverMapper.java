@@ -1,9 +1,13 @@
 package com.enn.energy.price.web.convertMapper;
 
+import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.web.vo.requestvo.*;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * @author liujin
@@ -72,5 +76,18 @@ public interface ElectricityPriceVersionUpdateConverMapper {
      */
     ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOTOBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionUpdateReqVO);
 
+
+    /**
+     * @param electricityPriceDictionaryBO
+     * @return
+     */
+    ElectricityPriceDictionaryRespVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
+
+
+    /**
+     * @param electricityPriceDictionaryBOs
+     * @return
+     */
+    List<ElectricityPriceDictionaryRespVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
 
 }
