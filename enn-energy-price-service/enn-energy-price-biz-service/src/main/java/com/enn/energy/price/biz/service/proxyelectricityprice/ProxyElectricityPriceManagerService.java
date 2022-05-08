@@ -43,7 +43,7 @@ public interface ProxyElectricityPriceManagerService {
      * @param provinceCode
      * @return
      */
-    RdfaResult<ElectricityPriceVersionListBO> queryPriceVersionList(String provinceCode);
+    List<ElectricityPriceVersionBO> queryPriceVersionList(String provinceCode);
 
 
     /**
@@ -51,14 +51,14 @@ public interface ProxyElectricityPriceManagerService {
      * @param versionId
      * @return
      */
-    RdfaResult<ElectricityPriceStructureListBO> queryPriceVersionStructureList(String versionId);
+    List<ElectricityPriceStructureBO> queryPriceVersionStructureList(String versionId);
 
 
     /**
      * 根据体系id查询体系详情
      * @param structuredId
      */
-    RdfaResult<ElectricityPriceStructureDetailBO> getStructureDetail(String structuredId);
+    ElectricityPriceStructureDetailBO getStructureDetail(String structuredId);
 
 
     /**

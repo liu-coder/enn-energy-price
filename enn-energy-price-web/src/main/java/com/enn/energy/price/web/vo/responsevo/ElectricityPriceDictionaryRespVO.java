@@ -18,7 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel("字典响应vo")
-public class ElectricityPriceDictionaryVO implements Serializable {
+public class ElectricityPriceDictionaryRespVO implements Serializable {
     @ApiModelProperty("主键")
     private Long id;
     @ApiModelProperty("key值")

@@ -103,12 +103,11 @@
                 and last_version_id = #{lastVersionId,jdbcType=VARCHAR}
             </if>
         </where>
->>>>>>>> origin/purchase_electricity_price_20220426:enn-energy-price-dal/src/main/resources/com/enn/energy/price/dal/mapper/ext/proxyprice/ElectricityPriceVersionExtMapper.xml
     </select>
     <select id="queryPriceVersionList" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
         select
         <include refid="Base_Column_List" />
         from electricity_price_version
-        where province_code=#{provinceCode} and state=0 order by create_time asc
+        where province_code=#{provinceCode} and state=#{state} order by create_time asc
     </select>
 </mapper>

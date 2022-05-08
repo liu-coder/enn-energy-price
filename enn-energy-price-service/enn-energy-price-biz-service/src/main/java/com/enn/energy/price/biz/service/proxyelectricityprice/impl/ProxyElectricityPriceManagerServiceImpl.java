@@ -258,6 +258,12 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         });
     }
 
+
+
+
+
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RdfaResult<Boolean> updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO) {
@@ -308,7 +314,10 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
             }
             //根据电价版本id查询电价体系id
-            List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByVersionId( electricityPriceVersionDeleteBO.getId() );
+            Map<String, Object> map=new HashMap<>();
+            map.put( "versionId", electricityPriceVersionDeleteBO.getId());
+            map.put( "state",0 );
+            List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
             //根据电价体系id删除
             electricityPriceStructures.forEach( t->{
                 deleteStructure( t.getId() );
@@ -336,31 +345,33 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
     }
 
     @Override
-    public RdfaResult<ElectricityPriceVersionListBO> queryPriceVersionList(String provinceCode) {
-        List<ElectricityPriceVersion> electricityPriceVersions = electricityPriceVersionCustomMapper.queryPriceVersionList( provinceCode );
+    public List<ElectricityPriceVersionBO> queryPriceVersionList(String provinceCode) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put( "provinceCode",provinceCode );
+        map.put( "state",0 );
+        List<ElectricityPriceVersion> electricityPriceVersions = electricityPriceVersionCustomMapper.queryPriceVersionList( map );
         if(CollectionUtil.isEmpty(electricityPriceVersions  )){
-            return RdfaResult.success(null);
+            return null;
         }
-        List<ElectricityPriceVersionBO> electricityPriceVersionBOS = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceVersionListPOTOVO( electricityPriceVersions );
-        ElectricityPriceVersionListBO electricityPriceVersionListBO = new ElectricityPriceVersionListBO();
-        electricityPriceVersionListBO.setElectricityPriceVersionBOList( electricityPriceVersionBOS );
-        return RdfaResult.success(electricityPriceVersionListBO);
+        List<ElectricityPriceVersionBO> electricityPriceVersionBOs = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceVersionListPOToBO( electricityPriceVersions );
+        return electricityPriceVersionBOs;
     }
 
     @Override
-    public RdfaResult<ElectricityPriceStructureListBO> queryPriceVersionStructureList(String versionId) {
-        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByVersionId( versionId );
+    public List<ElectricityPriceStructureBO> queryPriceVersionStructureList(String versionId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("versionId",versionId);
+        map.put( "state",0 );
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
         if(CollectionUtil.isEmpty( electricityPriceStructures )){
-            return RdfaResult.success( null );
+            return null;
         }
-        List<ElectricityPriceStructureBO> electricityPriceStructureBOS = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceStructureListPOTOBO( electricityPriceStructures );
-        ElectricityPriceStructureListBO electricityPriceStructureListBO = new ElectricityPriceStructureListBO();
-        electricityPriceStructureListBO.setPriceStructureBOList( electricityPriceStructureBOS );
-        return RdfaResult.success( electricityPriceStructureListBO );
+        List<ElectricityPriceStructureBO> electricityPriceStructureBOS = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceStructurePOListToBOList( electricityPriceStructures );
+        return electricityPriceStructureBOS;
     }
 
     @Override
-    public RdfaResult<ElectricityPriceStructureDetailBO> getStructureDetail(String structuredId) {
+    public ElectricityPriceStructureDetailBO getStructureDetail(String structuredId) {
         //根据体系id获取体系信息
         ElectricityPriceStructure electricityPriceStructure = electricityPriceStructureMapper.selectByPrimaryKey( Long.valueOf( structuredId ) );
         ElectricityPriceStructureDetailBO electricityPriceStructureDetailBO = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.ElectricityPriceStructurePOTOElectricityPriceStructureDetailBO( electricityPriceStructure );
@@ -433,7 +444,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //将规则列表添加进体系
         electricityPriceStructureDetailBO.setElectricityPriceStructureRuleDetailBOS( electricityPriceStructureRuleDetailBOS );
         electricityPriceStructureDetailBO.setElectricityPriceDetailBOList( electricityPriceDetailBOs );
-        return RdfaResult.success( electricityPriceStructureDetailBO );
+        return electricityPriceStructureDetailBO;
     }
 
     @Override
@@ -454,7 +465,10 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private List<Long> queryDeleteStructureIds(List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList,String versionId) {
         //根据版本id查询当前版本下的体系id列表
-        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByVersionId( versionId );
+        Map<String,Object> map = new HashMap<>();
+        map.put("versionId",versionId);
+        map.put( "state",0 );
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
         //筛选出现有的id
         List<String> ids = electricityPriceStructureUpdateBOList.stream().map( ElectricityPriceStructureUpdateBO::getId ).filter( StringUtils::isNotEmpty ).collect( Collectors.toList() );
         //拿版本下的体系列表与现有的对比，得出哪些删除了

@@ -58,20 +58,20 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
      * @param electricityPriceVersions
      * @return
      */
-    List<ElectricityPriceVersionBO> electricityPriceVersionListPOTOVO(List<ElectricityPriceVersion> electricityPriceVersions);
+    List<ElectricityPriceVersionBO> electricityPriceVersionListPOToBO(List<ElectricityPriceVersion> electricityPriceVersions);
 
 
     /**
      * @param ectricityPriceStructure
      * @return
      */
-    ElectricityPriceStructureBO electricityPriceStructurePOTOBO(ElectricityPriceStructure ectricityPriceStructure);
+    ElectricityPriceStructureBO electricityPriceStructurePOToBO(ElectricityPriceStructure ectricityPriceStructure);
 
     /**
      * @param electricityPriceStructures
      * @return
      */
-    List<ElectricityPriceStructureBO> electricityPriceStructureListPOTOBO(List<ElectricityPriceStructure> electricityPriceStructures);
+    List<ElectricityPriceStructureBO> electricityPriceStructurePOListToBOList(List<ElectricityPriceStructure> electricityPriceStructures);
 
 
     /**

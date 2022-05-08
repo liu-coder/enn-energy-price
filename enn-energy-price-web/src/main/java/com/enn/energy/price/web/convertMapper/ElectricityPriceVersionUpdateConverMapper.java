@@ -3,7 +3,8 @@ package com.enn.energy.price.web.convertMapper;
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.web.vo.requestvo.*;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceVersionRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -81,13 +82,27 @@ public interface ElectricityPriceVersionUpdateConverMapper {
      * @param electricityPriceDictionaryBO
      * @return
      */
-    ElectricityPriceDictionaryVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
+    ElectricityPriceDictionaryRespVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
 
 
     /**
      * @param electricityPriceDictionaryBOs
      * @return
      */
-    List<ElectricityPriceDictionaryVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
+    List<ElectricityPriceDictionaryRespVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
+
+
+    /**
+     * @param electricityPriceVersionBOS
+     * @return
+     */
+    List<ElectricityPriceVersionRespVO> electricityPriceVersionRespBOListToVOList(List<ElectricityPriceVersionBO> electricityPriceVersionBOS);
+
+    /**
+     * @param electricityPriceVersion
+     * @return
+     */
+    ElectricityPriceVersionRespVO electricityPriceVersionRespBOToVO(ElectricityPriceVersionBO electricityPriceVersion);
+
 
 }
