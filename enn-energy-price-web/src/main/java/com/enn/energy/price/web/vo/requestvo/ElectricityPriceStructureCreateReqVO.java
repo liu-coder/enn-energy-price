@@ -36,7 +36,6 @@ public class ElectricityPriceStructureCreateReqVO implements Serializable {
     private String districtCodes;
 
     @ApiModelProperty(value = "父体系id", required = true, dataType = "string")
-    @NotBlank(message = "父体系id不能为空")
     private String parentId;
 
     public String getStructureName() {

@@ -1,10 +1,13 @@
 package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquVersionView;
+import com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author liujin
@@ -19,6 +22,20 @@ public interface ElectricityPriceEquipmentCustomMapper {
      * @return
      */
     List<ElectricityPriceEquipment> queryEquipmentBinding(@Param( "versionId" ) String versionId);
+
+    /**
+     * 查询版本下的设备绑定关系
+     * @param record
+     * @return List<ElectricityPriceEquipment>
+     */
+    List<ElectricityPriceEquipmentView> listRuleEquipmentBindRecords(ElectricityPriceEquipment record);
+
+    /**
+     * 根据规则id集合查询设备绑定关系
+     * @param ruleIdList
+     * @return List<ElectricityPriceEquipment>
+     */
+    List<ElectricityPriceEquipment> listRuleEquipmentBindRecordsByRuleIdList(List<String> ruleIdList);
 
     /**
      * 查询体系下的设备绑定关系

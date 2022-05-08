@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
-
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -259,20 +258,6 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         });
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RdfaResult<Boolean> updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO) {
@@ -469,7 +454,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private List<Long> queryDeleteStructureIds(List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList,String versionId) {
         //根据版本id查询当前版本下的体系id列表
-        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByVersionId( versionId );
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.queryListByVersionId( versionId );
         //筛选出现有的id
         List<String> ids = electricityPriceStructureUpdateBOList.stream().map( ElectricityPriceStructureUpdateBO::getId ).filter( StringUtils::isNotEmpty ).collect( Collectors.toList() );
         //拿版本下的体系列表与现有的对比，得出哪些删除了

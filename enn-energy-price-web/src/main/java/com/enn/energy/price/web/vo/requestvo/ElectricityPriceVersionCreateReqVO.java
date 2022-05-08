@@ -50,7 +50,6 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
 
     @ApiModelProperty(value = "版本生效期", required = true, dataType = "date")
     @NotNull
-    @FutureOrPresent(message = "生效日期必须为未来时")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
@@ -63,7 +62,6 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
     private String bindType;
 
     @ApiModelProperty(value = "父版本id", required = true, dataType = "string")
-    @NotBlank(message = "父版本id不能为空")
     private String lastVersionId;
 
     public String getVersionName() {

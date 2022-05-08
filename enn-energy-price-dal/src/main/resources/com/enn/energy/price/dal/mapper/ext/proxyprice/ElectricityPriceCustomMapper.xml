@@ -14,16 +14,4 @@
             #{ruleId}
         </foreach>
     </update>
-    <select id="getPriceDetailListByStructureId"
-            resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO">
-        select
-               t.ruleId as ruleId,t.voltageLevel as voltageLevel,t.industry as industry,t.strategy as strategy,
-               e.transformer_capacity_price as  transformerCapacityPrice, e.max_capacity_price as maxCapacityPrice,
-               e.consumption_price as consumptionPrice,e.distribution_price as distributionPrice,
-               e.gov_add_price as govAddPrice ,e.sharp_price as sharpPrice, e.peak_price as peakPrice,
-               e.level_price as levelPrice,e.valley_price as valleyPrice
-        from (select r.id as ruleId,r.industry,r.strategy,r.voltage_level as voltageLevel
-              from electricity_price_rule r where r.structure_id=#{structureId} and r.state=0) t
-        left join electricity_price e on t.rule_id=e.rule_id and r.state=0
-    </select>
 </mapper>

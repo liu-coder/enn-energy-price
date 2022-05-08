@@ -15,6 +15,15 @@ public interface ElectricityPriceVersionCustomMapper {
      */
     int updateElectricityPriceVersionById(ElectricityPriceVersion electricityPriceVersion);
 
+    /**
+     * @describtion
+     * @author sunjidong
+     * @date 2022/5/3 16:13
+     * @param
+     * @return
+     */
+    long countByPriceVersionExample(ElectricityPriceVersion electricityPriceVersion);
+
 
     /**
      * 查询当前版本的前一个版本

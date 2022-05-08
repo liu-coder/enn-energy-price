@@ -18,11 +18,11 @@ import java.util.Map;
 @Mapper
 public interface ElectricityPriceDetailExtMapper {
 
-    public List<ElectricityPriceDetail> selectDetailByCondition(Map<String,Object> map);
+    List<ElectricityPriceDetail> selectDetailByCondition(Map<String,Object> map);
 
     void batchAddElectricityPriceDetail(List<ElectricityPriceDetail> electricityPriceDetailList);
 
-    List<ElectricityPriceDetail> selectPriceDetailsByVersionId(String versionId);
+    //List<ElectricityPriceDetail> selectPriceDetailsByVersionId(String versionId);
 
     void batchUpdateByRuleIds(List<ElectricityPriceRule>  electricityPriceRuleBOs);
 
