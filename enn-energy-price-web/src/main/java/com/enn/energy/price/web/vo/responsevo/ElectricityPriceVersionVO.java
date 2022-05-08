@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityPriceVersionRespVO implements Serializable {
+public class ElectricityPriceVersionVO implements Serializable {
     private static final long serialVersionUID = 256759790496023525L;
     private Long id;
 

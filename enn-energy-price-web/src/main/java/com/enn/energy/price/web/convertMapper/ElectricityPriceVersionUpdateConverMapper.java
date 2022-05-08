@@ -3,7 +3,7 @@ package com.enn.energy.price.web.convertMapper;
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.web.vo.requestvo.*;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -81,13 +81,13 @@ public interface ElectricityPriceVersionUpdateConverMapper {
      * @param electricityPriceDictionaryBO
      * @return
      */
-    ElectricityPriceDictionaryRespVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
+    ElectricityPriceDictionaryVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
 
 
     /**
      * @param electricityPriceDictionaryBOs
      * @return
      */
-    List<ElectricityPriceDictionaryRespVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
+    List<ElectricityPriceDictionaryVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
 
 }

@@ -16,8 +16,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityPriceVersionListRespVO implements Serializable {
+public class ElectricityPriceVersionListVO implements Serializable {
     private static final long serialVersionUID = -5387315080247554553L;
     @ApiModelProperty("版本list")
-    List<ElectricityPriceVersionRespVO> electricityPriceVersionRespVOList;
+    List<ElectricityPriceVersionVO> electricityPriceVersionVOList;
 }

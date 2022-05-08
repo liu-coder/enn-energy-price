@@ -11,8 +11,8 @@ import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConve
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionDeleteReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVOList;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryVOList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -124,12 +124,12 @@ public class ProxyElectricityPriceManagerController {
 
     @ApiOperation( "查询电价字典" )
     @GetMapping("/getDictionarys/{type}")
-    public RdfaResult<ElectricityPriceDictionaryRespVOList> getElectricityPriceDictionarys(@PathVariable("type") @ApiParam(required = true, name = "type", value = "类型 0:用电行业 1:电压等级") String type){
+    public RdfaResult<ElectricityPriceDictionaryVOList> getElectricityPriceDictionarys(@PathVariable("type") @ApiParam(required = true, name = "type", value = "类型 0:用电行业 1:电压等级") String type){
         List<ElectricityPriceDictionaryBO> priceElectricityDictionarys = proxyElectricityPriceManagerService.getPriceElectricityDictionarys( type );
-        List<ElectricityPriceDictionaryRespVO> electricityPriceDictionaryRespVOS = ElectricityPriceVersionUpdateConverMapper.INSTANCE.ElectricityPriceDictionaryBOListToVOList( priceElectricityDictionarys );
-        ElectricityPriceDictionaryRespVOList electricityPriceDictionaryRespVOList = new ElectricityPriceDictionaryRespVOList();
-        electricityPriceDictionaryRespVOList.setElectricityPriceDictionaryRespVOList( electricityPriceDictionaryRespVOS );
-        return RdfaResult.success( electricityPriceDictionaryRespVOList );
+        List<ElectricityPriceDictionaryVO> electricityPriceDictionaryVOS = ElectricityPriceVersionUpdateConverMapper.INSTANCE.ElectricityPriceDictionaryBOListToVOList( priceElectricityDictionarys );
+        ElectricityPriceDictionaryVOList electricityPriceDictionaryVOList = new ElectricityPriceDictionaryVOList();
+        electricityPriceDictionaryVOList.setElectricityPriceDictionaryVOList( electricityPriceDictionaryVOS );
+        return RdfaResult.success( electricityPriceDictionaryVOList );
     }
 
 }

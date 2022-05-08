@@ -15,6 +15,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityPriceDictionaryRespVOList implements Serializable {
-    List<ElectricityPriceDictionaryRespVO>  electricityPriceDictionaryRespVOList;
+public class ElectricityPriceDictionaryVOList implements Serializable {
+    List<ElectricityPriceDictionaryVO> electricityPriceDictionaryVOList;
 }
