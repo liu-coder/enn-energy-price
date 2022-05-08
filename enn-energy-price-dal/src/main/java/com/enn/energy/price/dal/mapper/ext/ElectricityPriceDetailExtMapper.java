@@ -18,7 +18,7 @@ import java.util.Map;
 @Mapper
 public interface ElectricityPriceDetailExtMapper {
 
-    List<ElectricityPriceDetail> selectDetailByCondition(Map<String,Object> map);
+    public List<ElectricityPriceDetail> selectDetailByCondition(Map<String,Object> map);
 
     void batchAddElectricityPriceDetail(List<ElectricityPriceDetail> electricityPriceDetailList);
 
