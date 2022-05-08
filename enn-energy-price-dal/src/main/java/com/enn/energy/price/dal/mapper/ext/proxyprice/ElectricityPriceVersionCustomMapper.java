@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ElectricityPriceVersionMapper {
+public interface ElectricityPriceVersionCustomMapper {
     /**
      * 更新电价版本信息根据id
      * @param electricityPriceVersion

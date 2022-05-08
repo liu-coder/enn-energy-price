@@ -8,7 +8,7 @@ import com.enn.energy.price.biz.service.bo.proxyprice.ProvinceListBO;
 import com.enn.energy.price.biz.service.convertMapper.CityConverMapper;
 import com.enn.energy.price.biz.service.proxyelectricityprice.CityManagerService;
 import com.enn.energy.price.common.enums.BoolLogic;
-import com.enn.energy.price.dal.mapper.ext.proxyprice.CityExtMapper;
+import com.enn.energy.price.dal.mapper.ext.proxyprice.CityCustomMapper;
 import com.enn.energy.price.dal.po.ext.CityCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class CityMangerServiceImp implements CityManagerService {
     @Autowired
-    CityExtMapper cityExtMapper;
+    CityCustomMapper cityCustomMapper;
 
 
 
@@ -33,12 +33,12 @@ public class CityMangerServiceImp implements CityManagerService {
         CityCode cityCode = new CityCode();
         cityCode.setParentId( provinceBO.getProvinceCode() );
         cityCode.setState( BoolLogic.NO.getCode());
-        List<CityCode> cityCodes = cityExtMapper.queryCityList( cityCode );
+        List<CityCode> cityCodes = cityCustomMapper.queryCityList( cityCode );
         List<CityBO> cityBOList = cityCodes.stream().map( t -> {
             CityCode cityCode1 = new CityCode();
             cityCode1.setState( BoolLogic.NO.getCode() );
             cityCode1.setParentId( t.getId() );
-            List<CityCode> cityCodesList = cityExtMapper.queryCityList( cityCode1 );
+            List<CityCode> cityCodesList = cityCustomMapper.queryCityList( cityCode1 );
             CityBO cityBO = new CityBO();
             cityBO.setCity( t.getName() );
             cityBO.setCityCode( t.getAreaCode() );
@@ -61,7 +61,7 @@ public class CityMangerServiceImp implements CityManagerService {
         CityCode cityCode = new CityCode();
         cityCode.setLevel( "1" );
         cityCode.setState( BoolLogic.NO.getCode());
-        List<CityCode> cityCodes = cityExtMapper.queryCityList( cityCode );
+        List<CityCode> cityCodes = cityCustomMapper.queryCityList( cityCode );
         if(CollectionUtil.isEmpty( cityCodes )){
             return null;
         }

@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface CityExtMapper {
+public interface CityCustomMapper {
     /**
      * 查询城市列表
      * @return 城市编码
