@@ -4,17 +4,18 @@ import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
 @Mapper
 public interface ElectricityPriceVersionCustomMapper {
     /**
-     * 更新电价版本信息根据id
-     * @param electricityPriceVersion
+     * 更新电价版本信息根据map
+     * @param map
      * @return
      */
-    int updateElectricityPriceVersionById(ElectricityPriceVersion electricityPriceVersion);
+    int updateElectricityPriceVersionCondition(Map<String,Object> map);
 
     /**
      * @describtion

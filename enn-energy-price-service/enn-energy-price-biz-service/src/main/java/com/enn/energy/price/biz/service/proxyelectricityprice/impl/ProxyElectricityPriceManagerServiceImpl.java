@@ -335,7 +335,13 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             beforePriceVersion.setUpdator( tenantId );
             beforePriceVersion.setUpdateTime( DateUtil.date() );
             electricityPriceVersionMapper.updateByPrimaryKey( beforePriceVersion );
-            electricityPriceVersionMapper.deleteByPrimaryKey( Long.valueOf( electricityPriceVersionDeleteBO.getId() ) );
+            HashMap<String, Object> versionUpdateMap = new HashMap<>();
+            versionUpdateMap.put( "id", electricityPriceVersionDeleteBO.getId());
+            versionUpdateMap.put( "afterState", BoolLogic.YES.getCode());
+            versionUpdateMap.put( "state", BoolLogic.NO.getCode());
+            versionUpdateMap.put( "updator",tenantId );
+            versionUpdateMap.put( "updateTime",DateUtil.date() );
+            electricityPriceVersionCustomMapper.updateElectricityPriceVersionCondition(versionUpdateMap);
         } catch (LockFailException e) {
             return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
         }finally {
