@@ -1,9 +1,14 @@
 package com.enn.energy.price.web.convertMapper;
 
+import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.web.vo.requestvo.*;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDictionaryRespVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceVersionRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * @author liujin
@@ -11,8 +16,8 @@ import org.mapstruct.factory.Mappers;
  * @Date 2022/5/1 17:23
  */
 @Mapper
-public interface ElectricityPriceVersionUpdateMapper {
-    ElectricityPriceVersionUpdateMapper INSTANCE = Mappers.getMapper( ElectricityPriceVersionUpdateMapper.class );
+public interface ElectricityPriceVersionUpdateConverMapper {
+    ElectricityPriceVersionUpdateConverMapper INSTANCE = Mappers.getMapper( ElectricityPriceVersionUpdateConverMapper.class );
 
     /**
      * @param electricityPriceStructureUpdateReqVO vo
@@ -71,4 +76,33 @@ public interface ElectricityPriceVersionUpdateMapper {
      * @return bo
      */
     ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOTOBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionUpdateReqVO);
+
+
+    /**
+     * @param electricityPriceDictionaryBO
+     * @return
+     */
+    ElectricityPriceDictionaryRespVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
+
+
+    /**
+     * @param electricityPriceDictionaryBOs
+     * @return
+     */
+    List<ElectricityPriceDictionaryRespVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
+
+
+    /**
+     * @param electricityPriceVersionBOS
+     * @return
+     */
+    List<ElectricityPriceVersionRespVO> electricityPriceVersionRespBOListToVOList(List<ElectricityPriceVersionBO> electricityPriceVersionBOS);
+
+    /**
+     * @param electricityPriceVersion
+     * @return
+     */
+    ElectricityPriceVersionRespVO electricityPriceVersionRespBOToVO(ElectricityPriceVersionBO electricityPriceVersion);
+
+
 }

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityTimeSectionCustomMapper">
+    <sql id="Base_Column_List">
+        id, season_section_id, time_section_id, start_time, end_time, periods, state, compare,
+        temperature, create_time, update_time
+    </sql>
 
     <delete id="batchDeleteTimeSectionBySeasonSectionIds">
         update electricity_time_section set state=0 WHERE season_section_id IN
@@ -8,4 +12,11 @@
             #{seasonSectionId}
         </foreach>
     </delete>
+    <select id="getTimeSectionListBySeasonSectionId"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityTimeSection">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_time_section
+        where season_section_id=#{seasonSectionId} and state=0
+    </select>
 </mapper>

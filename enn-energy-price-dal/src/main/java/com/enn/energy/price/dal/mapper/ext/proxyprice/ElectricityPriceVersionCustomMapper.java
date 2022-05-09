@@ -2,6 +2,10 @@ package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ElectricityPriceVersionCustomMapper {
@@ -28,4 +32,20 @@ public interface ElectricityPriceVersionCustomMapper {
      * @return
      */
     ElectricityPriceVersion queryBeforePriceVersion(ElectricityPriceVersion electricityPriceVersion);
+
+
+    /**
+     * 根据省份查询价格版本列表
+     * @param provinceCode
+     * @return
+     */
+    //List<ElectricityPriceVersion> queryPriceVersionList(@Param( "provinceCode" ) String provinceCode);
+
+    /**
+     * 根据条件查询价格版本列表
+     * @param map
+     * @return
+     */
+    List<ElectricityPriceVersion> queryPriceVersionList(Map<String,Object> map);
+
 }

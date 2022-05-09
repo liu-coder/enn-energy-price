@@ -53,11 +53,11 @@
             #{ruleId}
         </foreach>
     </update>
+
     <select id="queryRuleListByStructureId" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceRule">
         select
         <include refid="Base_Column_List" />
         from electricity_price_rule
         where structure_id = #{structureId}
     </select>
--->
 </mapper>

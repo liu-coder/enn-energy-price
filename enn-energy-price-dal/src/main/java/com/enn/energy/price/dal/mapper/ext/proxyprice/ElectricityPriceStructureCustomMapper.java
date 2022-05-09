@@ -5,15 +5,18 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ElectricityPriceStructureCustomMapper {
+
     /**
-     * 根据版本id查询体系列表
-     * @param versionId
+     * 根据条件查询体系列表
+     * @param map
      * @return
      */
-    List<ElectricityPriceStructure> queryListByVersionId(@Param( "versionId" ) String versionId);
+    List<ElectricityPriceStructure> queryListByConditions(Map<String,Object> map);
+
 
     /**
      * @param ids 批量查询体系列表根据体系ids

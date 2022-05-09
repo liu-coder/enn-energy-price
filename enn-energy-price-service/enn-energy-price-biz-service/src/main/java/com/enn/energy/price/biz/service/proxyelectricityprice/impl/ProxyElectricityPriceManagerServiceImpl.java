@@ -1,10 +1,12 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionBOConvertMapper;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionUpdateBOConverMapper;
@@ -13,8 +15,11 @@ import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.BoolLogic;
 import com.enn.energy.price.common.enums.changeTypeEum;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.utils.BeanUtil;
+import com.enn.energy.price.dal.mapper.ext.ExtElectricityPriceDictionaryMapper;
 import com.enn.energy.price.dal.mapper.ext.proxyprice.*;
 import com.enn.energy.price.dal.mapper.mbg.*;
+import com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO;
 import com.enn.energy.price.dal.po.mbg.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,10 +31,7 @@ import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
@@ -44,28 +46,31 @@ import java.util.stream.Collectors;
 public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricityPriceManagerService {
 
     @Autowired
-    ElectricityPriceVersionCustomMapper electricityPriceVersionExtMapper;
+    ElectricityPriceVersionCustomMapper electricityPriceVersionCustomMapper;
 
     @Autowired
-    ElectricityPriceStructureCustomMapper electricityPriceStructureExtMapper;
+    ElectricityPriceStructureRuleCustomMapper electricityPriceStructureRuleCustomMapper;
 
     @Autowired
-    ElectricityPriceEquipmentCustomMapper electricityPriceEquipmentExtMapper;
+    ElectricityPriceStructureCustomMapper electricityPriceStructureCustomMapper;
 
     @Autowired
-    ElectricityPriceStructureRuleCustomMapper electricityPriceStructureRuleExtMapper;
+    ElectricityPriceEquipmentCustomMapper electricityPriceEquipmentCustomMapper;
 
     @Autowired
-    ElectricityPriceSeasonSectionCustomMapper electricityPriceSeasonSectionExtMapper;
+    ElectricityPriceSeasonSectionCustomMapper electricityPriceSeasonSectionCustomMapper;
 
     @Autowired
-    ElectricityTimeSectionCustomMapper electricityTimeSectionExtMapper;
+    ElectricityTimeSectionCustomMapper electricityTimeSectionCustomMapper;
 
     @Autowired
-    ElectricityPriceRuleCustomMapper electricityPriceRuleExtMapper;
+    ElectricityPriceRuleCustomMapper electricityPriceRuleCustomMapper;
 
     @Autowired
-    ElectricityPriceCustomMapper electricityPriceExtMapper;
+    ElectricityPriceCustomMapper electricityPriceCustomMapper;
+
+    @Resource
+    ExtElectricityPriceDictionaryMapper electricityPriceDictionaryCustomMapper;
 
     @Resource
     ElectricityPriceVersionMapper electricityPriceVersionMapper;
@@ -253,6 +258,12 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         });
     }
 
+
+
+
+
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RdfaResult<Boolean> updatePriceVersion(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO) {
@@ -303,19 +314,22 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
             }
             //根据电价版本id查询电价体系id
-            List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.queryListByVersionId( electricityPriceVersionDeleteBO.getId() );
+            Map<String, Object> map=new HashMap<>();
+            map.put( "versionId", electricityPriceVersionDeleteBO.getId());
+            map.put( "state",0 );
+            List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
             //根据电价体系id删除
             electricityPriceStructures.forEach( t->{
                 deleteStructure( t.getId() );
             } );
             //根据版本id删除电价体系与设备的关联关系
-            electricityPriceEquipmentExtMapper.deleteEquipmentBindingByVersionId(electricityPriceVersionDeleteBO.getId());
+            electricityPriceEquipmentCustomMapper.deleteEquipmentBindingByVersionId(electricityPriceVersionDeleteBO.getId());
             //查询当前版本的上个版本
             ElectricityPriceVersion electricityPriceVersion=new ElectricityPriceVersion();
-            electricityPriceVersion.setProvince( electricityPriceVersionDeleteBO.getProvinceCode() );
+            electricityPriceVersion.setProvinceCode( electricityPriceVersionDeleteBO.getProvinceCode() );
             electricityPriceVersion.setStartDate( DateUtil.parse(electricityPriceVersionDeleteBO.getStartDate(), DatePattern.NORM_DATE_PATTERN) );
             electricityPriceVersion.setEndDate(  DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN));
-            ElectricityPriceVersion beforePriceVersion = electricityPriceVersionExtMapper.queryBeforePriceVersion( electricityPriceVersion );
+            ElectricityPriceVersion beforePriceVersion = electricityPriceVersionCustomMapper.queryBeforePriceVersion( electricityPriceVersion );
             //更新上一个版本 并删除当前版本
             beforePriceVersion.setEndDate( DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN) );
             beforePriceVersion.setUpdator( tenantId );
@@ -330,6 +344,120 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         return RdfaResult.success(true);
     }
 
+    @Override
+    public List<ElectricityPriceVersionBO> queryPriceVersionList(String provinceCode) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put( "provinceCode",provinceCode );
+        map.put( "state",0 );
+        List<ElectricityPriceVersion> electricityPriceVersions = electricityPriceVersionCustomMapper.queryPriceVersionList( map );
+        if(CollectionUtil.isEmpty(electricityPriceVersions  )){
+            return null;
+        }
+        List<ElectricityPriceVersionBO> electricityPriceVersionBOs = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceVersionListPOToBO( electricityPriceVersions );
+        return electricityPriceVersionBOs;
+    }
+
+    @Override
+    public List<ElectricityPriceStructureBO> queryPriceVersionStructureList(String versionId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("versionId",versionId);
+        map.put( "state",0 );
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
+        if(CollectionUtil.isEmpty( electricityPriceStructures )){
+            return null;
+        }
+        List<ElectricityPriceStructureBO> electricityPriceStructureBOS = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceStructurePOListToBOList( electricityPriceStructures );
+        return electricityPriceStructureBOS;
+    }
+
+    @Override
+    public ElectricityPriceStructureDetailBO getStructureDetail(String structuredId) {
+        //根据体系id获取体系信息
+        ElectricityPriceStructure electricityPriceStructure = electricityPriceStructureMapper.selectByPrimaryKey( Long.valueOf( structuredId ) );
+        ElectricityPriceStructureDetailBO electricityPriceStructureDetailBO = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.ElectricityPriceStructurePOTOElectricityPriceStructureDetailBO( electricityPriceStructure );
+        //创建体系规则详情
+        List<ElectricityPriceStructureRuleDetailBO> electricityPriceStructureRuleDetailBOS=new ArrayList<>();
+        //根据体系id获取体系规则列表
+        List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByStructureId( structuredId );
+        //规则列表组装
+        electricityPriceStructureRules.forEach( t->{
+            //创建体系规则详情与季节列表
+            ElectricityPriceStructureRuleDetailBO electricityPriceStructureRuleDetailBO = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.ElectricityPriceStructureRulePOTOBO( t);
+            List<ElectricityPriceSeasonDetailBO> seasonDetailList=new ArrayList<>();
+            //根据体系规则id查找季节列表
+            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( t.getStructureRuleId() );
+            //筛选出季节
+            Set<String> SeasonSectionIds = electricitySeasonSections.stream().map( ElectricitySeasonSection::getSeasonSectionId ).collect( Collectors.toSet() );
+            //对季节区间进行合并(同一个季节)
+            SeasonSectionIds.forEach( i->{
+                ElectricityPriceSeasonDetailBO electricityPriceSeasonDetailBO = new ElectricityPriceSeasonDetailBO();
+                electricityPriceSeasonDetailBO.setSeasonSectionId( Long.valueOf( i ) );
+                List<SeansonDateBO> seansonDateBOList =new ArrayList<>();
+                electricitySeasonSections.stream().filter( h->h.getSeasonSectionId().equals(i) ).forEach( h->{
+                    electricityPriceSeasonDetailBO.setSeasonName(h.getSeasonSectionName());
+                    //添加季节区间时间信息
+                    SeansonDateBO seansonDateBO = new SeansonDateBO();
+                    seansonDateBO.setSeasonId( String.valueOf(h.getId()) );
+                    seansonDateBO.setSeaEndDate( h.getSeaEndDate() );
+                    seansonDateBO.setSeaStartDate( h.getSeaStartDate() );
+                    seansonDateBOList.add(seansonDateBO );
+                } );
+                //根据季节id查询分时区间信息
+                List<ElectricityTimeSection> timeSectionList = electricityTimeSectionCustomMapper.getTimeSectionListBySeasonSectionId( i );
+                Map<String, List<ElectricityTimeSection>> timeMap = timeSectionList.stream().collect(
+                        Collectors.groupingBy(
+                                time -> time.getCompare() + "-" + time.getTemperature()
+                        ) );
+                //组装规则列表
+                List<ElectricityPriceStrategyBO> electricityPriceStrategyBOList=new ArrayList<>();
+                timeMap.forEach((k,v)->{
+                    String[] split = k.split( "-" );
+                    ElectricityPriceStrategyBO electricityPriceStrategyBO = new ElectricityPriceStrategyBO();
+                    electricityPriceStrategyBO.setCompare( split[0] );
+                    electricityPriceStrategyBO.setTemperature( split[1] );
+                    List<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOS = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.ElectricityTimeSectionPOListToBOList( v );
+                    electricityPriceStrategyBO.setElectricityTimeSectionUpdateBOList( electricityTimeSectionUpdateBOS );
+                    electricityPriceStrategyBOList.add( electricityPriceStrategyBO );
+
+                });
+                //规则列表添加入季节
+                electricityPriceSeasonDetailBO.setElectricityPriceStrategyBOList( electricityPriceStrategyBOList );
+                //季节列表时间添加入季节
+                electricityPriceSeasonDetailBO.setSeasonDateList( seansonDateBOList );
+                //季节添加进季节列表
+                seasonDetailList.add( electricityPriceSeasonDetailBO);
+            } );
+            //季节列表添加进体系规则
+            electricityPriceStructureRuleDetailBO.setElectricityPriceSeasonDetailBOS( seasonDetailList );
+            electricityPriceStructureRuleDetailBO.setStrategies( t.getStrategies() );
+            electricityPriceStructureRuleDetailBO.setId( String.valueOf( t.getId() ) );
+            electricityPriceStructureRuleDetailBO.setIndustries( t.getIndustries() );
+            electricityPriceStructureRuleDetailBO.setVoltageLevels( t.getVoltageLevels() );
+            //将体系规则添加进规则列表
+            electricityPriceStructureRuleDetailBOS.add(electricityPriceStructureRuleDetailBO);
+
+        } );
+        //组装体系价格列表
+        List<ElectricityPriceDetailPO> priceDetailPOList = electricityPriceCustomMapper.getPriceDetailListByStructureId( structuredId );
+        List<ElectricityPriceDetailBO> electricityPriceDetailBOs = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceDetailPOListToBOList( priceDetailPOList );
+
+        //将规则列表添加进体系
+        electricityPriceStructureDetailBO.setElectricityPriceStructureRuleDetailBOS( electricityPriceStructureRuleDetailBOS );
+        electricityPriceStructureDetailBO.setElectricityPriceDetailBOList( electricityPriceDetailBOs );
+        return electricityPriceStructureDetailBO;
+    }
+
+    @Override
+    public List<ElectricityPriceDictionaryBO> getPriceElectricityDictionarys(String type) {
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put( "type",type );
+        hashMap.put("state",0);
+        List<ElectricityPriceDictionary> electricityPriceDictionaries = electricityPriceDictionaryCustomMapper.selectDictionaryByCondition( hashMap );
+        List<ElectricityPriceDictionaryBO> dictionaryBOList = BeanUtil.mapList(electricityPriceDictionaries, ElectricityPriceDictionaryBO.class);
+        return dictionaryBOList;
+
+    }
+
     /**
      * 查找哪些体系被删除了
      * @param electricityPriceStructureUpdateBOList
@@ -337,7 +465,10 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private List<Long> queryDeleteStructureIds(List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList,String versionId) {
         //根据版本id查询当前版本下的体系id列表
-        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.queryListByVersionId( versionId );
+        Map<String,Object> map = new HashMap<>();
+        map.put("versionId",versionId);
+        map.put( "state",0 );
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
         //筛选出现有的id
         List<String> ids = electricityPriceStructureUpdateBOList.stream().map( ElectricityPriceStructureUpdateBO::getId ).filter( StringUtils::isNotEmpty ).collect( Collectors.toList() );
         //拿版本下的体系列表与现有的对比，得出哪些删除了
@@ -350,11 +481,11 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private void updateStructure(ElectricityPriceStructureUpdateBO priceStructureUpdateBO,String versionId) {
         //查询当前体系绑定的设备信息
-        List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentExtMapper.queryEquipmentBindingByStructureId( priceStructureUpdateBO.getId() );
+        List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentCustomMapper.queryEquipmentBindingByStructureId( priceStructureUpdateBO.getId() );
         //更新操作,先删除当前体系下的数据然后新增
         deleteStructure(Long.valueOf( priceStructureUpdateBO.getId() ));
         String structureId = createStructure( priceStructureUpdateBO, versionId );
-        List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleExtMapper.queryRuleListByStructureId( structureId );
+        List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleCustomMapper.queryRuleListByStructureId( structureId );
         //更新设备绑定,根据设备绑定的规则id找到对应的三要素,匹配新体系下的三要素
         electricityPriceEquipments.forEach( t->{
             ElectricityPriceRule electricityPriceRule = priceRuleMapper.selectByPrimaryKey( Long.valueOf(t.getId()) );
@@ -375,36 +506,6 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             electricityPriceEquipmentMapper.updateByPrimaryKey(t);
 
         } );
-
-
-
-
-        /*//1.修改体系名称,体系区域
-        ElectricityPriceStructure electricityPriceStructure = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceStructureBOTOPO( priceStructureUpdateBO );
-        electricityPriceStructure.setUpdator( tenantId );
-        electricityPriceStructure.setUpdateTime( DateUtil.date() );
-        electricityPriceStructure.setState(BoolLogic.NO.getCode() );
-        electricityPriceStructureExtMapper.updateByPrimaryKey(electricityPriceStructure );
-        //2.修改体系规则
-        //2.1查询之前体系下的体系规则
-        List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleExtMapper.queryElectricityPriceRulesByStructureId( priceStructureUpdateBO.getId() );
-        //2.1.1查找出当前体系下体系规则被删除的规则
-        List<String> afterStructureRuleIds = priceStructureUpdateBO.getElectricityPriceStructureRuleUpdateBOList().stream().filter( t -> StringUtils.isNotEmpty( String.valueOf( t.getId() ) ) ).map( ElectricityPriceStructureRuleUpdateBO::getId ).collect( Collectors.toList() );
-        List<Long> deleteStructureRuleIds = electricityPriceStructureRules.stream().filter( t -> !afterStructureRuleIds.contains( t ) ).collect( Collectors.toList() ).stream().map( ElectricityPriceStructureRule::getId ).collect( Collectors.toList() );
-        //2.1.1.1 删除体系规则以及对应的季节分时与价格
-        if(!CollectionUtils.isEmpty( deleteStructureRuleIds )){
-            //2.1.1.1.1 删除季节分时
-            deleteStructureRuleByStructureRuleIds(deleteStructureRuleIds);
-            //2.1.1.1.2 删除规则与价格 根据体系规则找到对应的规则id
-            List<ElectricityPriceStructureRule> priceRules = electricityPriceStructureRuleExtMapper.queryElectricityPriceRulesByStructureRule( StringUtils.join( deleteStructureRuleIds ) );
-            batchDeleteRuleAndPrice(priceRules.stream().map( ElectricityPriceStructureRule::getId ).collect( Collectors.toList()) );
-        }
-        //2.1.2 筛选出新增的体系规则
-        List<ElectricityPriceStructureRuleUpdateBO> addStructureRuleList = priceStructureUpdateBO.getElectricityPriceStructureRuleUpdateBOList().stream().filter( t -> StringUtils.isEmpty( t.getId() ) ).collect( Collectors.toList() );
-        if(!CollectionUtils.isEmpty( addStructureRuleList )){
-
-        }*/
-
     }
 
 
@@ -417,11 +518,11 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //根据体系id删除体系规则,季节分时,分时区间,规则,价格
         electricityPriceStructureMapper.deleteByPrimaryKey( structureId );
         //根据体系id查询体系规则,根据体系规则ids删除体系规则
-        List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleExtMapper.queryElectricityPriceRulesByStructureId( String.valueOf(structureId) );
+        List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByStructureId( String.valueOf(structureId) );
         List<Long> electricityPriceStructureRuleIds = electricityPriceStructureRules.stream().map( ElectricityPriceStructureRule::getId ).collect( Collectors.toList() );
         deleteStructureRuleByStructureRuleIds(electricityPriceStructureRuleIds);
         //批量删除体系规则下对应的规则与价格(根据体系id)
-        List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleExtMapper.queryRuleListByStructureId( String.valueOf( structureId ) );
+        List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleCustomMapper.queryRuleListByStructureId( String.valueOf( structureId ) );
         List<Long> electricityPriceRuleIds = electricityPriceRules.stream().map( ElectricityPriceRule::getId ).collect( Collectors.toList() );
         batchDeleteRuleAndPrice(electricityPriceRuleIds);
     }
@@ -432,22 +533,22 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
     public void deleteStructureRuleByStructureRuleIds(List<Long> electricityPriceRuleIds){
         //根据体系规则id删除体系规则
         String ids = StringUtils.join( electricityPriceRuleIds, "," );
-        electricityPriceStructureRuleExtMapper.batchDeleteStructureRuleByIds(ids);
+        electricityPriceStructureRuleCustomMapper.batchDeleteStructureRuleByIds(ids);
         //根据体系规则id查询出体系规则下对应的季节id ,根据季节id删除季节与分时信息
-        List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionExtMapper.querySeasonSectionIdsByStructureRuleIds( ids );
-        List<Long> seasonIds = electricitySeasonSections.stream().map( ElectricitySeasonSection::getId ).collect( Collectors.toList() );
-        batchDeleteSeasonAndTime(seasonIds);
+        List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( ids );
+        List<String> seasonSectionIds = electricitySeasonSections.stream().map( ElectricitySeasonSection::getSeasonSectionId ).collect( Collectors.toList() );
+        batchDeleteSeasonAndTime(seasonSectionIds);
 
     }
 
     /**
      * 删除季节分时与分时区间
      */
-    public void batchDeleteSeasonAndTime(List<Long> seasonIds){
-        String seasonIdsString = StringUtils.join( seasonIds, "," );
-        //根据季节id删除季节与分时信息
-        electricityPriceSeasonSectionExtMapper.batchDeleteSeasonSectionByIds(seasonIdsString );
-        electricityTimeSectionExtMapper.batchDeleteTimeSectionBySeasonSectionIds(seasonIdsString);
+    public void batchDeleteSeasonAndTime(List<String> seasonSectionIds){
+        String seasonIdsString = StringUtils.join( seasonSectionIds, "," );
+        //根据季节sectionId删除季节与分时信息
+        electricityPriceSeasonSectionCustomMapper.batchDeleteSeasonSectionBySectionIds(seasonIdsString );
+        electricityTimeSectionCustomMapper.batchDeleteTimeSectionBySeasonSectionIds(seasonIdsString);
     }
 
     /**
@@ -455,8 +556,8 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     public void batchDeleteRuleAndPrice(List<Long> electricityPriceRuleIds){
         String ruleIdsString= StringUtils.join( electricityPriceRuleIds, "," );
-        electricityPriceRuleExtMapper.bacthDeletePriceRuleByRuleIds( ruleIdsString );
-        electricityPriceExtMapper.batchDeletePriceByRuleIds( ruleIdsString );
+        electricityPriceRuleCustomMapper.bacthDeletePriceRuleByRuleIds( ruleIdsString );
+        electricityPriceCustomMapper.batchDeletePriceByRuleIds( ruleIdsString );
     }
 
 
@@ -482,7 +583,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             electricityPriceStructureRule.setStructureRuleId( structureRuleId );
             electricityPriceStructureRule.setState(BoolLogic.NO.getCode());
             electricityPriceStructureRule.setCreateTime(DateUtil.date());
-            electricityPriceStructureRuleExtMapper.insertElectricityPriceStructureRule(electricityPriceStructureRule);
+            electricityPriceStructureRuleCustomMapper.insertElectricityPriceStructureRule(electricityPriceStructureRule);
             Long structureRuleAutoId=electricityPriceStructure.getId();
             //创建季节分时与分时区间
             t.getElectricityPriceSeasonUpdateReqVOList().forEach( season->{
@@ -588,62 +689,4 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             } );
         } );
     }
-
-
-
-
-    /**
-     * 判断现传入的体系区域是否覆盖之前的体系区域
-     * @param cityCodesBefore
-     * @param cityCodesNow
-     * @return
-     */
-    private Boolean judgeCityCover(String cityCodesBefore, String cityCodesNow) {
-
-        return false;
-    }
-
-
-    /**
-     * 校验版本下是否存在重复体系名称
-     * @param electricityPriceVersionUpdateBO
-     * @return true 存在重复 false 不存在
-     */
-    Boolean judgeStructureNameDuplicate(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO){
-        int size = electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList().stream().map( ElectricityPriceStructureUpdateBO::getStructureName ).collect( Collectors.toSet() ).size();
-        if(electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList().size()>size){
-            return true;
-        }
-        return false;
-    }
-
-
-    /*LinkedMultiValueMap<String,Object> judgeStructureChange(ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO){
-        //根据版本id查找当前版本下的所有体系id,与现有进行比较,判断出哪些删除了,哪些修改了,哪些新增了
-        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureExtMapper.queryListByVersionId( String.valueOf( electricityPriceVersionUpdateBO.getId() ) );
-        LinkedMultiValueMap<String,Object> map= new LinkedMultiValueMap<>();
-        List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList = electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList();
-
-        //新增的体系
-        electricityPriceStructureUpdateBOList.forEach( t->{
-            if(!Optional.ofNullable(t.getId()).isPresent()){
-                map.add( "add",t );
-            }
-        } );
-        //删除与修改的体系
-        List<String> nowIds = electricityPriceStructureUpdateBOList.stream().map( ElectricityPriceStructureUpdateBO::getId ).collect( Collectors.toList() );
-        electricityPriceStructures.forEach( t->{
-            if(nowIds.contains( String.valueOf(t.getId()) )){
-                ElectricityPriceStructureUpdateBO electricityPriceStructureUpdateBO = electricityPriceStructureUpdateBOList.stream().filter( f -> f.getId().equals( t.getId() ) ).findFirst().get();
-                //todo 体系修改,  历史与当前版本 1.判断体系是否绑定了设备 2.体系区域是否发生修改
-
-
-                map.add("update",electricityPriceStructureUpdateBO );
-            }else{
-                map.add( "delete",t.getId() );
-            }
-
-        } );
-        return map;
-    }*/
 }
