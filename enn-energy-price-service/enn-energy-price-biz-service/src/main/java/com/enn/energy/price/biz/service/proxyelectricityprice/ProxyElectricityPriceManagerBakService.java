@@ -1,11 +1,13 @@
 package com.enn.energy.price.biz.service.proxyelectricityprice;
 
+import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelWriter;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureAndRuleValidateBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureAndRuleValidateRespBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionStructuresCreateBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceVersionUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.*;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import top.rdfa.framework.biz.ro.RdfaResult;
+
+import java.util.List;
 
 /**
  * 代购电价service
@@ -33,4 +35,14 @@ public interface ProxyElectricityPriceManagerBakService {
 
     ExcelWriter downLoadTemplate();
 
+    /**
+     * @describtion 上传模板
+     * @author sunjidong
+     * @date 2022/5/8 8:11
+     * @param
+     * @return
+     */
+    List<ElectricityPriceRuleCreateBO> uploadTemplate(ExcelReader reader, List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList);
+
+    ElectricityPriceStructureAndRuleValidateRespBO validateSeasonTime(List<ElectricitySeasonCreateBO> seasonCreateBOList);
 }

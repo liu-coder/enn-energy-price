@@ -1,6 +1,7 @@
 package com.enn.energy.price.biz.service.bo.proxyprice;
 
 import javax.validation.Valid;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -9,7 +10,9 @@ import java.util.*;
  * @author sunjidong
  * @date 2022/4/30
  **/
-public class ValidationList<E> implements List<E> {
+public class ValidationList<E> implements List<E> , Serializable {
+
+    private static final long serialVersionUID = -4999712545678459642L;
 
     @Valid
     public List<E> list = new ArrayList<>();

@@ -1,7 +1,7 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.poi.excel.ExcelFileUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -122,8 +122,7 @@ public class ProxyElectricityPriceManagerController {
             return RdfaResult.success(null);
         }
         ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
-                = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE
-                .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
+                = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
 
@@ -132,7 +131,6 @@ public class ProxyElectricityPriceManagerController {
      * @author sunjidong
      * @date 2022/5/7 20:38
      * @param response
-     * @return
      */
     @GetMapping("/downLoadTemplate")
     public void downLoadTemplate(HttpServletResponse response){
@@ -148,18 +146,44 @@ public class ProxyElectricityPriceManagerController {
      * @describtion 导入模板
      * @author sunjidong
      * @date 2022/5/7 20:38
-     * @param 
-     * @return
+     * @param  priceRuleReqVOList  file
+     * @return List<ElectricityPriceRuleCreateReqVO>
      */
     @PostMapping("/uploadTemplate")
-    public void uploadTemplate(List<ElectricityPriceRuleCreateReqVO> priceRuleReqVOList, @RequestParam("fileName") MultipartFile file){
+    public List<ElectricityPriceRuleCreateReqVO> uploadTemplate(List<ElectricityPriceRuleCreateReqVO> priceRuleReqVOList, @RequestParam("fileName") MultipartFile file){
+        if(CollUtil.isEmpty(priceRuleReqVOList)){
+            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
+        }
+        List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceRuleCreateReqVOListToBOList(priceRuleReqVOList);
         ExcelReader reader;
         try {
             reader = ExcelUtil.getReader(file.getInputStream());
         } catch (IOException e) {
             throw new PriceException(ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
         }
-        List<List<Object>> read = reader.read(2);
+        List<ElectricityPriceRuleCreateBO> priceRuleCreateRespBOList = priceManagerBakService.uploadTemplate(reader, priceRuleCreateBOList);
+        return ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceRuleCreateReqBOListToVOList(priceRuleCreateRespBOList);
+    }
+
+    /**
+     * @describtion 季节、分时相关校验
+     * @author sunjidong
+     * @date 2022/5/6 9:04
+     * @param validateReqVO
+     * @return ElectricityPriceStructureAndRuleValidateRespVO
+     */
+    @PostMapping("/validateSeasonTime")
+    @ApiOperation( "季节、分时相关校验" )
+    public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateSeasonTime(@RequestBody @Valid List<ElectricitySeasonValidateReqVO> validateReqVO){
+        List<ElectricitySeasonCreateBO> seasonCreateBOList = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.seasonValidateReqVOListToBOList(validateReqVO);
+        ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateSeasonTime(seasonCreateBOList);
+        if(ObjectUtil.isNull(validateRespBO)){
+            return RdfaResult.success(null);
+        }
+        ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
+                = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE
+                .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
+        return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
 
 }
