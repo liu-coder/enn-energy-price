@@ -1,7 +1,10 @@
 package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
+import com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface ElectricityPriceCustomMapper {
@@ -17,4 +20,12 @@ public interface ElectricityPriceCustomMapper {
      * @param ruleIds
      */
     void batchDeletePriceByRuleIds(@Param( "ruleIds" ) String ruleIds);
+
+
+    /**
+     * 获取电价明细列表
+     * @param structureId
+     * @return
+     */
+    List<ElectricityPriceDetailPO> getPriceDetailListByStructureId(@Param( "structureId" ) String structureId);
 }

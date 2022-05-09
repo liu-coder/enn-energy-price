@@ -6,14 +6,7 @@
         parentId, version_id, creator, updator, create_time, update_time
     </sql>
 
-    <select id="queryListByVersionId" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
-        select
-        <include refid="Base_Column_List" />
-        from electricity_price_structure
-        where version_id = #{versionId} and state=0
 
-
-    </select>
     <select id="batchQueryStructureListByIds"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         select
@@ -25,6 +18,18 @@
         </foreach>
     </select>
 
+    <select id="queryListByConditions" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price_structure
+        where
+        <if test="versionId != null">
+            and version_id = #{versionId}
+        </if>
+        <if test="state != null">
+            and state = #{state}
+        </if>
+    </select>
 
 
     <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">

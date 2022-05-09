@@ -19,7 +19,6 @@ import java.util.List;
 @Getter
 public class ElectricityPriceStrategyBO implements Serializable {
     private static final long serialVersionUID = 6502612562096991373L;
-    private String strategyName;
     private String compare;
     private String temperature;
     private List<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOList;

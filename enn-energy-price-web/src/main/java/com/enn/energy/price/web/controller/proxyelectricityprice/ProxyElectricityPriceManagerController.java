@@ -1,7 +1,7 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.poi.excel.ExcelFileUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -95,14 +95,14 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/updatePriceVersion")
     @ApiOperation( "修改电价版本" )
     public RdfaResult<Boolean> updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
-        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
+        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
         return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
     }
 
     @PostMapping("/deletePriceVersion")
     @ApiOperation( "删除电价版本" )
     public RdfaResult<Boolean> deletePriceVersion(@RequestBody @Valid ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO){
-        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateMapper.INSTANCE.electricityPriceVersionDeleteReqVOTOBO( electricityPriceVersionDeleteReqVO );
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOTOBO( electricityPriceVersionDeleteReqVO );
         return proxyElectricityPriceManagerService.deletePriceVersion(electricityPriceVersionDeleteBO);
     }
 
@@ -184,6 +184,49 @@ public class ProxyElectricityPriceManagerController {
                 = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE
                 .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
+    }
+    @GetMapping("/getVersionList/{provinceCode}")
+    @ApiOperation("获取版本列表")
+    public RdfaResult<ElectricityPriceVersionRespVOList> getVersionList(@PathVariable("provinceCode") @ApiParam(required = true, name = "provinceCode", value = "省编码") String provinceCode){
+        List<ElectricityPriceVersionBO> electricityPriceVersionBOS = proxyElectricityPriceManagerService.queryPriceVersionList( provinceCode );
+        if(CollectionUtils.isEmpty(electricityPriceVersionBOS)){
+            return RdfaResult.success( null );
+        }
+        List<ElectricityPriceVersionRespVO> priceVersionRespVOList = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionRespBOListToVOList( electricityPriceVersionBOS );
+        ElectricityPriceVersionRespVOList respVOList = ElectricityPriceVersionRespVOList.builder().electricityPriceVersionRespVOList( priceVersionRespVOList ).build();
+        return RdfaResult.success(respVOList) ;
+    }
+
+
+    @GetMapping("/getVersionStructureList/{versionId}")
+    @ApiOperation( "获取版本体系列表" )
+    public RdfaResult<ElectricityPriceStructureRespVOList> getVersionStructureList(@PathVariable("versionId") @ApiParam(required = true, name = "versionId", value = "版本id") String versionId){
+        List<ElectricityPriceStructureBO> electricityPriceStructureBOS = proxyElectricityPriceManagerService.queryPriceVersionStructureList( versionId );
+        if(CollectionUtils.isEmpty(electricityPriceStructureBOS)){
+            return RdfaResult.success( null );
+        }
+        List<ElectricityPriceStructureRespVO> electricityPriceStructureRespVOS = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureRespBOListToVOList( electricityPriceStructureBOS );
+        ElectricityPriceStructureRespVOList respVOList = ElectricityPriceStructureRespVOList.builder().electricityPriceStructureRespVOList( electricityPriceStructureRespVOS ).build();
+        return RdfaResult.success( respVOList );
+    }
+
+    @GetMapping("/getStructureDetail/{structureId}")
+    @ApiOperation("获取体系详情")
+    public RdfaResult<ElectricityPriceStructureDetailRespVO> getStructureDetail (@PathVariable("structureId") @ApiParam(required = true, name = "structureId", value = "体系id") String structureId){
+        ElectricityPriceStructureDetailBO structureDetail = proxyElectricityPriceManagerService.getStructureDetail( structureId );
+        ElectricityPriceStructureDetailRespVO electricityPriceStructureDetailRespVO = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureDetailBOToVO( structureDetail );
+        return RdfaResult.success( electricityPriceStructureDetailRespVO );
+    }
+
+
+    @ApiOperation( "查询电价字典" )
+    @GetMapping("/getDictionarys/{type}")
+    public RdfaResult<ElectricityPriceDictionaryRespVOList> getElectricityPriceDictionarys(@PathVariable("type") @ApiParam(required = true, name = "type", value = "类型 0:用电行业 1:电压等级") String type){
+        List<ElectricityPriceDictionaryBO> priceElectricityDictionarys = proxyElectricityPriceManagerService.getPriceElectricityDictionarys( type );
+        List<ElectricityPriceDictionaryRespVO> electricityPriceDictionaryRespVOS = ElectricityPriceVersionUpdateConverMapper.INSTANCE.ElectricityPriceDictionaryBOListToVOList( priceElectricityDictionarys );
+        ElectricityPriceDictionaryRespVOList electricityPriceDictionaryRespVOList = new ElectricityPriceDictionaryRespVOList();
+        electricityPriceDictionaryRespVOList.setElectricityPriceDictionaryRespVOList( electricityPriceDictionaryRespVOS );
+        return RdfaResult.success( electricityPriceDictionaryRespVOList );
     }
 
 }
