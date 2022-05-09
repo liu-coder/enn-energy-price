@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Xinao
@@ -12,9 +13,9 @@ import java.util.List;
 @Mapper
 public interface ElectricityTimeSectionCustomMapper {
     /**
-     * 批量删除季节分时信息根据季节区间id(uuid)
+     * 批量删除分时信息根据季节区间id(uuid)
      */
-    void batchDeleteTimeSectionBySeasonSectionIds(@Param( "seasonSectionIds" ) String seasonSectionIds);
+    void batchDeleteTimeSectionBySeasonSectionIds(Map<String,Object> map);
 
 
     /**

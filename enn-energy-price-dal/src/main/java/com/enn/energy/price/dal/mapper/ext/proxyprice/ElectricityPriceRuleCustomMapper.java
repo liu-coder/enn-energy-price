@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 电价版本规则Mapper.
@@ -25,9 +26,9 @@ public interface ElectricityPriceRuleCustomMapper {
 
     /**
      * 批量删除电价规则根据规则ids
-     * @param ruleIds
+     * @param map
      */
-    void bacthDeletePriceRuleByRuleIds(@Param( "ruleIds" ) String ruleIds);
+    void bacthDeletePriceRuleByRuleIds(Map<String,Object> map);
 
     /**
      * 根据体系id查找对应的规则列表
