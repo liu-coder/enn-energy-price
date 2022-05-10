@@ -112,4 +112,10 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
      * @return
      */
     ElectricityPriceDetailBO  electricityPriceDetailPOToBO(ElectricityPriceDetailPO electricityPriceDetailPO);
+
+    /**
+     * @param electricityPrice
+     * @return
+     */
+    ElectricityPrice electricityPriceBOToPO(ElectricityPriceUpdateBO electricityPrice);
 }

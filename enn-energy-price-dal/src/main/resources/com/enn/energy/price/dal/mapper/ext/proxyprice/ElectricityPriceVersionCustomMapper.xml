@@ -7,16 +7,35 @@
         start_date, end_date, price_type, bind_type, state, creator, updator, create_time,
         update_time, last_version_id
     </sql>
+    <update id="updateElectricityPriceVersionCondition">
+        update electricity_price_version
+        set
+         <if test="versionName!=null">
+             version_name = #{versionName,jdbcType=VARCHAR},
+         </if>
+         <if test="updator!=null">
+             updator = #{updator,jdbcType=VARCHAR},
+         </if>
+         <if test="updateTime!=null">
+             update_time = #{updateTime,jdbcType=TIMESTAMP},
+         </if>
+         <if test="afterState !=null">
+             state=#{afterState}
+         </if>
+         <where>
+             <if test="id!=null">
+                 and id = #{id,jdbcType=BIGINT}
+             </if>
+             <if test="updator!=null">
+                 and tenant_id = #{updator,jdbcType=VARCHAR}
+             </if>
+             <if test="state!=null">
+                 and  state = #{state,jdbcType=INTEGER}
+             </if>
+         </where>
 
-    <update id="updateElectricityPriceVersionById">
-        update electricity_price_version set
-        version_name = #{versionName,jdbcType=VARCHAR},
-        updator = #{updator,jdbcType=VARCHAR},
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-        where tenant_id = #{updator,jdbcType=VARCHAR}
-        and  state = #{state,jdbcType=INTEGER}
-        and  id = #{id,jdbcType=BIGINT}
     </update>
+
 
     <select id="queryBeforePriceVersion" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
         select

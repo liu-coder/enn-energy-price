@@ -37,7 +37,8 @@ public enum ErrorCodeEnum {
     VALIDATE_FAIL("E30005","校验不通过，请确认"),
     RETRY_AFTER("E30006","稍后重试"),
     DOWNLOAD_TEMPLATE_EXCEPTION("E30007","模板下载异常"),
-    UPLOAD_TEMPLATE_EXCEPTION("E30008","模板上传异常")
+    UPLOAD_TEMPLATE_EXCEPTION("E30008","模板上传异常"),
+    VERSION_IS_NOT_ALLOW_DELETE("E30009","只允许删除未来版本"),
     ;
     private String errorCode;
     private String errorMsg;

@@ -6,7 +6,7 @@
         structure_rule_id, system_code, adjust, state, creator, updator, create_time, update_time
     </sql>
     <update id="deleteEquipmentBindingByVersionId">
-        update electricity_price_equipment set state=1 where version_id=#{versionId}
+        update electricity_price_equipment set state=1 where version_id=#{versionId} and state=0
     </update>
     <select id="queryEquipmentBinding" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select

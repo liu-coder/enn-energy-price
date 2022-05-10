@@ -29,4 +29,7 @@ public interface ElectricityPriceVersionBOConvertMapper {
 
     ElectricityTimeSection timeSectionCreateBOToPO(ElectricityTimeSectionCreateBO timeSectionCreateBO);
 
+
+
+
 }

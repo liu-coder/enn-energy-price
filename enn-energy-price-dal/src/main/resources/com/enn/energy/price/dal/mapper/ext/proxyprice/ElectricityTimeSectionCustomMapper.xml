@@ -5,6 +5,14 @@
         id, season_section_id, time_section_id, start_time, end_time, periods, state, compare,
         temperature, create_time, update_time
     </sql>
+    <update id="batchDeleteTimeSectionByIds">
+        update electricity_time_section
+        set state=#{state},update_time=#{updateTime}
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
 
     <delete id="batchDeleteTimeSectionBySeasonSectionIds">
         update electricity_time_section
