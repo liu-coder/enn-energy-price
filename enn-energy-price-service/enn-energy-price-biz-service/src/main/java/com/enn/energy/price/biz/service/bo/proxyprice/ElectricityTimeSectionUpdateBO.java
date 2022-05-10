@@ -25,4 +25,5 @@ public class ElectricityTimeSectionUpdateBO implements Serializable {
     private String periods;
     private String startTime;
     private String endTime;
+    private Boolean comply;
 }

@@ -16,7 +16,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public class ElectricityPriceStrategyBO implements Serializable {
     private static final long serialVersionUID = 6502612562096991373L;
     private String compare;

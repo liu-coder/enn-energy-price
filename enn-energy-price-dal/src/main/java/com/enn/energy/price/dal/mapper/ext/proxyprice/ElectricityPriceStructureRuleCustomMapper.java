@@ -31,7 +31,7 @@ public interface ElectricityPriceStructureRuleCustomMapper {
 
 
     /**
-     * 根据价格规则id查询规则
+     * 根据体系规则id查询规则
      * @param structureRuleIds
      * @return
      */

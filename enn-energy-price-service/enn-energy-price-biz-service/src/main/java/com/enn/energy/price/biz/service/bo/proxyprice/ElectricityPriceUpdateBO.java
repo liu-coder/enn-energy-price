@@ -29,4 +29,5 @@ public class ElectricityPriceUpdateBO implements Serializable {
     private BigDecimal maxCapacityPrice;
     private BigDecimal transformerCapacityPrice;
     private String structureRuleId;
+    private Boolean comply;
 }

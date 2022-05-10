@@ -25,7 +25,16 @@ public interface ElectricityPriceSeasonSectionCustomMapper {
 
     /**
      * 批量删除季节区间根据季节区间id
-     * @param seansonIds
+     * @param map
      */
-    void batchDeleteSeasonSectionBySectionIds(Map<String,Object> map);
+    int batchDeleteSeasonSectionBySectionIds(Map<String,Object> map);
+
+
+    /**
+     * 批量删除季节根据季节id
+     * @param map
+     * @return
+     */
+    int batchDeleteSeasonSectionByIds(Map<String,Object> map);
+
 }
