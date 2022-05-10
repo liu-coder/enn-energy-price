@@ -62,7 +62,7 @@ public interface ElectricityPriceVersionUpdateConverMapper {
      * @param electricityPriceVersionUpdateReqVO VO
      * @return VO
      */
-    ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateReqVOTOBO(ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO);
+    ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateReqVOToBO(ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO);
 
 
     /**
@@ -75,7 +75,7 @@ public interface ElectricityPriceVersionUpdateConverMapper {
      * @param electricityPriceVersionUpdateReqVO
      * @return bo
      */
-    ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOTOBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionUpdateReqVO);
+    ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOToBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionUpdateReqVO);
 
 
     /**

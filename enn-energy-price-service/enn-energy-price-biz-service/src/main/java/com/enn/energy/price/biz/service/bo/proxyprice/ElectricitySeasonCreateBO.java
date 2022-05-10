@@ -2,11 +2,14 @@ package com.enn.energy.price.biz.service.bo.proxyprice;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 季节名称BO
@@ -19,6 +22,8 @@ public class ElectricitySeasonCreateBO implements Serializable {
     private static final long serialVersionUID = -4213396806536606042L;
 
     private String seasonSectionName;
+
+    private Date startDate;
 
     private ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList;
 
@@ -48,10 +53,19 @@ public class ElectricitySeasonCreateBO implements Serializable {
         this.timeSectionCreateBOList = timeSectionCreateBOList;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
     @Override
     public String toString() {
         return "ElectricitySeasonCreateBO{" +
                 "seasonSectionName='" + seasonSectionName + '\'' +
+                ", startDate=" + startDate +
                 ", seasonSectionCreateBOList=" + seasonSectionCreateBOList +
                 ", timeSectionCreateBOList=" + timeSectionCreateBOList +
                 '}';

@@ -8,6 +8,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * VO层通用转换器
  *
@@ -32,12 +34,28 @@ public interface ElectricityPriceVersionCreateBOConvertMapper {
     })
     ElectricitySeasonCreateBO seasonCreateReqVOToBO(ElectricitySeasonCreateReqVO seasonCreateReqVO);
 
+    @Mappings({
+            @Mapping(source = "seasonValidateReqVO.seasonSectionValidateReqVOList", target = "seasonSectionCreateBOList"),
+            @Mapping(source = "seasonValidateReqVO.timeSectionValidateReqVOList", target = "timeSectionCreateBOList"),
+    })
+    ElectricitySeasonCreateBO seasonValidateReqVOToBO(ElectricitySeasonValidateReqVO seasonValidateReqVO);
+
+    List<ElectricitySeasonCreateBO> seasonValidateReqVOListToBOList(List<ElectricitySeasonValidateReqVO> seasonCreateReqVOList);
+
     ElectricitySeasonSectionCreateBO seasonSectionCreateReqVOToBO(ElectricitySeasonSectionCreateReqVO seasonSectionCreateReqVO);
 
     ElectricityTimeSectionCreateBO timeSectionCreateReqVOToBO(ElectricityTimeSectionCreateReqVO timeSectionCreateReqVO);
 
     @Mapping(source = "priceRuleCreateReqVO.electricityPriceCreateReqVO", target = "electricityPriceCreateBO")
     ElectricityPriceRuleCreateBO priceRuleCreateReqVOToBO(ElectricityPriceRuleCreateReqVO priceRuleCreateReqVO);
+
+    @Mapping(source = "priceRuleCreateBO.electricityPriceCreateBO", target = "electricityPriceCreateReqVO")
+    ElectricityPriceRuleCreateReqVO priceRuleCreateReqBOToVO(ElectricityPriceRuleCreateBO priceRuleCreateBO);
+
+    List<ElectricityPriceRuleCreateBO> priceRuleCreateReqVOListToBOList(List<ElectricityPriceRuleCreateReqVO> priceRuleCreateReqVOList);
+
+    List<ElectricityPriceRuleCreateReqVO> priceRuleCreateReqBOListToVOList(List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList);
+
 
     ElectricityPriceCreateBO priceCreateVOToBO(ElectricityPriceCreateReqVO priceReqCreateReqVO);
 

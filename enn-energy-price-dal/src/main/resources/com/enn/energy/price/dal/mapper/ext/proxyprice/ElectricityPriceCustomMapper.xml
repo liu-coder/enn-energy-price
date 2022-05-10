@@ -9,7 +9,9 @@
         </foreach>
     </update>
     <update id="batchDeletePriceByRuleIds">
-        update electricity_price set state=0 WHERE rule_id IN
+        update electricity_price
+        set state=#{state},update_time=#{updateTime}
+        WHERE rule_id IN
         <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
             #{ruleId}
         </foreach>

@@ -48,7 +48,9 @@
     </select>
 
     <update id="bacthDeletePriceRuleByRuleIds">
-        update electricity_price_rule set state=1 WHERE id IN
+        update electricity_price_rule
+        set state==#{state}, update_time=#{updateTime}
+        WHERE id IN
         <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
             #{ruleId}
         </foreach>
@@ -58,6 +60,6 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_rule
-        where structure_id = #{structureId}
+        where structure_id = #{structureId} and state=0
     </select>
 </mapper>

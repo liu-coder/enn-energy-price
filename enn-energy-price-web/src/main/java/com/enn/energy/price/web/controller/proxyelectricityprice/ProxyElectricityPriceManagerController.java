@@ -1,32 +1,37 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerBakService;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceStrutureConverMapper;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConverMapper;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStructureAndRuleValidateReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionDeleteReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionStructuresCreateReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceVersionUpdateReqVO;
+import com.enn.energy.price.web.vo.requestvo.*;
 import com.enn.energy.price.web.vo.responsevo.*;
-import com.github.xiaoymin.knife4j.core.util.CollectionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
@@ -94,14 +99,14 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/updatePriceVersion")
     @ApiOperation( "修改电价版本" )
     public RdfaResult<Boolean> updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
-        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOTOBO( electricityPriceVersionUpdateReqVO );
+        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOToBO( electricityPriceVersionUpdateReqVO );
         return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
     }
 
     @PostMapping("/deletePriceVersion")
     @ApiOperation( "删除电价版本" )
     public RdfaResult<Boolean> deletePriceVersion(@RequestBody @Valid ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO){
-        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOTOBO( electricityPriceVersionDeleteReqVO );
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( electricityPriceVersionDeleteReqVO );
         return proxyElectricityPriceManagerService.deletePriceVersion(electricityPriceVersionDeleteBO);
     }
 
@@ -121,11 +126,69 @@ public class ProxyElectricityPriceManagerController {
             return RdfaResult.success(null);
         }
         ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
+                = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO);
+        return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
+    }
+
+    /**
+     * @describtion 下载模板
+     * @author sunjidong
+     * @date 2022/5/7 20:38
+     * @param response
+     */
+    @GetMapping("/downLoadTemplate")
+    public void downLoadTemplate(HttpServletResponse response){
+        ExcelWriter excelWriter = priceManagerBakService.downLoadTemplate();
+        try {
+            excelWriter.flush(response.getOutputStream());
+        } catch (IOException e) {
+            throw new PriceException(ErrorCodeEnum.DOWNLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.DOWNLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
+        }
+    }
+
+    /**
+     * @describtion 导入模板
+     * @author sunjidong
+     * @date 2022/5/7 20:38
+     * @param  priceRuleReqVOList  file
+     * @return List<ElectricityPriceRuleCreateReqVO>
+     */
+    @PostMapping("/uploadTemplate")
+    public List<ElectricityPriceRuleCreateReqVO> uploadTemplate(List<ElectricityPriceRuleCreateReqVO> priceRuleReqVOList, @RequestParam("fileName") MultipartFile file){
+        if(CollUtil.isEmpty(priceRuleReqVOList)){
+            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
+        }
+        List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceRuleCreateReqVOListToBOList(priceRuleReqVOList);
+        ExcelReader reader;
+        try {
+            reader = ExcelUtil.getReader(file.getInputStream());
+        } catch (IOException e) {
+            throw new PriceException(ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
+        }
+        List<ElectricityPriceRuleCreateBO> priceRuleCreateRespBOList = priceManagerBakService.uploadTemplate(reader, priceRuleCreateBOList);
+        return ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceRuleCreateReqBOListToVOList(priceRuleCreateRespBOList);
+    }
+
+    /**
+     * @describtion 季节、分时相关校验
+     * @author sunjidong
+     * @date 2022/5/6 9:04
+     * @param validateReqVO
+     * @return ElectricityPriceStructureAndRuleValidateRespVO
+     */
+    @PostMapping("/validateSeasonTime")
+    @ApiOperation( "季节、分时相关校验" )
+    public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateSeasonTime(@RequestBody @Valid List<ElectricitySeasonValidateReqVO> validateReqVO){
+        List<ElectricitySeasonCreateBO> seasonCreateBOList = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.seasonValidateReqVOListToBOList(validateReqVO);
+        ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateSeasonTime(seasonCreateBOList);
+        if(ObjectUtil.isNull(validateRespBO)){
+            return RdfaResult.success(null);
+        }
+        ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
                 = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE
                 .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
-
     @GetMapping("/getVersionList/{provinceCode}")
     @ApiOperation("获取版本列表")
     public RdfaResult<ElectricityPriceVersionRespVOList> getVersionList(@PathVariable("provinceCode") @ApiParam(required = true, name = "provinceCode", value = "省编码") String provinceCode){
@@ -164,9 +227,9 @@ public class ProxyElectricityPriceManagerController {
     @GetMapping("/getDictionarys/{type}")
     public RdfaResult<ElectricityPriceDictionaryRespVOList> getElectricityPriceDictionarys(@PathVariable("type") @ApiParam(required = true, name = "type", value = "类型 0:用电行业 1:电压等级") String type){
         List<ElectricityPriceDictionaryBO> priceElectricityDictionarys = proxyElectricityPriceManagerService.getPriceElectricityDictionarys( type );
-        List<ElectricityPriceDictionaryRespVO> electricityPriceDictionaryRespVOS = ElectricityPriceVersionUpdateConverMapper.INSTANCE.ElectricityPriceDictionaryBOListToVOList( priceElectricityDictionarys );
+        List<ElectricityPriceDictionaryRespVO> electricityPriceDictionaryRespVOs = ElectricityPriceVersionUpdateConverMapper.INSTANCE.ElectricityPriceDictionaryBOListToVOList( priceElectricityDictionarys );
         ElectricityPriceDictionaryRespVOList electricityPriceDictionaryRespVOList = new ElectricityPriceDictionaryRespVOList();
-        electricityPriceDictionaryRespVOList.setElectricityPriceDictionaryRespVOList( electricityPriceDictionaryRespVOS );
+        electricityPriceDictionaryRespVOList.setElectricityPriceDictionaryRespVOList( electricityPriceDictionaryRespVOs );
         return RdfaResult.success( electricityPriceDictionaryRespVOList );
     }
 

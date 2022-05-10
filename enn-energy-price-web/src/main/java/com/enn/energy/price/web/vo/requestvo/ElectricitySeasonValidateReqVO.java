@@ -3,11 +3,14 @@ package com.enn.energy.price.web.vo.requestvo;
 import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 季节名称请求VO
@@ -20,6 +23,11 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
 
     private static final long serialVersionUID = -4213396806536606042L;
 
+    @ApiModelProperty(value = "版本生效期", required = true, dataType = "date")
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date startDate;
+
     @ApiModelProperty(value = "季节名称", required = true, dataType = "string")
     @NotBlank(message = "季节名称不能为空")
     private String seasonSectionName;
@@ -28,6 +36,7 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
     @Valid
     private ValidationList<ElectricitySeasonSectionValidateReqVO> seasonSectionValidateReqVOList;
 
+    @NotEmpty(message = "分时区间不能为空")
     @Valid
     private ValidationList<ElectricityTimeSectionValidateReqVO> timeSectionValidateReqVOList;
 
@@ -55,10 +64,19 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
         this.timeSectionValidateReqVOList = timeSectionValidateReqVOList;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
     @Override
     public String toString() {
         return "ElectricitySeasonValidateReqVO{" +
-                "seasonSectionName='" + seasonSectionName + '\'' +
+                "startDate=" + startDate +
+                ", seasonSectionName='" + seasonSectionName + '\'' +
                 ", seasonSectionValidateReqVOList=" + seasonSectionValidateReqVOList +
                 ", timeSectionValidateReqVOList=" + timeSectionValidateReqVOList +
                 '}';
