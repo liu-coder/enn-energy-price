@@ -5,6 +5,7 @@ import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import top.rdfa.framework.biz.ro.RdfaResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 代购电价service
@@ -65,5 +66,5 @@ public interface ProxyElectricityPriceManagerService {
      * 根据类型获取对应的字典列表
      * @param type
      */
-    List<ElectricityPriceDictionaryBO> getPriceElectricityDictionarys(String type);
+    Map<Integer, List<ElectricityPriceDictionaryBO>> getPriceElectricityDictionaries(String type, String province);
 }

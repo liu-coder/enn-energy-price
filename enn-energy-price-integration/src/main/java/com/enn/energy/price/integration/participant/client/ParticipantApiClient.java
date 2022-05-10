@@ -13,7 +13,7 @@ import java.util.List;
  * @date 2021/12/1
  * @description: 参与者中心调用
  **/
-//@FeignClient(name="ParticipantApiClient",contextId = "ParticipantApiClient",path="/rest", url = "${participant.api.server.url}")
+@FeignClient(name="ParticipantApiClient",contextId = "ParticipantApiClient",path="/rest", url = "${participant.api.server.url}")
 @RequestMapping(headers = "X-GW-AccessKey=${participant.gateway.accessKey}")
 public interface ParticipantApiClient {
     /**

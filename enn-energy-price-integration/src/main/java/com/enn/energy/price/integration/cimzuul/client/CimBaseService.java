@@ -14,7 +14,7 @@ import java.util.List;
  * @date 2021/12/1
  * @description:调用cim服务
  **/
-//@FeignClient(value = "BASE-CIM-ZUUL", url = "${cim.base.zuul.url}")
+@FeignClient(value = "BASE-CIM-ZUUL", url = "${cim.base.zuul.url}")
 public interface CimBaseService {
 
     /**

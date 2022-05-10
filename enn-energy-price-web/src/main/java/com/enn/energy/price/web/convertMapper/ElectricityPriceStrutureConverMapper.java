@@ -2,6 +2,8 @@ package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureDetailBO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStrategyForCreateRespVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureDetailForCreateRespVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureDetailRespVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureRespVO;
 import org.mapstruct.Mapper;
@@ -32,8 +34,13 @@ public interface ElectricityPriceStrutureConverMapper {
      */
     ElectricityPriceStructureDetailRespVO ElectricityPriceStructureDetailBOToVO(ElectricityPriceStructureDetailBO priceStructureDetailBO);
 
+    List<ElectricityPriceStructureDetailRespVO> ElectricityPriceStructureDetailBOListToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBOList);
 
+    ElectricityPriceStrategyForCreateRespVO ElectricityPriceStructureForCreaateBOToVO(ElectricityPriceStructureBO priceStructureBO);
 
+    ElectricityPriceStructureDetailForCreateRespVO ElectricityPriceStructureDetailForCreaateBOToVO(ElectricityPriceStructureDetailBO priceStructureDetailBO);
+
+    List<ElectricityPriceStructureDetailForCreateRespVO> ElectricityPriceStructureDetailForCreaateBOToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBO);
 
 
 

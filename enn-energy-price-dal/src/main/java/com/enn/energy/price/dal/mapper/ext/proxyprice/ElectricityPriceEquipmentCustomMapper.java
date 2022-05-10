@@ -51,4 +51,11 @@ public interface ElectricityPriceEquipmentCustomMapper {
      * @return
      */
     int deleteEquipmentBindingByVersionId(@Param( "versionId" ) String versionId);
+
+    /**
+     * 根据ruieid查询设备绑定关系
+     * @param id
+     * @return
+     */
+    long countRuleEquipmentBindRecordsById(@Param( "id" ) Long id);
 }

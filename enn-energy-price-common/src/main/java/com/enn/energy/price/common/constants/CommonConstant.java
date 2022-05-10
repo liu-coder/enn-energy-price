@@ -95,7 +95,7 @@ public class CommonConstant {
 
     public final static String PRICE_METHOD_P = "p";
 
-    public final static String DEFAULT_TYPE = "默认";
+    public final static String DEFAULT_TYPE = "default";
 
     /**
      * 日期间隔符
@@ -234,6 +234,16 @@ public class CommonConstant {
      * 2022-12-31 11:59:59
      */
     public static final String TRANSFORMER_CAPACITY_CHINA = "变压器容量";
+
+    /**
+     * 区域分隔符
+     */
+    public static final String AREA_SPLIT = ",";
+
+    /**
+     * 默认失效日期
+     */
+    public static final String DEFAULT_END_DATE = "2099-12-31";
 
     /**
      * redis key

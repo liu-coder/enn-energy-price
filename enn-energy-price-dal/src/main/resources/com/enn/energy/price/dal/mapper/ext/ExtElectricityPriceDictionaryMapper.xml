@@ -22,6 +22,9 @@
       <if test="type != null">
         and type = #{type}
       </if>
+      <if test="province != null">
+        and province = #{province}
+      </if>
       <if test="state != null">
         and state = #{state}
       </if>

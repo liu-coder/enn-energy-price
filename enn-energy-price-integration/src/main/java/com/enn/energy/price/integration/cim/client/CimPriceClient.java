@@ -6,7 +6,7 @@ import com.enn.energy.price.integration.cimzuul.dto.CimResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 
-//@FeignClient(name = "cimPriceClient", url = "${cim.api.server.url}")
+@FeignClient(name = "cimPriceClient", url = "${cim.api.server.url}")
 public interface CimPriceClient {
     /**
      * 根据测点查询某天电价

@@ -3,6 +3,7 @@ package com.enn.energy.price.biz.service.bo.proxyprice;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
@@ -26,6 +27,8 @@ public class ElectricityPriceStructureAndRuleValidateBO implements Serializable 
     private String provinceCode;
 
     private Date startDate;
+
+    private String versionName;
 
     private ValidationList<ElectricityPriceStructureRuleCreateBO> priceStructureRuleValidateReqVOList;
 
@@ -87,6 +90,14 @@ public class ElectricityPriceStructureAndRuleValidateBO implements Serializable 
         this.provinceCode = provinceCode;
     }
 
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
     @Override
     public String toString() {
         return "ElectricityPriceStructureAndRuleValidateBO{" +
@@ -95,6 +106,7 @@ public class ElectricityPriceStructureAndRuleValidateBO implements Serializable 
                 ", tenantId='" + tenantId + '\'' +
                 ", provinceCode='" + provinceCode + '\'' +
                 ", startDate=" + startDate +
+                ", versionName='" + versionName + '\'' +
                 ", priceStructureRuleValidateReqVOList=" + priceStructureRuleValidateReqVOList +
                 ", priceRuleValidateReqVOList=" + priceRuleValidateReqVOList +
                 '}';

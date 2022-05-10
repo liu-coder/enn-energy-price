@@ -29,4 +29,11 @@ public interface ElectricityPriceStructureCustomMapper {
      * @return
      */
     int updateByPrimaryKey(ElectricityPriceStructure record);
+
+    /**
+     * 根据id查询体系
+     * @param id
+     * @return
+     */
+    ElectricityPriceStructure selectByPrimaryKey(Long id);
 }

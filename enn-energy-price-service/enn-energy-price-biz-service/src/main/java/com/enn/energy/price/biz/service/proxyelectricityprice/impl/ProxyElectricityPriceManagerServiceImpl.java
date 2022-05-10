@@ -448,13 +448,15 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
     }
 
     @Override
-    public List<ElectricityPriceDictionaryBO> getPriceElectricityDictionarys(String type) {
+    public Map<Integer, List<ElectricityPriceDictionaryBO>> getPriceElectricityDictionaries(String type, String province) {
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put( "type",type );
+        hashMap.put( "province",province );
         hashMap.put("state",0);
         List<ElectricityPriceDictionary> electricityPriceDictionaries = electricityPriceDictionaryCustomMapper.selectDictionaryByCondition( hashMap );
         List<ElectricityPriceDictionaryBO> dictionaryBOList = BeanUtil.mapList(electricityPriceDictionaries, ElectricityPriceDictionaryBO.class);
-        return dictionaryBOList;
+        return dictionaryBOList.stream()
+                .collect(Collectors.groupingBy(ElectricityPriceDictionaryBO ::getType));
 
     }
 

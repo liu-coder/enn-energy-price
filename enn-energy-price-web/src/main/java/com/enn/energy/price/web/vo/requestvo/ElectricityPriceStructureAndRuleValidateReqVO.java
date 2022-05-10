@@ -2,6 +2,7 @@ package com.enn.energy.price.web.vo.requestvo;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModelProperty;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -32,9 +33,14 @@ public class ElectricityPriceStructureAndRuleValidateReqVO implements Serializab
     private String provinceCode;
 
     @ApiModelProperty(value = "版本生效期", required = true, dataType = "date")
-    @NotNull
+    @NotNull(message = "版本生效日期不能为空")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
+
+    @ApiModelProperty(value = "版本名称不能为空", required = true, dataType = "string")
+    @NotBlank(message = "省编码code不能为空")
+    @Length(min = 1, max = 50, message = "名称最长为50个字符")
+    private String versionName;
 
     @Valid
     private ValidationList<ElectricityPriceStructureRuleValidateReqVO> priceStructureRuleValidateReqVOList;
@@ -91,6 +97,14 @@ public class ElectricityPriceStructureAndRuleValidateReqVO implements Serializab
         this.priceRuleValidateReqVOList = priceRuleValidateReqVOList;
     }
 
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
     @Override
     public String toString() {
         return "ElectricityPriceStructureAndRuleValidateReqVO{" +
@@ -98,6 +112,7 @@ public class ElectricityPriceStructureAndRuleValidateReqVO implements Serializab
                 ", structureId='" + structureId + '\'' +
                 ", provinceCode='" + provinceCode + '\'' +
                 ", startDate=" + startDate +
+                ", versionName='" + versionName + '\'' +
                 ", priceStructureRuleValidateReqVOList=" + priceStructureRuleValidateReqVOList +
                 ", priceRuleValidateReqVOList=" + priceRuleValidateReqVOList +
                 '}';

@@ -6,8 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum StrategyEnum {
-    DOUBLESTRAGEY((byte) 1, "两部制"),
-    SINGLESTRAGEY((byte) 0, "单一制"),
+    DOUBLESTRATEGY((byte) 1, "两部制"),
+    SINGLESTRATEGY((byte) 0, "单一制"),
     ;
 
     private Byte code;

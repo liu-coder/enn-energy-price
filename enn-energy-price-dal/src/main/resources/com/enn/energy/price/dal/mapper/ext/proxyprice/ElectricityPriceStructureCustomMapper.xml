@@ -30,6 +30,13 @@
             and state = #{state}
         </if>
     </select>
+    <select id="selectByPrimaryKey" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price_structure
+        where id = #{id,jdbcType=BIGINT}
+        and state = 0
+    </select>
 
 
     <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">

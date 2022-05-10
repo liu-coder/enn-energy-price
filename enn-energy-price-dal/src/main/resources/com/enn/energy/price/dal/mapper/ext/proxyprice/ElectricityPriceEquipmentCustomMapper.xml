@@ -17,6 +17,12 @@
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
         <include refid="Base_Column_List" />
-        from electricity_price_equipment where structure_id=#{structureId} and state=0
+        from electricity_price_equipment where structure_id = #{structureId} and state=0
+    </select>
+    <select id="countRuleEquipmentBindRecordsById" resultType="java.lang.Long">
+        select count(*)
+        from electricity_price_equipment
+        where id = #{id}
+          and   state = 0
     </select>
 </mapper>

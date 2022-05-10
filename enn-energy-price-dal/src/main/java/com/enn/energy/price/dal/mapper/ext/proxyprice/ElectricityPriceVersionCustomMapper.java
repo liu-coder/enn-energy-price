@@ -1,5 +1,6 @@
 package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
+import com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -48,4 +49,10 @@ public interface ElectricityPriceVersionCustomMapper {
      */
     List<ElectricityPriceVersion> queryPriceVersionList(Map<String,Object> map);
 
+    /**
+     * 根据条件查询价格体系列表
+     * @param priceVersion
+     * @return
+     */
+    List<ElectricityPriceStructure> queryStructuresByCondition(ElectricityPriceVersion priceVersion);
 }
