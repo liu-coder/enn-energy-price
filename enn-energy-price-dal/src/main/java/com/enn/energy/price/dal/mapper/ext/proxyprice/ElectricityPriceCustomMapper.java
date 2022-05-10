@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ElectricityPriceCustomMapper {
@@ -17,9 +18,9 @@ public interface ElectricityPriceCustomMapper {
 
     /**
      * 根据规则ids批量删除价格
-     * @param ruleIds
+     * @param map
      */
-    void batchDeletePriceByRuleIds(@Param( "ruleIds" ) String ruleIds);
+    void batchDeletePriceByRuleIds(Map<String,Object> map);
 
 
     /**

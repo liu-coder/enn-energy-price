@@ -18,10 +18,13 @@ import java.util.Date;
 public class PriceDateUtils {
 
 
-    private static SimpleDateFormat dayDataFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static SimpleDateFormat dayFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    private static SimpleDateFormat dayTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     static {
-        dayDataFormat.setLenient(false);
+        dayFormat.setLenient(false);
+        dayTimeFormat.setLenient(false);
     }
 
     public static Date addDateByday (Date date, int days) {
@@ -39,16 +42,19 @@ public class PriceDateUtils {
     }
 
     /**
-     * 获取相差天数的当天开始时间
-     *
-     * @param days
+     * 获取指定日期(默认当天日期)，偏移的天数
+     * @param date
+     * @param deltaDays
      * @return
      */
-    public static Date getNextDayBeginTime(int days) {
+    public static Date getDeltaDay(Date date, int deltaDays) {
 
+        if(null == date){
+            date = new Date();
+        }
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DATE, days);
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, deltaDays);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -66,8 +72,22 @@ public class PriceDateUtils {
         if (date == null) {
             return null;
         }
-        return dayDataFormat.format(date);
+        return dayFormat.format(date);
     }
+
+    /**
+     * 格式化到天+时间的日期格式
+     *
+     * @param dateTime
+     * @return
+     */
+    public static String dayTimeDateToStr(Date dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
+        return dayTimeFormat.format(dateTime);
+    }
+
 
     /**
      * 字符串转换日期
@@ -80,21 +100,25 @@ public class PriceDateUtils {
             return null;
         }
         try {
-           return dayDataFormat.parse(date);
+           return dayFormat.parse(date);
         } catch (ParseException e) {
             throw new PriceException(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(),"获取指定格式日期的数据格式异常");
         }
     }
 
     /**
-     * 获取指定的日期
+     * 字符串转换日期+时间
      * @param date
      * @return
      */
-    public static Date getDesignatedDayDate(String date){
+    public static Date strToDayTimeDate(String date){
+
+        if (date == null) {
+            return null;
+        }
 
         try {
-            return dayDataFormat.parse(date);
+            return dayTimeFormat.parse(date);
         } catch (ParseException e) {
             throw new PriceException(ErrorCodeEnum.VALIDATION_CODE_EXCEPTION.getErrorCode(),"获取指定格式日期的数据格式异常");
         }
@@ -164,18 +188,5 @@ public class PriceDateUtils {
             e.printStackTrace();
             return "";
         }
-    }
-    public static void main(String[] args) throws ParseException {
-        System.out.println(getNextDayBeginTime(-1));
-        String s1 = "2022-01-01";
-        String s2 = "2022-12-01";
-        String s4 = "2022-04-01";
-        System.out.println(beforeOrEqual(s1, s2));
-        System.out.println(afterOrEqual(s2, s4));
-        System.out.println(s1.substring(5));
-        String s3 = "2021-02-29";
-        sf_dd.get().setLenient(false);
-        System.out.println(sf_dd.get().parse(s3));
-        System.out.println(sf_dd.get().format(sf_dd.get().parse(s3)));
     }
 }

@@ -1,11 +1,11 @@
 package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
-import com.enn.energy.price.dal.po.mbg.ElectricityPriceRule;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ElectricityPriceStructureRuleCustomMapper {
@@ -17,17 +17,17 @@ public interface ElectricityPriceStructureRuleCustomMapper {
 
     /**
      * 根据体系规则ids批量删除体系规则
-     * @param ids
+     * @param map
      */
-    void batchDeleteStructureRuleByIds(@Param( "ids" ) String ids);
+    void batchDeleteStructureRuleByIds(Map<String,Object> map);
 
 
     /**
      * 根据体系id查找体系下面对应的体系规则id
-     * @param structureId
+     * @param map
      * @return
      */
-    List<ElectricityPriceStructureRule> queryElectricityPriceRulesByStructureId(@Param( "structureId" ) String structureId);
+    List<ElectricityPriceStructureRule> queryElectricityPriceRulesByCondition(Map<String,Object> map);
 
 
     /**

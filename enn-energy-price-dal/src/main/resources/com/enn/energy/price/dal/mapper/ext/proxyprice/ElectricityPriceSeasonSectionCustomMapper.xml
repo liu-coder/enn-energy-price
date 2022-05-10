@@ -6,7 +6,9 @@
         sea_end_date, state, create_time, update_time
     </sql>
     <update id="batchDeleteSeasonSectionBySectionIds">
-        update electricity_season_section set state=1 where season_section_id in
+        update electricity_season_section
+        set state=#{state}, update_time=#{updateTime}
+        where season_section_id in
         <foreach collection="seasonSectionIds" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>

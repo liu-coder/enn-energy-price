@@ -7,7 +7,9 @@
     </sql>
 
     <delete id="batchDeleteTimeSectionBySeasonSectionIds">
-        update electricity_time_section set state=0 WHERE season_section_id IN
+        update electricity_time_section
+        set state=#{state},update_time=#{updateTime}
+        WHERE season_section_id IN
         <foreach collection="seasonSectionIds" item="seasonSectionId" open="(" close=")" separator=",">
             #{seasonSectionId}
         </foreach>

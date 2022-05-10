@@ -13,21 +13,15 @@
                 #{strategies,jdbcType=VARCHAR}, #{voltageLevels,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT},
                 #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
-
-    <delete id="batchDeleteStructureRuleByIds">
-        DELETE FROM electricity_price_structure_rule WHERE id IN
+    <update id="batchDeleteStructureRuleByIds">
+        DELETE FROM electricity_price_structure_rule
+        set state=#{state},update_time=#{updateTime}
+        WHERE id IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
-    </delete>
+    </update>
 
-    <select id="queryElectricityPriceRulesByStructureId"
-            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule">
-        select
-        <include refid="Base_Column_List" />
-        from electricity_price_structure_rule
-        where structure_id = #{structureId} and state=0
-    </select>
     <select id="queryElectricityPriceRulesByStructureRule"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule">
         select
@@ -37,6 +31,16 @@
         <foreach collection="structureRuleIds" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+    </select>
+    <select id="queryElectricityPriceRulesByCondition"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price_structure_rule
+        where state=#{state}
+        <if test="structure_id !=null">
+            structure_id = #{structureId}
+        </if>
     </select>
 
 
