@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceCustomMapper">
-
+    <sql id="Base_Column_List">
+        id, detail_id, season_id, rule_id, tenant_id, tenant_name, transformer_capacity_price,
+        max_capacity_price, consumption_price, distribution_price, gov_add_price, sharp_price,
+        peak_price, level_price, valley_price, state, create_time, update_time
+    </sql>
     <update id="batchDeletePriceByPriceIds">
         update electricity_price set state=0 WHERE id IN
         <foreach collection="priceIds" item="priceId" open="(" close=")" separator=",">
@@ -16,4 +20,32 @@
             #{ruleId}
         </foreach>
     </update>
+
+
+    <select id="getPriceByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPrice">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_price
+        where
+        state=#{state}
+        <if test="ruleId!=null">
+            and rule_id =#{ruleId}
+        </if>
+
+    </select>
+
+
+
+    <select id="getPriceDetailListByStructureId"
+            resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO">
+        select
+            t.ruleId as ruleId,t.voltageLevel as voltageLevel,t.industry as industry,t.strategy as strategy,
+            e.transformer_capacity_price as  transformerCapacityPrice, e.max_capacity_price as maxCapacityPrice,
+            e.consumption_price as consumptionPrice,e.distribution_price as distributionPrice,
+            e.gov_add_price as govAddPrice ,e.sharp_price as sharpPrice, e.peak_price as peakPrice,
+            e.level_price as levelPrice,e.valley_price as valleyPrice
+        from (select r.id as ruleId,r.industry,r.strategy,r.voltage_level as voltageLevel
+              from electricity_price_rule r where r.structure_id=#{structureId} and r.state=0) t
+                 left join electricity_price e on t.rule_id=e.rule_id and r.state=0
+    </select>
 </mapper>

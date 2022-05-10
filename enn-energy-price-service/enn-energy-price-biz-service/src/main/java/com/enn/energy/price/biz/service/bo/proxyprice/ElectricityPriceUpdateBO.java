@@ -20,14 +20,15 @@ public class ElectricityPriceUpdateBO implements Serializable {
     private String industry;
     private String strategy;
     private String voltageLevel;
-    private BigDecimal distributionPrice;
-    private BigDecimal govAddPrice;
-    private BigDecimal sharpPrice;
-    private BigDecimal peakPrice;
-    private BigDecimal levelPrice;
-    private BigDecimal valleyPrice;
-    private BigDecimal maxCapacityPrice;
-    private BigDecimal transformerCapacityPrice;
+    private String distributionPrice;
+    private String govAddPrice;
+    private String sharpPrice;
+    private String peakPrice;
+    private String levelPrice;
+    private String valleyPrice;
+    private String maxCapacityPrice;
+    private String transformerCapacityPrice;
+    private String consumptionPrice;
     private String structureRuleId;
     private Boolean comply;
 }

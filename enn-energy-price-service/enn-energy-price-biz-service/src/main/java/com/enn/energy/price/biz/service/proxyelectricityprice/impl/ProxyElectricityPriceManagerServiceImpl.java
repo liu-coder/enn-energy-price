@@ -504,7 +504,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * 更新体系
      * @param priceStructureUpdateBO
      */
-    public void updateStructurePlan2(ElectricityPriceStructureUpdateBO priceStructureUpdateBO){
+    public void updateStructurePlan2(ElectricityPriceStructureUpdateBO priceStructureUpdateBO,String versionId){
         //根据体系规则id判断体系规则的变化
         List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList = priceStructureUpdateBO.getElectricityPriceStructureRuleUpdateBOList();
         List<ElectricityPriceStructureRuleUpdateBO> updateList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> Optional.ofNullable( t.getId() ).isPresent() ).collect( Collectors.toList() );
@@ -666,14 +666,87 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 return false;
             } );
         } ).collect( Collectors.toList() );
+        priceRules.removeAll( ruleHaveList );
+        List<Long> deleteRuleIds = priceRules.stream().map( q -> q.getId() ).collect( Collectors.toList() );
+        //批量删除无用的规则以及对应的价格
+        batchDeleteRuleAndPrice( deleteRuleIds );
+        //已有规则的
+        List<ElectricityPriceUpdateBO> haveRuleList = priceUpdateBOList.stream().filter( m -> m.getComply() ).collect( Collectors.toList() );
+        //对已经有的规则进行判断价格是否改变,以及匹配对应的体系规则id
+        ruleHaveList.forEach( n->{
+            //根据规则查询价格,直接更新价格
+            HashMap<String, Object> priceQueryMap = new HashMap<>();
+            priceQueryMap.put( "state",BoolLogic.NO.getCode() );
+            priceQueryMap.put( "ruleId", n.getId());
+            ElectricityPrice electricityPrice = electricityPriceCustomMapper.getPriceByCondition( priceQueryMap ).stream().findFirst().orElse( null );
+            haveRuleList.forEach( h->{
+                //价格匹配
+                if(h.getIndustry().equals( n.getIndustry() )
+                        &&h.getVoltageLevel().equals( n.getVoltageLevel() )
+                        && h.getStrategy().equals( n.getStrategy() )){
+                    if(!h.getTransformerCapacityPrice().equals( electricityPrice.getTransformerCapacityPrice() )
+                            || !h.getMaxCapacityPrice().equals( electricityPrice.getMaxCapacityPrice() )
+                            || !h.getConsumptionPrice().equals(electricityPrice.getConsumptionPrice()  )
+                            || ! h.getDistributionPrice().equals(electricityPrice.getDistributionPrice()  )
+                            || ! h.getGovAddPrice().equals(electricityPrice.getGovAddPrice())
+                            || ! h.getSharpPrice().equals( electricityPrice.getSharpPrice() )
+                            || ! h.getPeakPrice().equals(electricityPrice.getPeakPrice())
+                            || ! h.getLevelPrice().equals(electricityPrice.getLevelPrice())
+                            || ! h.getValleyPrice().equals(electricityPrice.getValleyPrice())){
+                        electricityPrice.setTransformerCapacityPrice( h.getTransformerCapacityPrice() );
+                        electricityPrice.setMaxCapacityPrice( h.getMaxCapacityPrice() );
+                        electricityPrice.setConsumptionPrice( h.getConsumptionPrice() );
+                        electricityPrice.setDistributionPrice( h.getDistributionPrice() );
+                        electricityPrice.setGovAddPrice( h.getGovAddPrice() );
+                        electricityPrice.setSharpPrice( h.getSharpPrice() );
+                        electricityPrice.setPeakPrice( h.getPeakPrice() );
+                        electricityPrice.setLevelPrice( h.getLevelPrice() );
+                        electricityPrice.setValleyPrice( h.getValleyPrice() );
+                        electricityPrice.setUpdateTime( DateUtil.date() );
+                        priceMapper.updateByPrimaryKey( electricityPrice );
+                        //判断体系规则id是否匹配
+                        Long strutureRuleId = queryStrutureRuleId( h.getIndustry(), h.getStrategy(), h.getVoltageLevel(), priceStructureUpdateBO.getId() );
+                        if(!n.getStructureRuleId().equals( String.valueOf( strutureRuleId ) )){
+                            n.setStructureRuleId( String.valueOf(strutureRuleId) );
+                            priceRuleMapper.updateByPrimaryKey( n );
+                        }
 
+                    }
+                }
+            } );
+        } );
+        //新增未匹配的规则以及价格
+        priceUpdateBOList.stream().filter( m->!m.getComply() ).forEach( l->{
+            //增加规则与价格
+            Long strutureRuleId = queryStrutureRuleId( l.getIndustry(), l.getStrategy(), l.getVoltageLevel(), priceStructureUpdateBO.getId() );
+            createPriceAndRule(l,versionId,priceStructureUpdateBO.getId(),String.valueOf( strutureRuleId ));
+        } );
     }
 
-
-
-
-
-
+    /**
+     * 根据三要素匹配体系规则
+     * @param industry
+     * @param strategy
+     * @param voltageLevel
+     * @param id
+     * @return
+     */
+    private Long queryStrutureRuleId(String industry, String strategy, String voltageLevel, String id) {
+        Map<String,Object> map=new HashMap<>();
+        map.put( "state", BoolLogic.NO.getCode());
+        map.put( "structureId",id );
+        List<ElectricityPriceStructureRule> priceStructureRuleList = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByCondition( map );
+        ElectricityPriceStructureRule electricityPriceStructureRule = priceStructureRuleList.stream().filter( t -> {
+            boolean a = Arrays.asList( t.getStrategies().split( "," ) ).contains( strategy );
+            boolean b = Arrays.asList( t.getIndustries().split( "," ) ).contains( industry );
+            boolean c = Arrays.asList( t.getVoltageLevels().split( "," ) ).contains( voltageLevel );
+            if (a && b && c) {
+                return true;
+            }
+            return false;
+        } ).collect( Collectors.toList() ).stream().findFirst().orElse( null );
+        return electricityPriceStructureRule.getId();
+    }
 
 
     /**
