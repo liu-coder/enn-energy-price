@@ -25,6 +25,8 @@ public class ElectricityPriceStrategyReqVO implements Serializable {
     private String compare;
     @ApiModelProperty(value = "温度")
     private String temperature;
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
     @ApiModelProperty(value = "电价分时区间列表",required = true)
     @NotBlank(message = "电价分时区间列表不能为空")
     private List<ElectricityTimeSectionUpdateReqVO> electricityTimeSectionUpdateReqVOList;

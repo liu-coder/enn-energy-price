@@ -5,7 +5,6 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionBOConvertMapper;
@@ -13,8 +12,7 @@ import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionUpd
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.BoolLogic;
-import com.enn.energy.price.common.enums.changeTypeEum;
-import com.enn.energy.price.common.error.ErrorCodeEnum;
+import com.enn.energy.price.common.enums.ChangeTypeEum;
 import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.dal.mapper.ext.ExtElectricityPriceDictionaryMapper;
 import com.enn.energy.price.dal.mapper.ext.proxyprice.*;
@@ -29,11 +27,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.rdfa.framework.biz.ro.RdfaResult;
-import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 /**
@@ -271,9 +267,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //1.根据变更类型判断出体系的变更状态
         //1.1根据是否有id区分是否新增
         List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList = electricityPriceVersionUpdateBO.getElectricityPriceStructureUpdateBOList();
-        List<ElectricityPriceStructureUpdateBO> addCollect = electricityPriceStructureUpdateBOList.stream().filter( t -> StringUtils.isEmpty( t.getId() ) ).collect( Collectors.toList() );
+        List<ElectricityPriceStructureUpdateBO> addCollect = electricityPriceStructureUpdateBOList.stream().filter( t -> StringUtils.isEmpty( String.valueOf( t.getId() ) ) ).collect( Collectors.toList() );
         //1.2根据changeType判断是否修改
-        List<ElectricityPriceStructureUpdateBO> updateCollect = electricityPriceStructureUpdateBOList.stream().filter( t -> t.getChangeType().equals( changeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
+        List<ElectricityPriceStructureUpdateBO> updateCollect = electricityPriceStructureUpdateBOList.stream().filter( t -> t.getChangeType().equals( ChangeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
         //1.3查询版本下面的体系列表比对哪些缺失
         List<Long> deleteIdList = queryDeleteStructureIds( electricityPriceStructureUpdateBOList, electricityPriceVersionUpdateBO.getId() );
         //2.1 增加体系直接增加
@@ -282,9 +278,11 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         } );
         //2.2 删除体系直接删除
         deleteIdList.forEach( this::deleteStructure );
-        //2.3 修改体系(暂行覆盖)
+        //2.3 修改体系
         updateCollect.forEach( t->{
-            updateStructure(t,electricityPriceVersionUpdateBO.getId());
+            /*updateStructure(t,electricityPriceVersionUpdateBO.getId());*/
+            updateStructurePlan3( t,electricityPriceVersionUpdateBO.getId() );
+
         } );
         return RdfaResult.success( true );
 
@@ -383,15 +381,15 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             SeasonSectionIds.forEach( i->{
                 ElectricityPriceSeasonDetailBO electricityPriceSeasonDetailBO = new ElectricityPriceSeasonDetailBO();
                 electricityPriceSeasonDetailBO.setSeasonSectionId( Long.valueOf( i ) );
-                List<SeansonDateBO> seansonDateBOList =new ArrayList<>();
+                List<SeasonDateBO> seasonDateBOList =new ArrayList<>();
                 electricitySeasonSections.stream().filter( h->h.getSeasonSectionId().equals(i) ).forEach( h->{
                     electricityPriceSeasonDetailBO.setSeasonName(h.getSeasonSectionName());
                     //添加季节区间时间信息
-                    SeansonDateBO seansonDateBO = new SeansonDateBO();
-                    seansonDateBO.setSeasonId( String.valueOf(h.getId()) );
-                    seansonDateBO.setSeaEndDate( h.getSeaEndDate() );
-                    seansonDateBO.setSeaStartDate( h.getSeaStartDate() );
-                    seansonDateBOList.add(seansonDateBO );
+                    SeasonDateBO seasonDateBO = new SeasonDateBO();
+                    seasonDateBO.setSeasonId( h.getId() );
+                    seasonDateBO.setSeaEndDate( h.getSeaEndDate() );
+                    seasonDateBO.setSeaStartDate( h.getSeaStartDate() );
+                    seasonDateBOList.add( seasonDateBO );
                 } );
                 //根据季节id查询分时区间信息
                 List<ElectricityTimeSection> timeSectionList = electricityTimeSectionCustomMapper.getTimeSectionListBySeasonSectionId( i );
@@ -415,7 +413,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 //策略列表添加入季节
                 electricityPriceSeasonDetailBO.setElectricityPriceStrategyBOList( electricityPriceStrategyBOList );
                 //季节列表时间添加入季节
-                electricityPriceSeasonDetailBO.setSeasonDateList( seansonDateBOList );
+                electricityPriceSeasonDetailBO.setSeasonDateList( seasonDateBOList );
                 //季节添加进季节列表
                 seasonDetailList.add( electricityPriceSeasonDetailBO);
             } );
@@ -464,7 +462,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         map.put( "state",BoolLogic.NO.getCode() );
         List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
         //筛选出现有的id
-        List<String> ids = electricityPriceStructureUpdateBOList.stream().map( ElectricityPriceStructureUpdateBO::getId ).filter( StringUtils::isNotEmpty ).collect( Collectors.toList() );
+        List<Long> ids = electricityPriceStructureUpdateBOList.stream().map( ElectricityPriceStructureUpdateBO::getId ).filter(m-> StringUtils.isNotBlank( String.valueOf(m ) )).collect( Collectors.toList() );
         //拿版本下的体系列表与现有的对比，得出哪些删除了
         return electricityPriceStructures.stream().map( ElectricityPriceStructure::getId ).collect( Collectors.toList() ).stream().filter( f -> !ids.contains(String.valueOf( f )  ) ).collect( Collectors.toList() );
     }
@@ -475,7 +473,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     private void updateStructure(ElectricityPriceStructureUpdateBO priceStructureUpdateBO,String versionId) {
         //查询当前体系绑定的设备信息
-        List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentCustomMapper.queryEquipmentBindingByStructureId( priceStructureUpdateBO.getId() );
+        List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentCustomMapper.queryEquipmentBindingByStructureId( String.valueOf(priceStructureUpdateBO.getId()) );
         //更新操作,先删除当前体系下的数据然后新增
         deleteStructure(Long.valueOf( priceStructureUpdateBO.getId() ));
         String structureId = createStructure( priceStructureUpdateBO, versionId );
@@ -502,21 +500,279 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         } );
     }
 
+
+    public void updateStructurePlan3(ElectricityPriceStructureUpdateBO priceStructureUpdateBO,String versionId){
+        Long structureId = priceStructureUpdateBO.getId();
+        //根据体系规则id判断体系规则的变化
+        List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList = priceStructureUpdateBO.getElectricityPriceStructureRuleUpdateBOList();
+        List<ElectricityPriceStructureRuleUpdateBO> haveIdList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> Optional.ofNullable( t.getStructureRuleId() ).isPresent() ).collect( Collectors.toList() );
+        List<ElectricityPriceStructureRuleUpdateBO> addList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> !Optional.ofNullable( t.getStructureRuleId() ).isPresent() ).collect( Collectors.toList() );
+        List<ElectricityPriceStructureRuleUpdateBO> updateList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> !Optional.ofNullable( t.getStructureRuleId() ).isPresent() && t.getChangeType().equals( ChangeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
+
+        //根据体系id查询当前体系原有的体系规则列表
+        HashMap<String , Object> structureRuleQueryMap = new HashMap<>();
+        structureRuleQueryMap.put( "structureId", structureId );
+        structureRuleQueryMap.put( "state",BoolLogic.NO.getCode() );
+        List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByCondition( structureRuleQueryMap );
+        List<Long> haveIds = haveIdList.stream().map( f -> f.getStructureRuleId() ).collect( Collectors.toList() );
+        List<Long> deleteIds = new ArrayList<>();
+        for (ElectricityPriceStructureRule t : electricityPriceStructureRules) {
+            if (!haveIds.contains( t.getId() )) {
+                Long id = t.getId();
+                deleteIds.add( id );
+            }
+        }
+        //规则的删除
+        if(CollectionUtil.isEmpty( deleteIds )){
+            deleteStructureRuleByStructureRuleIds(deleteIds);
+        }
+        //规则新增
+        if(CollectionUtil.isEmpty(addList)){
+            createStructureRuleAndSeason(addList, structureId );
+        }
+        //规则更新
+        updateList.forEach( t->{
+            ElectricityPriceStructureRule structureRule = new ElectricityPriceStructureRule();
+            structureRule.setId( t.getStructureRuleId() );
+            structureRule.setIndustries( t.getIndustries() );
+            structureRule.setStrategies( t.getStrategies() );
+            structureRule.setVoltageLevels( t.getVoltageLevels() );
+            structureRule.setUpdateTime( DateUtil.date() );
+            electricityPriceStructureRuleCustomMapper.updateStructureRule( structureRule );
+            //根据体系规则id查询季节列表
+            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( String.valueOf( t.getStructureRuleId() ) );
+            Set<String> collect = electricitySeasonSections.stream().map( m -> m.getSeasonSectionId() ).collect( Collectors.toSet() );
+            //判断哪些seasonSectionId删除了
+            List<String> havaSeasonIds = t.getElectricityPriceSeasonUpdateReqVOList().stream().filter( l -> StringUtils.isNotEmpty( l.getSeasonSectionId() ) ).map( n -> n.getSeasonSectionId() ).collect( Collectors.toList() );
+            Set<String> deleteSeasonIds = collect.stream().filter( n -> !havaSeasonIds.contains( n ) ).collect( Collectors.toSet() );
+            List<ElectricityPriceSeasonUpdateBO> updateSeasonList = t.getElectricityPriceSeasonUpdateReqVOList().stream().filter( n -> StringUtils.isNotEmpty( n.getSeasonSectionId() ) && n.getChangeType().equals( ChangeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
+            List<ElectricityPriceSeasonUpdateBO> addSeasonList = t.getElectricityPriceSeasonUpdateReqVOList().stream().filter( n -> StringUtils.isEmpty( n.getSeasonSectionId() ) ).collect( Collectors.toList() );
+            //删除
+            batchDeleteSeasonAndTime( deleteSeasonIds );
+            //增加
+            addSeasonList.forEach( n->{
+                createSeasonsAndTimes(n,String.valueOf( structureId ),t.getStructureRuleId());
+            } );
+            //修改
+            updateSeasonList.forEach( n->{
+                String seasonName = n.getSeasonName();
+                String seasonSectionId = n.getSeasonSectionId();
+                //日期部分
+                List<SeasonDateBO> seasonDateList = n.getSeasonDateList();
+                List<SeasonDateBO> haveDateIds = seasonDateList.stream().filter( m -> StringUtils.isNotEmpty( String.valueOf( m.getSeasonId() ) ) ).collect( Collectors.toList() );
+                List<SeasonDateBO> updateDateList = haveDateIds.stream().filter( m -> m.getChangeType().equals( ChangeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
+                List<SeasonDateBO> addDateList = seasonDateList.stream().filter( m -> StringUtils.isEmpty( String.valueOf( m.getSeasonId() ) ) ).collect( Collectors.toList() );
+                List<ElectricitySeasonSection> seasonSections = electricitySeasonSections.stream().filter( m -> m.getSeasonSectionId().equals( n.getSeasonSectionId() ) ).collect( Collectors.toList() );
+                List<Long> deleteDateIds = seasonSections.stream().filter( m -> !haveDateIds.contains( m.getId() ) ).map( m -> m.getId() ).collect( Collectors.toList() );
+                //删除date_time
+                if(CollectionUtils.isNotEmpty( deleteDateIds )){
+                    HashMap<String , Object> timeDeleteMap = new HashMap<>();
+                    timeDeleteMap.put( "ids", StringUtils.join( deleteDateIds,"," ));
+                    timeDeleteMap.put( "updateTime",DateUtil.date() );
+                    timeDeleteMap.put( "state", BoolLogic.NO.getCode());
+                    electricityPriceSeasonSectionCustomMapper.batchDeleteSeasonSectionByIds(timeDeleteMap  );
+                }
+                //增加date_time
+                if(CollectionUtils.isNotEmpty( addDateList )){
+                    batchCreateSeasonDate(addDateList,seasonName,seasonSectionId,String.valueOf( structureId ),String.valueOf( t.getStructureRuleId() ));
+                }
+                //更新时间
+                if(CollectionUtils.isNotEmpty(updateDateList)){
+                    batchUpdateSeasonDate(updateDateList);
+                }
+                //策略分时部分
+                List<ElectricityPriceStrategyBO> strategyList = n.getElectricityPriceStrategyBOList();
+                //根据季节分时查找分时list,然后根据策略分组
+                List<ElectricityTimeSection> timeSectionList = electricityTimeSectionCustomMapper.getTimeSectionListBySeasonSectionId( n.getSeasonSectionId() );
+                Map<String, List<ElectricityTimeSection>> groupStrategyList = timeSectionList.stream().collect( Collectors.groupingBy( m -> m.getCompare() + "-" + m.getTemperature() ) );
+                List<String> strategyNameList = strategyList.stream().map( m -> m.getCompare() + "-" + m.getTemperature() ).collect( Collectors.toList() );
+                groupStrategyList.forEach( (k,v)->{
+                    if(strategyNameList.contains( k )){
+                        strategyList.forEach( m->{
+                            String strategyName = m.getCompare() + "-" + m.getTemperature();
+                            if(strategyName.equals( k )){
+                                //设置标记 匹配上
+                                m.setComply( true );
+                                List<ElectricityTimeSectionUpdateBO> hasIdList = m.getElectricityTimeSectionUpdateBOList().stream().filter( h -> StringUtils.isNotEmpty( String.valueOf( h.getId() ) ) ).collect( Collectors.toList() );
+                                List<ElectricityTimeSectionUpdateBO> updateIdList = hasIdList.stream().filter( h -> h.getChangeType().equals( ChangeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
+                                List<ElectricityTimeSectionUpdateBO> addIdList = m.getElectricityTimeSectionUpdateBOList().stream().filter( h -> StringUtils.isEmpty( String.valueOf( h.getId() ) ) ).collect( Collectors.toList() );
+                                List<Long> datasourceIdList = v.stream().map( ElectricityTimeSection::getId ).collect( Collectors.toList() );
+                                List<Long> hasIds = hasIdList.stream().map( ElectricityTimeSectionUpdateBO::getId ).collect( Collectors.toList() );
+                                List<Long> deleteIdList = datasourceIdList.stream().filter( hasIds::contains ).collect( Collectors.toList() );
+                                //删除
+                                HashMap<String, Object> deleteMap = new HashMap<>();
+                                deleteMap.put("ids",StringUtils.join( deleteIdList,"," ));
+                                deleteMap.put( "state", BoolLogic.YES.getCode());
+                                deleteMap.put( "updateTime",DateUtil.date() );
+                                electricityTimeSectionCustomMapper.batchDeleteTimeSectionByIds( deleteMap );
+                                //增加
+                                List<ElectricityTimeSection> electricityTimeSectionList=new ArrayList<>();
+                                batchCreateTime(addIdList,seasonSectionId,m.getCompare(),m.getTemperature());
+                                //更新
+                                List<ElectricityTimeSection> timeUpdateList=new ArrayList<>();
+                                updateIdList.forEach( h->{
+                                    ElectricityTimeSection electricityTimeSection=new ElectricityTimeSection();
+                                    electricityTimeSection.setTemperature( m.getTemperature() );
+                                    electricityTimeSection.setCompare( m.getCompare() );
+                                    electricityTimeSection.setStartTime( h.getStartTime() );
+                                    electricityTimeSection.setEndTime( h.getEndTime() );
+                                    electricityTimeSection.setPeriods( h.getPeriods() );
+                                    electricityTimeSection.setId( h.getId() );
+                                    electricityTimeSection.setUpdateTime( DateUtil.date() );
+                                    timeUpdateList.add( electricityTimeSection );
+                                } );
+                                electricityTimeSectionCustomMapper.batchUpdateTimeSection(timeUpdateList);
+                            }
+                        } );
+                    }
+                    //删除无用的time
+                    List<Long> delete = v.stream().map( m -> m.getId() ).collect( Collectors.toList() );
+                    HashMap<String, Object> deleteMap = new HashMap<>();
+                    deleteMap.put("ids",StringUtils.join( delete,"," ));
+                    deleteMap.put( "state", BoolLogic.YES.getCode());
+                    deleteMap.put( "updateTime",DateUtil.date() );
+                    electricityTimeSectionCustomMapper.batchDeleteTimeSectionByIds( deleteMap );
+                } );
+
+                //增加未匹配上的策略
+                List<ElectricityPriceStrategyBO> addStrategyList = strategyList.stream().filter( m -> !m.getComply() ).collect( Collectors.toList() );
+                strategyList.forEach( m->{
+                    batchCreateTime(m.getElectricityTimeSectionUpdateBOList(),seasonSectionId,m.getCompare(),m.getTemperature());
+                } );
+            } );
+        } );
+        //价格部分
+        List<ElectricityPriceUpdateBO> rulePriceList = priceStructureUpdateBO.getElectricityPriceUpdateBOList();
+        List<ElectricityPriceUpdateBO> addRuleList = rulePriceList.stream().filter( t -> StringUtils.isEmpty( String.valueOf( t.getRuleId() ) ) ).collect( Collectors.toList() );
+        List<ElectricityPriceUpdateBO> hasRuleIdList = rulePriceList.stream().filter( t -> StringUtils.isNotEmpty( String.valueOf( t.getRuleId() ) ) ).collect( Collectors.toList() );
+        List<ElectricityPriceUpdateBO> updateRuleList = hasRuleIdList.stream().filter( t -> t.getRuleChangeType().equals( ChangeTypeEum.UPDATE.getType() ) ).collect( Collectors.toList() );
+        List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleCustomMapper.queryRuleListByStructureId( String.valueOf( structureId ) );
+        List<Long> dataSourceRules = electricityPriceRules.stream().map( ElectricityPriceRule::getId ).collect( Collectors.toList() );
+        List<Long> hasRuleId = hasRuleIdList.stream().map( ElectricityPriceUpdateBO::getRuleId ).collect( Collectors.toList() );
+        List<Long> deleteRuleList = dataSourceRules.stream().filter( t -> !hasRuleId.contains( t ) ).collect( Collectors.toList() );
+        //删除
+        batchDeleteRulePriceAndEquipment(deleteRuleList );
+        //增加
+        addRuleList.forEach( t->{
+            Long structureRuleId = queryStructureRuleId( t.getIndustry(), t.getStrategy(), t.getVoltageLevel(), String.valueOf( structureId ) );
+            createPriceAndRule(t,versionId,String.valueOf( structureId ),structureRuleId);
+        } );
+        //更新
+        updateRuleList.forEach( t->{
+            Long structureRuleId = queryStructureRuleId( t.getIndustry(), t.getStrategy(), t.getVoltageLevel(), String.valueOf( structureId ) );
+            ElectricityPriceRule electricityPriceRule = new ElectricityPriceRule();
+            electricityPriceRule.setVoltageLevel( t.getVoltageLevel() );
+            electricityPriceRule.setStructureRuleId( String.valueOf(structureRuleId) );
+            electricityPriceRule.setIndustry( t.getIndustry() );
+            electricityPriceRule.setStrategy(t.getStrategy());
+            electricityPriceRule.setUpdateTime( DateUtil.date() );
+            electricityPriceRule.setState( Integer.valueOf( BoolLogic.NO.getCode()  ));
+            electricityPriceRuleCustomMapper.updateRuleByConditions(electricityPriceRule);
+            //更新价格
+            ElectricityPrice electricityPrice = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceBOToPO( t );
+            electricityPrice.setState( Integer.valueOf( BoolLogic.NO.getCode() ) );
+            electricityPrice.setUpdateTime( DateUtil.date() );
+            electricityPriceCustomMapper.updatePriceByConditions( electricityPrice );
+            //更新设备绑定 todo(暂不考虑)
+        } );
+    }
+
+    /**
+     * 创建分时信息
+     * @param addIdList
+     * @param seasonSectionId
+     * @param compare
+     * @param Temperature
+     */
+    public void batchCreateTime(List<ElectricityTimeSectionUpdateBO> addIdList,String seasonSectionId,String compare,String Temperature){
+        List<ElectricityTimeSection> electricityTimeSectionList=new ArrayList<>();
+        addIdList.forEach( h->{
+            ElectricityTimeSection electricityTimeSection=new ElectricityTimeSection();
+            String timeSectionId = IdUtil.simpleUUID();
+            electricityTimeSection.setSeasonSectionId(seasonSectionId);
+            electricityTimeSection.setTimeSectionId( timeSectionId );
+            electricityTimeSection.setStartTime( h.getStartTime() );
+            electricityTimeSection.setEndTime(h.getEndTime());
+            electricityTimeSection.setPeriods( h.getPeriods() );
+            electricityTimeSection.setState(BoolLogic.NO.getCode());
+            electricityTimeSection.setCreateTime(DateUtil.date());
+            electricityTimeSection.setCompare( compare );
+            electricityTimeSection.setTemperature(Temperature );
+            electricityTimeSectionList.add(electricityTimeSection);
+        } );
+        electricityTimeSectionCustomMapper.batchInsertTimeSection( electricityTimeSectionList );
+
+    }
+
+
+
+
+
+    /**
+     * 插入seasonList
+     * @param addDateList
+     * @param seasonName
+     * @param seasonSectionId
+     * @param structureId
+     * @param structureRuleId
+     */
+    public void batchCreateSeasonDate(List<SeasonDateBO> addDateList, String seasonName, String seasonSectionId, String structureId, String structureRuleId){
+        if(CollectionUtils.isNotEmpty( addDateList )){
+            addDateList.forEach( t->{
+                ElectricitySeasonSection seasonSection = new ElectricitySeasonSection();
+                seasonSection.setSeasonSectionName( seasonName );
+                seasonSection.setSeasonSectionId( seasonSectionId);
+                seasonSection.setCreateTime( DateUtil.date() );
+                seasonSection.setStructureId( structureId );
+                seasonSection.setStructureRuleId( structureRuleId );
+                seasonSection.setState( BoolLogic.NO.getCode() );
+                seasonSection.setSeaEndDate( t.getSeaEndDate() );
+                seasonSection.setSeaStartDate( t.getSeaStartDate() );
+                seasonSectionMapper.insert( seasonSection );
+            } );
+        }
+    }
+
+    /**
+     * 批量更新季节日期列表
+     * @param updateDateList
+     */
+    public void batchUpdateSeasonDate(List<SeasonDateBO> updateDateList){
+        if(CollectionUtils.isNotEmpty( updateDateList )){
+            ArrayList<Object> list = new ArrayList<>();
+            updateDateList.forEach( t->{
+                HashMap<String, Object> map = new HashMap<>();
+                map.put( "id", t.getSeasonId());
+                map.put( "seaStartDate",t.getSeaStartDate() );
+                map.put( "seaEndDate",t.getSeaEndDate() );
+                map.put( "updateTime",DateUtil.date() );
+                list.add( map );
+            } );
+            electricityPriceSeasonSectionCustomMapper.batchUpdateSeason( list );
+        }
+    }
+
+
+
+
+
+
+
     /**
      * 更新体系
      * @param priceStructureUpdateBO
      */
-    public void updateStructurePlan2(ElectricityPriceStructureUpdateBO priceStructureUpdateBO,String versionId){
+    /*public void updateStructurePlan2(ElectricityPriceStructureUpdateBO priceStructureUpdateBO,String versionId){
         //根据体系规则id判断体系规则的变化
         List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList = priceStructureUpdateBO.getElectricityPriceStructureRuleUpdateBOList();
-        List<ElectricityPriceStructureRuleUpdateBO> updateList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> Optional.ofNullable( t.getId() ).isPresent() ).collect( Collectors.toList() );
-        List<ElectricityPriceStructureRuleUpdateBO> addList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> !Optional.ofNullable( t.getId() ).isPresent() ).collect( Collectors.toList() );
+        List<ElectricityPriceStructureRuleUpdateBO> updateList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> Optional.ofNullable( t.getStructureRuleId() ).isPresent() ).collect( Collectors.toList() );
+        List<ElectricityPriceStructureRuleUpdateBO> addList = electricityPriceStructureRuleUpdateBOList.stream().filter( t -> !Optional.ofNullable( t.getStructureRuleId() ).isPresent() ).collect( Collectors.toList() );
         //根据体系id查询当前体系原有的体系规则列表
         HashMap<String , Object> structureRuleQueryMap = new HashMap<>();
         structureRuleQueryMap.put( "structureId", priceStructureUpdateBO.getId());
         structureRuleQueryMap.put( "state",BoolLogic.NO.getCode() );
         List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByCondition( structureRuleQueryMap );
-        List<String> updateIds = updateList.stream().map( f -> f.getId() ).collect( Collectors.toList() );
+        List<Long> updateIds = updateList.stream().map( f -> f.getStructureRuleId() ).collect( Collectors.toList() );
         List<Long> deleteIds = new ArrayList<>();
         for (ElectricityPriceStructureRule t : electricityPriceStructureRules) {
             if (!updateIds.contains( t.getId() )) {
@@ -535,9 +791,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //规则的修改
         updateList.forEach( t->{
             //获取规则id,根据规则id查询季节列表
-            String id = t.getId();
+            Long id = t.getStructureRuleId();
             //比对数据库看是否发生变化
-            ElectricityPriceStructureRule structureRule = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByStructureRule( id ).get( 0 );
+            ElectricityPriceStructureRule structureRule = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByStructureRule( String.valueOf( id ) ).get( 0 );
             if(!t.getIndustries().equals( structureRule.getIndustries() )
                     || !t.getStrategies().equals( structureRule.getStrategies() )
                     || !t.getVoltageLevels().equals(structureRule.getVoltageLevels()  )){
@@ -548,7 +804,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 priceStructureRuleMapper.updateByPrimaryKey( structureRule );
             }
 
-            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( id );
+            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( String.valueOf( id ) );
             //匹配季节列表判断季节的变化
             List<ElectricityPriceSeasonUpdateBO> seasonAddList = t.getElectricityPriceSeasonUpdateReqVOList().stream().filter( s -> StringUtils.isEmpty(  s.getSeasonSectionId()  ) ).collect( Collectors.toList() );
             List<ElectricityPriceSeasonUpdateBO> seasonUpdateList = t.getElectricityPriceSeasonUpdateReqVOList().stream().filter( s -> StringUtils.isNotEmpty(s.getSeasonSectionId()  ) ).collect( Collectors.toList() );
@@ -558,17 +814,17 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             batchDeleteSeasonAndTime(seasonDeleteIdList);
             //季节新增
             seasonAddList.forEach( h->{
-                createSeasonsAndTimes(h,priceStructureUpdateBO.getId(),Long.valueOf( t.getId() ));
+                createSeasonsAndTimes(h,priceStructureUpdateBO.getId(),Long.valueOf( t.getStructureRuleId() ));
             } );
             //季节更新 根据season_id查询季节列表
             for (ElectricityPriceSeasonUpdateBO m : seasonUpdateList) {
                 List<ElectricitySeasonSection> seasonList = electricityPriceSeasonSectionCustomMapper.querySeasonSectionListBySeasonSectionId( m.getSeasonSectionId() );
                 //比对季节时间与季节名称是否改变
-                List<SeansonDateBO> seasonDateList = m.getSeasonDateList();
+                List<SeasonDateBO> seasonDateList = m.getSeasonDateList();
                 //筛选出符合条件的以及还未满足的季节列表
                 List<ElectricitySeasonSection> complyList = seasonList.stream().filter( l -> {
                     if (l.getSeasonSectionName().equals( m.getSeasonName() )) {
-                        List<SeansonDateBO> dateSame = seasonDateList.stream().filter( g -> {
+                        List<SeasonDateBO> dateSame = seasonDateList.stream().filter( g -> {
                             if (g.getSeaEndDate().equals( l.getSeaEndDate() ) && g.getSeaStartDate().equals( l.getSeaStartDate() )) {
                                 g.setComply( true );
                                 return true;
@@ -597,7 +853,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                         electricitySeasonSection.setSeasonSectionId( m.getSeasonSectionId() );
                         electricitySeasonSection.setCreateTime( DateUtil.date() );
                         electricitySeasonSection.setStructureId( priceStructureUpdateBO.getId() );
-                        electricitySeasonSection.setStructureRuleId( t.getId() );
+                        electricitySeasonSection.setStructureRuleId( String.valueOf( t.getStructureRuleId() ) );
                         electricitySeasonSection.setState( BoolLogic.NO.getCode() );
                         electricitySeasonSection.setSeaEndDate( k.getSeaEndDate() );
                         electricitySeasonSection.setSeaStartDate( k.getSeaStartDate() );
@@ -707,7 +963,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                         electricityPrice.setUpdateTime( DateUtil.date() );
                         priceMapper.updateByPrimaryKey( electricityPrice );
                         //判断体系规则id是否匹配
-                        Long strutureRuleId = queryStrutureRuleId( h.getIndustry(), h.getStrategy(), h.getVoltageLevel(), priceStructureUpdateBO.getId() );
+                        Long strutureRuleId = queryStructureRuleId( h.getIndustry(), h.getStrategy(), h.getVoltageLevel(), priceStructureUpdateBO.getId() );
                         if(!n.getStructureRuleId().equals( String.valueOf( strutureRuleId ) )){
                             n.setStructureRuleId( String.valueOf(strutureRuleId) );
                             priceRuleMapper.updateByPrimaryKey( n );
@@ -720,11 +976,11 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //新增未匹配的规则以及价格
         priceUpdateBOList.stream().filter( m->!m.getComply() ).forEach( l->{
             //增加规则与价格
-            Long strutureRuleId = queryStrutureRuleId( l.getIndustry(), l.getStrategy(), l.getVoltageLevel(), priceStructureUpdateBO.getId() );
-            createPriceAndRule(l,versionId,priceStructureUpdateBO.getId(),String.valueOf( strutureRuleId ));
+            Long strutureRuleId = queryStructureRuleId( l.getIndustry(), l.getStrategy(), l.getVoltageLevel(), priceStructureUpdateBO.getId() );
+            createPriceAndRule(l,versionId,priceStructureUpdateBO.getId(),strutureRuleId);
         } );
     }
-
+*/
     /**
      * 根据三要素匹配体系规则
      * @param industry
@@ -733,7 +989,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * @param id
      * @return
      */
-    private Long queryStrutureRuleId(String industry, String strategy, String voltageLevel, String id) {
+    private Long queryStructureRuleId(String industry, String strategy, String voltageLevel, String id) {
         Map<String,Object> map=new HashMap<>();
         map.put( "state", BoolLogic.NO.getCode());
         map.put( "structureId",id );
@@ -773,7 +1029,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //批量删除体系规则下对应的规则与价格(根据体系id)
         List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleCustomMapper.queryRuleListByStructureId( String.valueOf( structureId ) );
         List<Long> electricityPriceRuleIds = electricityPriceRules.stream().map( ElectricityPriceRule::getId ).collect( Collectors.toList() );
-        batchDeleteRuleAndPrice(electricityPriceRuleIds);
+        batchDeleteRulePriceAndEquipment(electricityPriceRuleIds);
     }
 
     /**
@@ -810,9 +1066,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
     }
 
     /**
-     * 批量删除规则与价格
+     * 批量删除规则与价格,与设备绑定关系
      */
-    public void batchDeleteRuleAndPrice(List<Long> electricityPriceRuleIds){
+    public void batchDeleteRulePriceAndEquipment(List<Long> electricityPriceRuleIds){
         String ruleIdsString= StringUtils.join( electricityPriceRuleIds, "," );
         Map<String,Object> map=new HashMap<>();
         map.put( "ruleIds", ruleIdsString);
@@ -820,6 +1076,11 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         map.put( "state",BoolLogic.YES.getCode());
         electricityPriceRuleCustomMapper.bacthDeletePriceRuleByRuleIds( map );
         electricityPriceCustomMapper.batchDeletePriceByRuleIds( map );
+        HashMap<String, Object> equipmentMap = new HashMap<>();
+        equipmentMap.put( "ruleIds", ruleIdsString);
+        equipmentMap.put( "updateTime",DateUtil.date() );
+        equipmentMap.put( "state",BoolLogic.YES.getCode());
+        electricityPriceEquipmentCustomMapper.batchDeleteEquipmentBindingByConditions( equipmentMap );
     }
 
 
@@ -879,7 +1140,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             if(Optional.ofNullable(p.getStructureRuleId()).isPresent()){
                 belongStructureRuleId=Long.valueOf(p.getStructureRuleId());
             }
-            createPriceAndRule(p,versionId,structureId,String.valueOf( belongStructureRuleId ));
+            createPriceAndRule(p,versionId,structureId,belongStructureRuleId);
         } );
 
         return String.valueOf( electricityPriceStructure.getId() );
@@ -890,11 +1151,11 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * @param electricityPriceStructureRuleUpdateBOList
      * @param structureId
      */
-    public void createStructureRuleAndSeason(List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList,String structureId){
+    public void createStructureRuleAndSeason(List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList,Long structureId){
         //创建体系规则
         electricityPriceStructureRuleUpdateBOList.forEach( t->{
             ElectricityPriceStructureRule electricityPriceStructureRule = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceStructureRuleBOTOPO( t );
-            electricityPriceStructureRule.setStructureId( structureId );
+            electricityPriceStructureRule.setStructureId( String.valueOf(structureId) );
             String structureRuleId = IdUtil.simpleUUID();
             electricityPriceStructureRule.setStructureRuleId( structureRuleId );
             electricityPriceStructureRule.setState(BoolLogic.NO.getCode());
@@ -903,7 +1164,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             Long structureRuleAutoId=electricityPriceStructureRule.getId();
             //创建季节分时与分时区间
             t.getElectricityPriceSeasonUpdateReqVOList().forEach( season->{
-                createSeasonsAndTimes(season,structureId,structureRuleAutoId);
+                createSeasonsAndTimes(season,String.valueOf( structureId ),structureRuleAutoId);
             } );
         } );
     }
@@ -918,13 +1179,13 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * @param structureId
      * @param structureRuleId
      */
-    private void createPriceAndRule(ElectricityPriceUpdateBO p, String versionId, String structureId, String structureRuleId) {
+    private void createPriceAndRule(ElectricityPriceUpdateBO p, String versionId, String structureId, Long structureRuleId) {
         ElectricityPriceRule electricityPriceRule = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceRuleBOTOPO( p );
         String ruleId = IdUtil.simpleUUID();
         electricityPriceRule.setRuleId( ruleId );
         electricityPriceRule.setVersionId( versionId );
         electricityPriceRule.setStructureId(structureId);
-        electricityPriceRule.setStructureRuleId( structureRuleId );
+        electricityPriceRule.setStructureRuleId( String.valueOf( structureRuleId ) );
         electricityPriceRule.setState(Integer.valueOf(BoolLogic.NO.getCode()));
         electricityPriceRule.setCreateTime(DateUtil.date());
         electricityPriceRule.setTenantId( tenantId );
@@ -961,20 +1222,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             seasonSectionMapper.insert(electricitySeasonSection);
             //以季节为维度插入分时数据
             electricityPriceSeasonUpdateBO.getElectricityPriceStrategyBOList().forEach( f->{
-                f.getElectricityTimeSectionUpdateBOList().forEach( g->{
-                    ElectricityTimeSection electricityTimeSection=new ElectricityTimeSection();
-                    String timeSectionId = IdUtil.simpleUUID();
-                    electricityTimeSection.setSeasonSectionId(seasonSectionId);
-                    electricityTimeSection.setTimeSectionId( timeSectionId );
-                    electricityTimeSection.setStartTime( g.getStartTime() );
-                    electricityTimeSection.setEndTime(g.getEndTime());
-                    electricityTimeSection.setPeriods( g.getPeriods() );
-                    electricityTimeSection.setState(BoolLogic.NO.getCode());
-                    electricityTimeSection.setCreateTime(DateUtil.date());
-                    electricityTimeSection.setCompare( f.getCompare() );
-                    electricityTimeSection.setTemperature(f.getTemperature() );
-                    timeSectionMapper.insertSelective( electricityTimeSection );
-                } );
+                batchCreateTime(f.getElectricityTimeSectionUpdateBOList(),seasonSectionId, f.getCompare(), f.getTemperature());
             } );
         } );
     }

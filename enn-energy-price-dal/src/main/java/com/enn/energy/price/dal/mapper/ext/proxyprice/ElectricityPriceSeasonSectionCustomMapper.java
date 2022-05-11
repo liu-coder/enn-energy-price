@@ -37,4 +37,12 @@ public interface ElectricityPriceSeasonSectionCustomMapper {
      */
     int batchDeleteSeasonSectionByIds(Map<String,Object> map);
 
+
+    /**
+     * 批量更新season
+     * @param updateDateList
+     * @return
+     */
+    int batchUpdateSeason(List updateDateList);
+
 }

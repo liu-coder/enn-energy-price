@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.bo.proxyprice;
 
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -20,5 +21,7 @@ public class ElectricityPriceStrategyBO implements Serializable {
     private static final long serialVersionUID = 6502612562096991373L;
     private String compare;
     private String temperature;
+    private Integer changeType;
+    private Boolean comply;
     private List<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOList;
 }

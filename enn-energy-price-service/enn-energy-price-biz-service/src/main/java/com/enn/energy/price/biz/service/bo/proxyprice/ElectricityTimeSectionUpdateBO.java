@@ -21,9 +21,10 @@ import java.util.Date;
 @NoArgsConstructor
 public class ElectricityTimeSectionUpdateBO implements Serializable {
     private static final long serialVersionUID = -6215969465976610323L;
-    private Integer timeSectionId;
+    private Long id;
     private String periods;
     private String startTime;
     private String endTime;
     private Boolean comply;
+    private Integer changeType;
 }

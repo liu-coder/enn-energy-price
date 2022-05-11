@@ -56,6 +56,36 @@
         </foreach>
     </update>
 
+
+    <update id="updateRuleByConditions">
+        update electricity_price_rule
+        <set >
+            <if test="industry != null">
+                industry = #{industry},
+            </if>
+            <if test="strategy != null">
+                strategy = #{strategy},
+            </if>
+            <if test="voltageLevel != null">
+                voltage_level = #{voltageLevel},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        <where>
+            <if test="id!=null">
+                and id=#{id}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+        </where>
+    </update>
+
+
+
+
     <select id="queryRuleListByStructureId" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceRule">
         select
         <include refid="Base_Column_List" />

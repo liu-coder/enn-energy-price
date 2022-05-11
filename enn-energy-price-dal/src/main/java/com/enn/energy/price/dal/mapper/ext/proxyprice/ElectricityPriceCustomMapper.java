@@ -38,4 +38,12 @@ public interface ElectricityPriceCustomMapper {
      * @return
      */
     List<ElectricityPrice> getPriceByCondition(Map<String,Object> map);
+
+
+    /**
+     * 更新价格根据条件
+     * @param electricityPrice
+     * @return
+     */
+    int updatePriceByConditions(ElectricityPrice electricityPrice);
 }
