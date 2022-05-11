@@ -21,6 +21,26 @@
             #{id}
         </foreach>
     </update>
+    <update id="updateStructureRule">
+        update electricity_price_structure_rule set
+        <if test="industries!=null">
+            industries=#{industries,jdbcType=VARCHAR},
+        </if>
+        <if test="strategies!=null">
+            strategies=#{strategies,jdbcType=VARCHAR},
+        </if>
+        <if test="voltageLevels!=null">
+            voltage_levels=#{voltageLevels,jdbcType=VARCHAR},
+        </if>
+        <if test="updateTime!=null">
+            update_time=#{updateTime,jdbcType=TIMESTAMP},
+        </if>
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+        </where>
+    </update>
 
     <select id="queryElectricityPriceRulesByStructureRule"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule">

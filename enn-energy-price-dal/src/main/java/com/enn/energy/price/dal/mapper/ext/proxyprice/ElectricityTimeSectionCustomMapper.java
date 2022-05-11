@@ -32,4 +32,20 @@ public interface ElectricityTimeSectionCustomMapper {
      * @return
      */
     int batchDeleteTimeSectionByIds(Map<String,Object> map);
+
+
+    /**
+     * 批量新增
+     * @param electricityTimeSectionList
+     * @return
+     */
+    int batchInsertTimeSection(List<ElectricityTimeSection> electricityTimeSectionList);
+
+
+    /**
+     * 批量更新
+     * @param electricityTimeSectionList
+     * @return
+     */
+    int batchUpdateTimeSection(List<ElectricityTimeSection> electricityTimeSectionList);
 }

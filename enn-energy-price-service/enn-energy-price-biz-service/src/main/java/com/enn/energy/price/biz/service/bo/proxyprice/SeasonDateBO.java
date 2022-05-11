@@ -15,10 +15,10 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SeansonDateBO implements Serializable {
+public class SeasonDateBO implements Serializable {
     private static final long serialVersionUID = 5345018996539374173L;
-    private String seasonId;
+    private Long seasonId;
     private String seaStartDate;
     private String seaEndDate;
-    private Boolean comply;
+    private Integer changeType;
 }

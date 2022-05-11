@@ -28,8 +28,8 @@ import java.util.List;
 public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 211362895339802678L;
     @ApiModelProperty(value = "版本主键id",required = true )
-    @NotNull(message = "主键id不能为空")
-    private Integer id;
+    @NotBlank(message = "主键id不能为空")
+    private String id;
     @ApiModelProperty(value = "版本名",required = true)
     @NotBlank(message = "版本名不能为空")
     @Length(max = 50,message = "电价体系名称最长50个字符")

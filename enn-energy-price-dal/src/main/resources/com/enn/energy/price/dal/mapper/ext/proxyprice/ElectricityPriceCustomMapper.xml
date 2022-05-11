@@ -22,6 +22,71 @@
     </update>
 
 
+    <update id="updatePriceByConditions">
+        update electricity_price
+        <set >
+            <if test="detailId != null">
+                detail_id=#{detailId,jdbcType=VARCHAR},
+            </if>
+            <if test="seasonId != null">
+                season_id=#{seasonId,jdbcType=VARCHAR},
+            </if>
+            <if test="ruleId != null">
+                rule_id=#{ruleId,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantId != null">
+                tenant_id=#{tenantId,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantName != null">
+                tenant_name=#{tenantName,jdbcType=VARCHAR},
+            </if>
+            <if test="transformerCapacityPrice != null">
+                transformer_capacity_price=#{transformerCapacityPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="maxCapacityPrice != null">
+                max_capacity_price=#{maxCapacityPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="consumptionPrice != null">
+                consumption_price=#{consumptionPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="distributionPrice != null">
+                distribution_price=#{distributionPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="govAddPrice != null">
+                gov_add_price=#{govAddPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="sharpPrice != null">
+                sharp_price=#{sharpPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="peakPrice != null">
+                peak_price=#{peakPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="levelPrice != null">
+                level_price=#{levelPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="valleyPrice != null">
+                valley_price=#{valleyPrice,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time=#{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <where>
+            <if test="id!=null">
+                and id=#{id}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+        </where>
+
+
+    </update>
+
+
     <select id="getPriceByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPrice">
         select
         <include refid="Base_Column_List" />

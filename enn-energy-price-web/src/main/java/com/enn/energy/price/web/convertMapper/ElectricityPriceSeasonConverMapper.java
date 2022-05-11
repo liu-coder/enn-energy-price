@@ -3,6 +3,7 @@ package com.enn.energy.price.web.convertMapper;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonDetailBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.SeansonDateBO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailForCreateRespVO;
+import com.enn.energy.price.biz.service.bo.proxyprice.SeasonDateBO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailRespVO;
 import com.enn.energy.price.web.vo.responsevo.SeansonDateRespVO;
 import com.enn.energy.price.web.vo.responsevo.SeasonDateForCreateRespVO;
@@ -15,7 +16,7 @@ public interface ElectricityPriceSeasonConverMapper {
 
     ElectricityPriceSeasonDetailRespVO ElectricityPriceSeasonDetailBOToVO(ElectricityPriceSeasonDetailBO electricityPriceSeasonDetailBO);
 
-    SeansonDateRespVO SeansonDateBOToVO(SeansonDateBO seansonDateBO);
+    SeansonDateRespVO SeansonDateBOToVO(SeasonDateBO seasonDateBO);
 
     SeasonDateForCreateRespVO SeansonDateForCreateBOToVO(SeansonDateBO seansonDateBO);
 

@@ -25,7 +25,7 @@ public class ElectricityTimeSectionUpdateReqVO implements Serializable {
 
     private static final long serialVersionUID = -7030440456697944470L;
     @ApiModelProperty(value = "分时区间id,新增的不传,修改的传")
-    private Integer timeSectionId;
+    private Long id;
     @ApiModelProperty(value = "分时区间名称",required = true)
     @NotBlank(message = "分时区间名称不能为空")
     private String periods;
@@ -37,4 +37,6 @@ public class ElectricityTimeSectionUpdateReqVO implements Serializable {
     @NotBlank(message = "分时区间结束不能为空")
     @DateValue(format = "HH:mm", message = "分时区间结束时间格式有误")
     private String endTime;
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
 }

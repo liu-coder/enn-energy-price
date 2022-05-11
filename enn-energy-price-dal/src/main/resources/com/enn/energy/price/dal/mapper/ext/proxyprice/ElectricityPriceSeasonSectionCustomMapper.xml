@@ -21,6 +21,37 @@
             #{id}
         </foreach>
     </update>
+    <update id="batchUpdateSeason">
+        update electricity_season_section
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="sea_start_date=case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.seaStartDate != null and i.seaStartDate != ''">
+                        when id=#{i.id} then #{i.seaStartDate}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="sea_end_date=case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.seaEndDate != null">
+                        when id=#{i.id} then #{i.seaEndDate}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="update_time=case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.updateTime != null">
+                        when id=#{i.id} then #{i.updateTime}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" separator="," open="(" close=")" item="i" index="index" >
+            #{i.id}
+        </foreach>
+        and state=0
+    </update>
 
     <select id="querySeasonSectionListBySeasonSectionId"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">
