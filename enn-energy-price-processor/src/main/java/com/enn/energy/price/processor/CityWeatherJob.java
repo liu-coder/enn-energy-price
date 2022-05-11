@@ -36,7 +36,7 @@ public class CityWeatherJob extends RdfaJobHandler {
     @Override
     protected boolean doExecute(String s) {
 
-        log.info("执行获取城市温度JOB");
+        log.info("执行获取城市温度JOB,参数:{}",s);
         Date date = new Date();
         if (StringUtils.isNotEmpty(s)) {
             date = PriceDateUtils.strToDayTimeDate(s);
