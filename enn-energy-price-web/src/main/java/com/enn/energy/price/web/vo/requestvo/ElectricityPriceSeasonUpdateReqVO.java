@@ -31,7 +31,7 @@ import java.util.List;
 public class ElectricityPriceSeasonUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 6708324781222848894L;
     @ApiModelProperty(value = "季节id,新增的不传,修改的需要")
-    private Long seasonSectionId;
+    private String seasonSectionId;
     @ApiModelProperty(value = "季节名称")
     private String seasonName;
     @ApiModelProperty(value = "变更类型")

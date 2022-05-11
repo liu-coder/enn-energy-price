@@ -1,7 +1,5 @@
 package com.enn.energy.price.web.vo.responsevo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStrategyBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.SeansonDateBO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

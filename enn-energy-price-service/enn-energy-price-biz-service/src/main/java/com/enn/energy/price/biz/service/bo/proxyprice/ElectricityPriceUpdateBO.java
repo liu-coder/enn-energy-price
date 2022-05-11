@@ -32,6 +32,8 @@ public class ElectricityPriceUpdateBO implements Serializable {
     private String maxCapacityPrice;
     private String transformerCapacityPrice;
     private String consumptionPrice;
+
+
     private String structureRuleId;
     private Boolean comply;
 }

@@ -61,5 +61,5 @@ public class ElectricityPriceUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "规则id")
     private Long ruleId;
     @ApiModelProperty(value = "变更类型")
-    private Integer changeType;
+    private Integer ruleChangeType;
 }

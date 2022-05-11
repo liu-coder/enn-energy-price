@@ -69,7 +69,7 @@ public interface ElectricityPriceVersionUpdateConverMapper {
      * @param seasonDateVO
      * @return
      */
-    SeansonDateBO seasonDateVOTOBO(SeasonDateVO seasonDateVO);
+    SeasonDateBO seasonDateVOTOBO(SeasonDateVO seasonDateVO);
 
     /**
      * @param electricityPriceVersionUpdateReqVO
