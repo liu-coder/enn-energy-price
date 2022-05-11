@@ -1,6 +1,8 @@
 package com.enn.energy.price.web.controller.proxyelectricityprice;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -99,14 +101,43 @@ public class ProxyElectricityPriceManagerController {
     @ApiOperation( "修改电价版本" )
     public RdfaResult<Boolean> updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
         ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOToBO( electricityPriceVersionUpdateReqVO );
-        return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
+        String lockKey =  String.format("%s:%s:%s", CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX,
+                tenantId, electricityPriceVersionUpdateBO.getId());
+        Lock lock = null;
+        try {
+            lock = redDisLock.lock(lockKey  );
+            if (ObjectUtil.isNull( lock )) {
+                return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
+            }
+            return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
+        } catch (LockFailException e) {
+            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
+        }finally {
+            redDisLock.unlock(lockKey);
+        }
     }
 
     @PostMapping("/deletePriceVersion")
     @ApiOperation( "删除电价版本" )
     public RdfaResult<Boolean> deletePriceVersion(@RequestBody @Valid ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO){
+        if(DateUtil.parse(electricityPriceVersionDeleteReqVO.getStartDate(), DatePattern.NORM_DATE_PATTERN).isBefore( DateUtil.date() )){
+            return RdfaResult.fail( ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorCode(), ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorMsg());
+        }
         ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( electricityPriceVersionDeleteReqVO );
-        return proxyElectricityPriceManagerService.deletePriceVersion(electricityPriceVersionDeleteBO);
+        String lockKey =  String.format("%s:%s:%s", CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX,
+                tenantId, electricityPriceVersionDeleteBO.getId());
+        Lock lock = null;
+        try {
+            lock = redDisLock.lock( lockKey );
+            if (ObjectUtil.isNull( lock )) {
+                return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
+            }
+            return proxyElectricityPriceManagerService.deletePriceVersion(electricityPriceVersionDeleteBO);
+        } catch (LockFailException e) {
+            return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
+        }finally {
+            redDisLock.unlock(lockKey);
+        }
     }
 
     /**

@@ -24,4 +24,12 @@ public interface ElectricityTimeSectionCustomMapper {
      * @return
      */
     List<ElectricityTimeSection> getTimeSectionListBySeasonSectionId(@Param( "seasonSectionId" ) String seasonSectionId);
+
+
+    /**
+     * 根据timeId删除分时数据
+     * @param map
+     * @return
+     */
+    int batchDeleteTimeSectionByIds(Map<String,Object> map);
 }

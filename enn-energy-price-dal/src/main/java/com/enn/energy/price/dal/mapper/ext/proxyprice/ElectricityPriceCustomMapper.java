@@ -1,6 +1,7 @@
 package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
 import com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO;
+import com.enn.energy.price.dal.po.mbg.ElectricityPrice;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,4 +30,12 @@ public interface ElectricityPriceCustomMapper {
      * @return
      */
     List<ElectricityPriceDetailPO> getPriceDetailListByStructureId(@Param( "structureId" ) String structureId);
+
+
+    /**
+     * 获取电价
+     * @param map
+     * @return
+     */
+    List<ElectricityPrice> getPriceByCondition(Map<String,Object> map);
 }

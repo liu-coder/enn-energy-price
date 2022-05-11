@@ -13,6 +13,14 @@
             #{id}
         </foreach>
     </update>
+    <update id="batchDeleteSeasonSectionByIds">
+        update electricity_season_section
+        set state=#{state}, update_time=#{updateTime}
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </update>
 
     <select id="querySeasonSectionListBySeasonSectionId"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">
