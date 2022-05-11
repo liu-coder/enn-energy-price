@@ -3,6 +3,7 @@ package com.enn.energy.price.web.controller.proxyelectricityprice;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import top.rdfa.framework.auth.client.annotation.Authorize;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
@@ -170,6 +172,7 @@ public class ProxyElectricityPriceManagerController {
     public void downLoadTemplate(HttpServletResponse response){
         ExcelWriter excelWriter = priceManagerBakService.downLoadTemplate();
         try {
+            response.setHeader("Content-Disposition", excelWriter.getDisposition("template.xls", CharsetUtil.CHARSET_UTF_8));
             excelWriter.flush(response.getOutputStream());
         } catch (IOException e) {
             throw new PriceException(ErrorCodeEnum.DOWNLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.DOWNLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
@@ -314,7 +317,9 @@ public class ProxyElectricityPriceManagerController {
      * @author sunjidong
      * @date 2022/5/11 14:57
      */
-    public ElectricityPriceDefaultStructureAndRuleRespVO getDefaultStructureDetail(@RequestParam String provinceCode){
+    @ApiOperation( "获取默认的体系详细内容")
+    @GetMapping("/getDefaultStructureDetail")
+    public ElectricityPriceDefaultStructureAndRuleRespVO getDefaultStructureDetail(@RequestParam(value = "provinceCode") String provinceCode){
         if(StrUtil.isEmpty(provinceCode)){
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }

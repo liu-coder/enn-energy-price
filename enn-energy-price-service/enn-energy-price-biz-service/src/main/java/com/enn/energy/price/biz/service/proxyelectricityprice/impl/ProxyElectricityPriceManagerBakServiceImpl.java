@@ -32,7 +32,8 @@ import com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import top.rdfa.framework.auth.client.UnifyAuthContextHolder;
+import top.rdfa.framework.auth.facade.entity.UserInfo;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,6 +98,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean createPriceVersionStructures(ElectricityPriceVersionStructuresCreateBO priceVersionStructuresCreateBO) {
+        UserInfo userInfo = UnifyAuthContextHolder.getUserInfo();
         //最终匹配到的设备与规则的绑定关系
         List<ElectricityPriceEquipmentView> matchedPriceEquipBindRecords = new ArrayList<>();
         //创建时间,后面统一使用这个作为创建时间
@@ -883,7 +885,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         excelWriter.merge(0, 1, 1, 1, CommonConstant.STRATEGY_CHINA, true);
         excelWriter.merge(0, 1, 2, 2, CommonConstant.VOLTAGELEVEL_CHINA, true);
         excelWriter.merge(0, 1, 3, 3, CommonConstant.CONSUMPTION_CHINA, true);
-
+        
         excelWriter.merge(0, 0, 4, 5, CommonConstant.OTHER_CHINA, true);
         excelWriter.writeCellValue(4, 1, CommonConstant.DISTRIBUTION_CHINA);
         excelWriter.writeCellValue(5, 1, CommonConstant.GOV_ADD_CHINA);
@@ -898,6 +900,14 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         excelWriter.writeCellValue(10, 1, CommonConstant.MAX_CAPACITY_CHINA);
         excelWriter.writeCellValue(11, 1, CommonConstant.TRANSFORMER_CAPACITY_CHINA);
         excelWriter.autoSizeColumnAll();
+        excelWriter.autoSizeColumn(4, true);
+        excelWriter.autoSizeColumn(5, true);
+        excelWriter.autoSizeColumn(6, true);
+        excelWriter.autoSizeColumn(7, true);
+        excelWriter.autoSizeColumn(8, true);
+        excelWriter.autoSizeColumn(9, true);
+        excelWriter.autoSizeColumn(10, true);
+        excelWriter.autoSizeColumn(11, true);
         return excelWriter;
     }
 
@@ -1341,6 +1351,9 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         seasonDetailBO.setSeasonDateList(seasonDateList);
         seasonDetailBO.setElectricityPriceStrategyBOList(strategyBOList);
         electricityPriceSeasonDetailBOS.add(seasonDetailBO);
+        structureRuleDetailBO.setIndustries(CommonConstant.DEFAULT_TYPE);
+        structureRuleDetailBO.setStrategies(CommonConstant.DEFAULT_TYPE);
+        structureRuleDetailBO.setVoltageLevels(CommonConstant.DEFAULT_TYPE);
         structureRuleDetailBO.setElectricityPriceSeasonDetailBOS(electricityPriceSeasonDetailBOS);
 
         defaultStructureAndRuleBO.setPriceStructureRuleDetailBO(structureRuleDetailBO);

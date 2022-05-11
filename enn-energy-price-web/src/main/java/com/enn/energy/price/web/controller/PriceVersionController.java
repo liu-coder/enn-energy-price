@@ -5,10 +5,7 @@ import com.enn.energy.price.biz.service.bo.*;
 import com.enn.energy.price.common.utils.PriceDateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -172,9 +169,9 @@ public class PriceVersionController {
     private String getCellValue(Cell cell) {
         if (cell == null) {
             return "";
-        } else if (Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
+        } else if (CellType.NUMERIC == cell.getCellType()) {
             return String.valueOf((int) cell.getNumericCellValue());
-        } else if (Cell.CELL_TYPE_STRING == cell.getCellType()) {
+        } else if (CellType.STRING == cell.getCellType()) {
             return cell.getStringCellValue().trim();
         } else {
             return "";

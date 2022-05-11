@@ -65,7 +65,9 @@ public class CityMangerServiceImp implements CityManagerService {
         if(CollectionUtil.isEmpty( cityCodes )){
             return null;
         }
-        ProvinceListBO provinceListBO = CityConverMapper.INSTANCE.CityCodePOListTOBOList( cityCodes );
+        List<ProvinceBO> provinceBOS = CityConverMapper.INSTANCE.CityCodePOListTOBOList(cityCodes);
+        ProvinceListBO provinceListBO = new ProvinceListBO();
+        provinceListBO.setCityCodeList(provinceBOS);
         return provinceListBO;
     }
 }

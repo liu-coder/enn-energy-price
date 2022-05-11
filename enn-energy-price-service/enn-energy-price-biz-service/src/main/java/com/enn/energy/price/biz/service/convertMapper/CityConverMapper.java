@@ -22,5 +22,5 @@ public interface CityConverMapper {
      * @param cityCode
      * @return
      */
-    ProvinceListBO CityCodePOListTOBOList(List<CityCode> cityCode);
+    List<ProvinceBO> CityCodePOListTOBOList(List<CityCode> cityCode);
 }

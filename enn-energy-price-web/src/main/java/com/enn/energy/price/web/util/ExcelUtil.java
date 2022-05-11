@@ -1,8 +1,6 @@
 package com.enn.energy.price.web.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -12,7 +10,6 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
@@ -170,22 +167,22 @@ public class ExcelUtil {
         font.setFontHeightInPoints((short) 11);//设置字体大小
         style.setFont(font);//选择需要用到的字体格式
 
-        style.setFillForegroundColor(HSSFColor.YELLOW.index);// 设置背景色
-        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
-        style.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框
-        style.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+        style.setFillForegroundColor(HSSFColor.HSSFColorPredefined.YELLOW.getIndex());// 设置背景色
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setAlignment(HorizontalAlignment.CENTER); // 居中
+        style.setBorderBottom(BorderStyle.THIN); //下边框
+        style.setBorderRight(BorderStyle.THIN);//右边框
 
         style2.setFont(font);//选择需要用到的字体格式
 
-        style2.setFillForegroundColor(HSSFColor.WHITE.index);// 设置背景色
-        style2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        style2.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER); //垂直居中
-        style2.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 水平向下居中
-        style2.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框
-        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
-        style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
-        style2.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+        style2.setFillForegroundColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());// 设置背景色
+        style2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style2.setVerticalAlignment(VerticalAlignment.CENTER); //垂直居中
+        style2.setAlignment(HorizontalAlignment.CENTER); // 水平向下居中
+        style2.setBorderBottom(BorderStyle.THIN); //下边框
+        style2.setBorderRight(BorderStyle.THIN);//右边框
+        style2.setBorderLeft(BorderStyle.THIN);//左边框
+        style2.setBorderTop(BorderStyle.THIN);//上边框
 
         Row headerRow = sh.createRow(0); //表头
 
@@ -407,23 +404,23 @@ public class ExcelUtil {
         String cellValue = "";
         if (cell == null) {
             return cellValue;
-        } else if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+        } else if (cell.getCellType() == CellType.STRING) {
             cellValue = cell.getStringCellValue();
-        } else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-            if (HSSFDateUtil.isCellDateFormatted(cell)) {
+        } else if (cell.getCellType() == CellType.NUMERIC) {
+            if (DateUtil.isCellDateFormatted(cell)) {
                 double d = cell.getNumericCellValue();
-                Date date = HSSFDateUtil.getJavaDate(d);
+                Date date = DateUtil.getJavaDate(d);
                 cellValue = sFormat.format(date);
             } else {
                 cellValue = decimalFormat.format((cell.getNumericCellValue()));
             }
-        } else if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+        } else if (cell.getCellType() == CellType.BLANK) {
             cellValue = "";
-        } else if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
+        } else if (cell.getCellType() == CellType.BOOLEAN) {
             cellValue = String.valueOf(cell.getBooleanCellValue());
-        } else if (cell.getCellType() == Cell.CELL_TYPE_ERROR) {
+        } else if (cell.getCellType() == CellType.ERROR) {
             cellValue = "";
-        } else if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
+        } else if (cell.getCellType() == CellType.FORMULA) {
             cellValue = cell.getCellFormula().toString();
         }
         return cellValue;
