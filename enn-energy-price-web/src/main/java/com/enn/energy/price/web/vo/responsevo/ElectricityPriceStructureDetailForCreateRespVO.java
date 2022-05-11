@@ -1,8 +1,7 @@
 package com.enn.energy.price.web.vo.responsevo;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,21 +11,28 @@ import java.util.List;
  * @version 1.0.0
  * @Date 2022/5/8 17:50
  */
+@ApiModel("体系以及对应下的体系配置内容")
 public class ElectricityPriceStructureDetailForCreateRespVO implements Serializable {
 
     private static final long serialVersionUID = -9163374928956756226L;
 
+    @ApiModelProperty(value = "体系名称", dataType = "string")
     private String structureName;
 
+    @ApiModelProperty(value = "省编码code", dataType = "string")
     private String provinceCode;
 
+    @ApiModelProperty(value = "市编码code，以,拼接", dataType = "string")
     private String cityCodes;
 
+    @ApiModelProperty(value = "区编码code，以,拼接", dataType = "string")
     private String districtCodes;
 
+    @ApiModelProperty(value = "父版本id", dataType = "string")
     private String lastVersionId;
 
-    private String parentid;
+    @ApiModelProperty(value = "父体系id", dataType = "string")
+    private String parentId;
 
     private List<ElectricityPriceDetailForCreateRespVO> priceDetailForCreateRespVOList;
 
@@ -72,12 +78,12 @@ public class ElectricityPriceStructureDetailForCreateRespVO implements Serializa
         this.lastVersionId = lastVersionId;
     }
 
-    public String getParentid() {
-        return parentid;
+    public String getParentId() {
+        return parentId;
     }
 
-    public void setParentid(String parentid) {
-        this.parentid = parentid;
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public List<ElectricityPriceDetailForCreateRespVO> getPriceDetailForCreateRespVOList() {
@@ -104,7 +110,7 @@ public class ElectricityPriceStructureDetailForCreateRespVO implements Serializa
                 ", cityCodes='" + cityCodes + '\'' +
                 ", districtCodes='" + districtCodes + '\'' +
                 ", lastVersionId='" + lastVersionId + '\'' +
-                ", parentid='" + parentid + '\'' +
+                ", parentId='" + parentId + '\'' +
                 ", priceDetailForCreateRespVOList=" + priceDetailForCreateRespVOList +
                 ", structureRuleDetailForCreateRespVOList=" + structureRuleDetailForCreateRespVOList +
                 '}';

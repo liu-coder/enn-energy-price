@@ -55,4 +55,18 @@ public interface ElectricityPriceVersionCustomMapper {
      * @return
      */
     List<ElectricityPriceStructure> queryStructuresByCondition(ElectricityPriceVersion priceVersion);
+
+    /**
+     * 查询当前版本的前一个版本
+     * @param electricityPriceVersion
+     * @return
+     */
+    List<ElectricityPriceVersion> queryPriceVersionByCondition(ElectricityPriceVersion electricityPriceVersion);
+
+    /**
+     * 查询当前版本的前一个版本
+     * @param electricityPriceVersion
+     * @return
+     */
+    ElectricityPriceVersion queryNextPriceVersion(ElectricityPriceVersion electricityPriceVersion);
 }

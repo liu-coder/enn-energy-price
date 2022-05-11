@@ -1,12 +1,12 @@
 package com.enn.energy.price.web.convertMapper;
 
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceDefaultStructureAndRuleBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureDetailBO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStrategyForCreateRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureDetailForCreateRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureDetailRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureRespVO;
+import com.enn.energy.price.web.vo.responsevo.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -42,6 +42,15 @@ public interface ElectricityPriceStrutureConverMapper {
 
     List<ElectricityPriceStructureDetailForCreateRespVO> ElectricityPriceStructureDetailForCreaateBOToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBO);
 
+    /**
+     * @param priceStructureDetailBO
+     * @return
+     */
+    @Mappings({
+            @Mapping(source = "priceDefaultStructureAndRuleBO.priceStructureRuleDetailBO", target = "structureRuleDetailForCreateRespVO"),
+            @Mapping(source = "priceDefaultStructureAndRuleBO.priceDetailBOList", target = "priceDetailForCreateRespVOList"),
+    })
+    ElectricityPriceDefaultStructureAndRuleRespVO electricityPriceStructureAndRuleBOToVO(ElectricityPriceDefaultStructureAndRuleBO priceDefaultStructureAndRuleBO);
 
 
 }

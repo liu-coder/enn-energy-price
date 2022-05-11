@@ -1,5 +1,8 @@
 package com.enn.energy.price.web.vo.responsevo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -8,10 +11,12 @@ import java.util.List;
  * @version 1.0.0
  * @Date 2022/5/8 17:54
  */
+@ApiModel("季节响应VO")
 public class ElectricityPriceSeasonDetailForCreateRespVO implements Serializable {
 
     private static final long serialVersionUID = -7775831418969043941L;
 
+    @ApiModelProperty(value = "季节名称", dataType = "string")
     private String seasonName;
 
     private List<SeasonDateForCreateRespVO> seasonDateForCreateRespVOList;
