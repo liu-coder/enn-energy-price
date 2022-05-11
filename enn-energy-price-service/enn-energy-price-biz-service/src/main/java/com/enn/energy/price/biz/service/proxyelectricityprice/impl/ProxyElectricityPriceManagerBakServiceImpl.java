@@ -1340,11 +1340,11 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         strategyBO.setElectricityTimeSectionUpdateBOList(timeSectionUpdateBOList);
         strategyBOList.add(strategyBO);
 
-        List<SeansonDateBO> seasonDateList = new ArrayList<>();
-        SeansonDateBO seansonDateBO = new SeansonDateBO();
-        seansonDateBO.setSeaStartDate(CommonConstant.FIRST_DAY_OF_YEAR);
-        seansonDateBO.setSeaEndDate(CommonConstant.LAST_DAY_OF_YEAR);
-        seasonDateList.add(seansonDateBO);
+        List<SeasonDateBO> seasonDateList = new ArrayList<>();
+        SeasonDateBO seasonDateBO = new SeasonDateBO();
+        seasonDateBO.setSeaStartDate(CommonConstant.FIRST_DAY_OF_YEAR);
+        seasonDateBO.setSeaEndDate(CommonConstant.LAST_DAY_OF_YEAR);
+        seasonDateList.add(seasonDateBO);
 
         List<ElectricityPriceSeasonDetailBO> electricityPriceSeasonDetailBOS = new ArrayList<>();
         ElectricityPriceSeasonDetailBO seasonDetailBO = new ElectricityPriceSeasonDetailBO();
