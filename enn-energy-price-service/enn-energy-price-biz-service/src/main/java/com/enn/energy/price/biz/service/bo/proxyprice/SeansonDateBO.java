@@ -20,5 +20,6 @@ public class SeansonDateBO implements Serializable {
     private String seasonId;
     private String seaStartDate;
     private String seaEndDate;
+    private Integer changeType;
     private Boolean comply;
 }

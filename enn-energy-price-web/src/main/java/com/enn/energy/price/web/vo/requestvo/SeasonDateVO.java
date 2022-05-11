@@ -27,4 +27,8 @@ public class SeasonDateVO implements Serializable {
     @DateValue(format = "MM-dd", message = "季节结束时间格式有误")
     @NotBlank(message = "季节结束时间不能为空")
     private String seaEndDate;
+    @ApiModelProperty(value = "季节id")
+    private Long id;
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
 }

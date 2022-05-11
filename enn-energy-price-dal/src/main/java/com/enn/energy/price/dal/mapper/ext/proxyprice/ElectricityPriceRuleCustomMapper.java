@@ -37,4 +37,10 @@ public interface ElectricityPriceRuleCustomMapper {
      */
     List<ElectricityPriceRule> queryRuleListByStructureId(@Param( "structureId" ) String structureId);
 
+    /**
+     * 更新规则根据条件
+     * @param electricityPriceRule
+     * @return
+     */
+    int updateRuleByConditions(ElectricityPriceRule electricityPriceRule);
 }

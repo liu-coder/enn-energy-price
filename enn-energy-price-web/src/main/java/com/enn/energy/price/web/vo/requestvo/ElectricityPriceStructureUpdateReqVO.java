@@ -39,7 +39,7 @@ public class ElectricityPriceStructureUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "区县编码不能为空,多个用,拼接",required = true)
     private String districtCodes;
 
-    @ApiModelProperty(value = "变更类型,0:无变化 1:修改")
+    @ApiModelProperty(value = "变更类型,2:修改")
     @NotNull(message = "变更类型不能为空")
     private Integer changeType;
 

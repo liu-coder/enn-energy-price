@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class ElectricityPriceUpdateBO implements Serializable {
     private static final long serialVersionUID = -607570668098849354L;
+    private Long priceId;
+    private Long ruleId;
+    private Integer ruleChangeType;
     private String industry;
     private String strategy;
     private String voltageLevel;

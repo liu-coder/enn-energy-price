@@ -34,7 +34,8 @@ public class ElectricityPriceSeasonUpdateReqVO implements Serializable {
     private Long seasonSectionId;
     @ApiModelProperty(value = "季节名称")
     private String seasonName;
-
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
     @ApiModelProperty("季节时间列表")
     @NotEmpty(message = "季节时间列表不能为空")
     @Valid

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum changeTypeEum {
+public enum ChangeTypeEum {
     ADD(0,"add"),
     DELETE(1,"delete"),
     UPDATE(2,"update");

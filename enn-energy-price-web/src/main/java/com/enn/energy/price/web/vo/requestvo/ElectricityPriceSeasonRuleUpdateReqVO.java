@@ -34,6 +34,8 @@ public class ElectricityPriceSeasonRuleUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "电压等级,多个电压等级用,进行分割",required = true)
     @NotBlank(message = "电压等级不能为空")
     private String voltageLevels;
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
     @ApiModelProperty(value = "季节分时列表")
     @NotEmpty(message = "季节分时列表不能为空")
     @Valid

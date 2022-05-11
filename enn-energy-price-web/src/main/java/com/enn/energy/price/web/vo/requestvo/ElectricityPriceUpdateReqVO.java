@@ -56,4 +56,10 @@ public class ElectricityPriceUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "变压器容量价格")
     @DecimalMin( value = "0",message = "变压器容量价格数值必须大于0")
     private BigDecimal transformerCapacityPrice;
+    @ApiModelProperty(value = "价格id")
+    private Long priceId;
+    @ApiModelProperty(value = "规则id")
+    private Long ruleId;
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
 }

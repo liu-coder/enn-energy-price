@@ -37,4 +37,6 @@ public class ElectricityTimeSectionUpdateReqVO implements Serializable {
     @NotBlank(message = "分时区间结束不能为空")
     @DateValue(format = "HH:mm", message = "分时区间结束时间格式有误")
     private String endTime;
+    @ApiModelProperty(value = "变更类型")
+    private Integer changeType;
 }

@@ -8,6 +8,26 @@
     <update id="deleteEquipmentBindingByVersionId">
         update electricity_price_equipment set state=1 where version_id=#{versionId} and state=0
     </update>
+
+
+
+    <update id="batchDeleteEquipmentBindingByConditions">
+        update electricity_price_equipment
+        <set>
+            <if test="state != null ">
+                state=#{state},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+        </set>
+        where rule_id in
+        <foreach collection="ruleIds" separator="," open="(" close=")" item="i" index="index" >
+            #{i.ruleId}
+        </foreach>
+        and state=0
+    </update>
+
     <select id="queryEquipmentBinding" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
         <include refid="Base_Column_List" />
@@ -18,5 +38,45 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_equipment where structure_id=#{structureId} and state=0
+    </select>
+
+
+    <select id="listRuleEquipmentBindRecords" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment" resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView">
+        select
+        epe.id, epe.equipment_id, epe.equipment_name, epe.rule_id, epe.version_id, epe.tenant_id,
+        epe.tenant_name, epe.structure_id, epe.structure_rule_id, epe.system_code, epe.adjust, epe.state,
+        epe.creator, epe.updator, epe.create_time, epe.update_time, epr.industry, epr.strategy, epr.voltage_level
+        from electricity_price_equipment epe
+        left join electricity_price_rule epr
+        on epe.rule_id = epr.rule_id
+        <where>
+            <if test="tenantId != null">
+                and epe.tenant_id = #{versionId}
+            </if>
+            <if test="versionId != null">
+                and epe.version_id = #{versionId}
+            </if>
+            <if test="equipmentId != null">
+                and epe.equipment_id = #{equipmentId}
+            </if>
+            <if test="systemCode != null">
+                and epe.system_code = #{systemCode}
+            </if>
+            <if test="state != null">
+                and epe.state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <select id="listRuleEquipmentBindRecordsByRuleIdList" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        select
+        epe.id,  epe.rule_id, epe.version_id, epe.tenant_id,
+        epe.structure_id, epe.structure_rule_id
+        from electricity_price_equipment epe
+        where epe.rule_id in
+        <foreach item="item" collection="list" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+        and state = 0
     </select>
 </mapper>
