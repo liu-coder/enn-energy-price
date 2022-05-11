@@ -24,7 +24,7 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
     private static final long serialVersionUID = -4213396806536606042L;
 
     @ApiModelProperty(value = "版本生效期", required = true, dataType = "date")
-    @NotNull
+    @NotNull(message = "生效日期不能为空")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date startDate;
 
@@ -36,7 +36,6 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
     @Valid
     private ValidationList<ElectricitySeasonSectionValidateReqVO> seasonSectionValidateReqVOList;
 
-    @NotEmpty(message = "分时区间不能为空")
     @Valid
     private ValidationList<ElectricityTimeSectionValidateReqVO> timeSectionValidateReqVOList;
 

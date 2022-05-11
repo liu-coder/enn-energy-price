@@ -246,6 +246,61 @@ public class CommonConstant {
     public static final String DEFAULT_END_DATE = "2099-12-31";
 
     /**
+     * 数字 -1
+     */
+    public static final Integer NUMBER0 = -1;
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final Integer INDUSTRY_TYPE = 0;
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final Integer STRATEGY_TYPE = 1;
+
+    /**
+     * 2022-12-31 11:59:59
+     */
+    public static final Integer VOLTAGELEVEL_TYPE = 2;
+
+    /**
+     * 区域分隔符
+     */
+    public static final String TYPE = "type";
+
+    /**
+     * 区域分隔符
+     */
+    public static final String PROVINCE = "province";
+
+    /**
+     * 区域分隔符
+     */
+    public static final String STATE = "state";
+
+    /**
+     * 字典类型
+     */
+    public static final String DICTIONARY_VOLTAGELEVEL_TYPE = "1";
+
+    /**
+     * 字典类型
+     */
+    public static final String DICTIONARY_INDUSTRY_TYPE = "0";
+
+    /**
+     * 结束时间
+     */
+    public static final String END_TIME = "24:00";
+
+    /**
+     * 结束时间
+     */
+    public static final String START_TIME = "00:00";
+
+    /**
      * redis key
      */
     public static class RedisKey {

@@ -81,4 +81,11 @@ public interface ProxyElectricityPriceManagerBakService {
      * @return
      */
     List<ElectricityPriceStructureDetailBO> getLastVersionStructures(String provinceCode);
+
+    /**
+     * 获取默认的体系详细内容
+     * @author sunjidong
+     * @date 2022/5/11 14:57
+     */
+    ElectricityPriceDefaultStructureAndRuleBO getDefaultStructureDetail(String type, String provinceCode);
 }

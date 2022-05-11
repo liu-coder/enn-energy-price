@@ -34,11 +34,9 @@ public class ElectricityTimeSectionCreateReqVO implements Serializable {
     private String periods;
 
     @ApiModelProperty(value = "0:等于;-1:小于;1:大于;-10:小于等于;10:大于等于", required = true, dataType = "string")
-    @NotBlank(message = "温度比较符号不能为空")
     private String compare;
 
     @ApiModelProperty(value = "温度:单位摄氏度", required = true, dataType = "string")
-    @NotBlank(message = "温度不能为空")
     @DecimalTemperatureValue(message = "温度格式异常")
     private String temperature;
 

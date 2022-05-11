@@ -442,9 +442,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
     @Override
     public Map<Integer, List<ElectricityPriceDictionaryBO>> getPriceElectricityDictionaries(String type, String province) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put( "type",type );
-        hashMap.put( "province",province );
-        hashMap.put("state",0);
+        hashMap.put( CommonConstant.TYPE, Integer.parseInt(type) );
+        hashMap.put( CommonConstant.PROVINCE, province );
+        hashMap.put(CommonConstant.STATE, CommonConstant.VALID);
         List<ElectricityPriceDictionary> electricityPriceDictionaries = electricityPriceDictionaryCustomMapper.selectDictionaryByCondition( hashMap );
         List<ElectricityPriceDictionaryBO> dictionaryBOList = BeanUtil.mapList(electricityPriceDictionaries, ElectricityPriceDictionaryBO.class);
         return dictionaryBOList.stream()

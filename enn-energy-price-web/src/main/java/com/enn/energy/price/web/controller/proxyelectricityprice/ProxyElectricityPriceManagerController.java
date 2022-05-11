@@ -47,7 +47,7 @@ import java.util.concurrent.locks.Lock;
  **/
 @Api(tags = "代理购电管理控制器")
 @RestController
-@RequestMapping("/ProxyElectricityPrice")
+@RequestMapping("/proxyElectricityPrice")
 @Slf4j
 public class ProxyElectricityPriceManagerController {
 
@@ -141,7 +141,7 @@ public class ProxyElectricityPriceManagerController {
     }
 
     /**
-     * @describtion 校验电价体系以及电价规则
+     * 校验电价体系以及电价规则
      * @author sunjidong
      * @date 2022/5/6 9:04
      * @param validateReqVO
@@ -216,6 +216,7 @@ public class ProxyElectricityPriceManagerController {
                 .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
+
     @GetMapping("/getVersionList/{provinceCode}")
     @ApiOperation("获取版本列表")
     public RdfaResult<ElectricityPriceVersionRespVOList> getVersionList(@PathVariable("provinceCode") @ApiParam(required = true, name = "provinceCode", value = "省编码") String provinceCode){
@@ -295,7 +296,7 @@ public class ProxyElectricityPriceManagerController {
      * @param
      * @return
      */
-    @ApiOperation( "根据省编码查找版本以及版本下的所有体系详细内容")
+    @ApiOperation( "根据省编码查找最迟的版本以及版本下的所有体系详细内容")
     @GetMapping("/getLastVersionStructures")
     public RdfaResult<ElectricityPriceStructureListRespVO> getLastVersionStructures(@RequestParam String provinceCode){
         if(StrUtil.isEmpty(provinceCode)){
@@ -306,6 +307,19 @@ public class ProxyElectricityPriceManagerController {
         ElectricityPriceStructureListRespVO priceStructureListRespVO = new ElectricityPriceStructureListRespVO();
         priceStructureListRespVO.setStructureDetailForCreateRespVOList(electricityPriceStructureDetailForCreateRespVOList);
         return RdfaResult.success(priceStructureListRespVO);
+    }
+
+    /**
+     * 获取默认的体系详细内容
+     * @author sunjidong
+     * @date 2022/5/11 14:57
+     */
+    public ElectricityPriceDefaultStructureAndRuleRespVO getDefaultStructureDetail(@RequestParam String provinceCode){
+        if(StrUtil.isEmpty(provinceCode)){
+            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
+        }
+        ElectricityPriceDefaultStructureAndRuleBO defaultStructureDetail = priceManagerBakService.getDefaultStructureDetail(CommonConstant.DICTIONARY_VOLTAGELEVEL_TYPE, provinceCode);
+        return ElectricityPriceStrutureConverMapper.INSTANCE.electricityPriceStructureAndRuleBOToVO(defaultStructureDetail);
     }
 
 }

@@ -25,4 +25,37 @@
         where id = #{id}
           and   state = 0
     </select>
+
+    <select id="listRuleEquipmentBindRecords" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment" resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView">
+        select
+        epe.id, epe.equipment_id, epe.equipment_name, epe.rule_id, epe.version_id, epe.tenant_id,
+        epe.tenant_name, epe.structure_id, epe.structure_rule_id, epe.system_code, epe.adjust, epe.state,
+        epe.creator, epe.updator, epe.create_time, epe.update_time, epr.industry, epr.strategy, epr.voltage_level
+        from electricity_price_equipment epe
+        left join electricity_price_rule epr
+        on epe.rule_id = epr.rule_id
+        <where>
+            <if test="tenantId != null">
+                and epe.tenant_id = #{versionId}
+            </if>
+            <if test="versionId != null">
+                and epe.version_id = #{versionId}
+            </if>
+            <if test="state != null">
+                and epe.state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <select id="listRuleEquipmentBindRecordsByRuleIdList" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        select
+        epe.id,  epe.rule_id, epe.version_id, epe.tenant_id,
+        epe.structure_id, epe.structure_rule_id
+        from electricity_price_equipment epe
+        where epe.rule_id in
+        <foreach item="item" collection="list" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+        and state = 0
+    </select>
 </mapper>

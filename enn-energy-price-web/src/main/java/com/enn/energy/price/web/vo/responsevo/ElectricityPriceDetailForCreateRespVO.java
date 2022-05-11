@@ -1,5 +1,7 @@
 package com.enn.energy.price.web.vo.responsevo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,32 +14,45 @@ import java.math.BigDecimal;
  * @version 1.0.0
  * @Date 2022/5/8 17:51
  */
+@ApiModel("电价详细响应VO")
 public class ElectricityPriceDetailForCreateRespVO implements Serializable {
 
     private static final long serialVersionUID = -1712746553229580559L;
 
+    @ApiModelProperty(value = "用电行业", dataType = "string")
     private String industry;
 
+    @ApiModelProperty(value = "定价策略", dataType = "string")
     private String strategy;
 
+    @ApiModelProperty(value = "电压等级", dataType = "string")
     private String voltageLevel;
 
+    @ApiModelProperty(value = "电度输配价格", dataType = "string")
     private String distributionPrice;
 
+    @ApiModelProperty(value = "政府附加价格", dataType = "string")
     private String govAddPrice;
 
+    @ApiModelProperty(value = "尖价", dataType = "string")
     private String sharpPrice;
 
+    @ApiModelProperty(value = "峰价", dataType = "string")
     private String peakPrice;
 
+    @ApiModelProperty(value = "平价", dataType = "string")
     private String levelPrice;
 
+    @ApiModelProperty(value = "谷价", dataType = "string")
     private String valleyPrice;
 
+    @ApiModelProperty(value = "最大容量基础电价", dataType = "string")
     private String maxCapacityPrice;
 
+    @ApiModelProperty(value = "变压器容量基础电价", dataType = "string")
     private String transformerCapacityPrice;
 
+    @ApiModelProperty(value = "体系id", dataType = "string")
     private String structureRuleId;
 
     public String getIndustry() {
