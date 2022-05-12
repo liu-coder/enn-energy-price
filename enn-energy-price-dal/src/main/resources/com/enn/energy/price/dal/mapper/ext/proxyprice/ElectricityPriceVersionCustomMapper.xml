@@ -127,7 +127,15 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_version
-        where province_code=#{provinceCode} and state=#{state} order by create_time asc
+        <where>
+            <if test="provinceCode!=null">
+                and province_code=#{provinceCode}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+        </where>
+                order by create_time asc
     </select>
 
     <select id="queryStructuresByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
