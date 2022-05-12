@@ -264,4 +264,21 @@ public class ProxyElectricityPriceManagerController {
         return RdfaResult.success( electricityPriceDictionaryRespVOList );
     }
 
+    @ApiOperation(value = "版本删除校验")
+    @PostMapping("/versionDeleteValidate")
+    public RdfaResult<Boolean> versionDeleteValidate(@Valid @RequestBody ElectricityPriceVersionDeleteReqVO priceVersionDeleteReqVO){
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( priceVersionDeleteReqVO );
+        RdfaResult<Boolean> result = proxyElectricityPriceManagerService.versionDeleteValidate( electricityPriceVersionDeleteBO );
+        return result;
+    }
+
+
+    @ApiOperation(value = "体系删除校验")
+    @PostMapping("/structureDeleteValidate")
+    public RdfaResult<Boolean> structureDeleteValidate(@RequestBody @Valid ElectricityPriceStructureDeleteValidateReqVO structureDeleteValidateReqVO){
+        ElectricityPriceStructureDeleteValidateBO structureDeleteValidateBO = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureDeleteValidateVOToBO( structureDeleteValidateReqVO );
+        RdfaResult<Boolean> result=proxyElectricityPriceManagerService.structureDeleteValidate(structureDeleteValidateBO);
+        return result;
+    }
+
 }

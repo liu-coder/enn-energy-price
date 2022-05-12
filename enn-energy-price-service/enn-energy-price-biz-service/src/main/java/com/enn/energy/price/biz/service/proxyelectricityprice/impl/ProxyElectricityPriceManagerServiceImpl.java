@@ -13,6 +13,7 @@ import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPr
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.enums.BoolLogic;
 import com.enn.energy.price.common.enums.ChangeTypeEum;
+import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.utils.BeanUtil;
 import com.enn.energy.price.dal.mapper.ext.ExtElectricityPriceDictionaryMapper;
 import com.enn.energy.price.dal.mapper.ext.proxyprice.*;
@@ -446,6 +447,22 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         List<ElectricityPriceDictionaryBO> dictionaryBOList = BeanUtil.mapList(electricityPriceDictionaries, ElectricityPriceDictionaryBO.class);
         return dictionaryBOList;
 
+    }
+
+    @Override
+    public RdfaResult<Boolean> versionDeleteValidate(ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO) {
+        if(DateUtil.parse(electricityPriceVersionDeleteBO.getStartDate(), DatePattern.NORM_DATE_PATTERN).isBefore( DateUtil.date() )){
+            return RdfaResult.fail( ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorCode(), ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorMsg());
+        }
+        return RdfaResult.success( true );
+    }
+
+    @Override
+    public RdfaResult<Boolean> structureDeleteValidate(ElectricityPriceStructureDeleteValidateBO structureDeleteValidateBO) {
+        if(DateUtil.parse(structureDeleteValidateBO.getEndDate(), DatePattern.NORM_DATE_PATTERN).isBefore( DateUtil.date() )){
+            return RdfaResult.fail( ErrorCodeEnum.STRUCTURE_IS_NOT_ALLOW_DELETE.getErrorCode(), ErrorCodeEnum.STRUCTURE_IS_NOT_ALLOW_DELETE.getErrorMsg());
+        }
+        return RdfaResult.success( true );
     }
 
     /**

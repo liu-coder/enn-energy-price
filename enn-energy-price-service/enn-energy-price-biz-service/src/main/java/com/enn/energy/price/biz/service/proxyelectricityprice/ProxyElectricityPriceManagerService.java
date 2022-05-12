@@ -66,4 +66,19 @@ public interface ProxyElectricityPriceManagerService {
      * @param type
      */
     List<ElectricityPriceDictionaryBO> getPriceElectricityDictionarys(String type);
+
+
+    /**
+     * 电价版本删除校验
+     * @param electricityPriceVersionDeleteBO
+     * @return
+     */
+    RdfaResult<Boolean> versionDeleteValidate(ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO);
+
+    /**
+     * 体系删除校验
+     * @param structureDeleteValidateBO
+     * @return
+     */
+    RdfaResult<Boolean> structureDeleteValidate(ElectricityPriceStructureDeleteValidateBO structureDeleteValidateBO);
 }

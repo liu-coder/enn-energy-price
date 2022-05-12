@@ -39,6 +39,7 @@ public enum ErrorCodeEnum {
     DOWNLOAD_TEMPLATE_EXCEPTION("E30007","模板下载异常"),
     UPLOAD_TEMPLATE_EXCEPTION("E30008","模板上传异常"),
     VERSION_IS_NOT_ALLOW_DELETE("E30009","只允许删除未来版本"),
+    STRUCTURE_IS_NOT_ALLOW_DELETE("E30010","只允许删除历史体系"),
     ;
     private String errorCode;
     private String errorMsg;
