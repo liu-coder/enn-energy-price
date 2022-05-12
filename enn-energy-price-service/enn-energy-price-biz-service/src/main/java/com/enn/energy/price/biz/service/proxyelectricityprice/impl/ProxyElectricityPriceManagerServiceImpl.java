@@ -438,6 +438,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         return electricityPriceStructureDetailBO;
     }
 
+
     @Override
     public Map<Integer, List<ElectricityPriceDictionaryBO>> getPriceElectricityDictionaries(String type, String province) {
         HashMap<String, Object> hashMap = new HashMap<>();
