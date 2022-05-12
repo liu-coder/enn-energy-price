@@ -16,9 +16,7 @@ import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPr
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceStrutureConverMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConverMapper;
+import com.enn.energy.price.web.convertMapper.*;
 import com.enn.energy.price.web.vo.requestvo.*;
 import com.enn.energy.price.web.vo.responsevo.*;
 import io.swagger.annotations.Api;
@@ -29,7 +27,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import top.rdfa.framework.auth.client.annotation.Authorize;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
@@ -47,7 +44,7 @@ import java.util.concurrent.locks.Lock;
  * @author sunjidong
  * @date 2022/4/30
  **/
-@Api(tags = "代理购电管理控制器")
+@Api(tags = "代理购电管理控制器v2.0")
 @RestController
 @RequestMapping("/proxyElectricityPrice")
 @Slf4j
@@ -86,7 +83,7 @@ public class ProxyElectricityPriceManagerController {
             if (ObjectUtil.isNull(lock)) {
                 return RdfaResult.fail(ErrorCodeEnum.REPEAT_REQUEST.getErrorCode(), ErrorCodeEnum.REPEAT_REQUEST.getErrorMsg());
             }
-            ElectricityPriceVersionStructuresCreateBO versionStructuresCreateBO = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceVersionStructuresCreateReqVOToBO(priceVersionStructuresCreateVO);
+            ElectricityPriceVersionStructuresCreateBO versionStructuresCreateBO = ElectricityPriceVersionCreateConvertMapper.INSTANCE.priceVersionStructuresCreateReqVOToBO(priceVersionStructuresCreateVO);
             versionStructuresCreateBO.getPriceVersionCreateBO().setTenantId(tenantId);
             versionStructuresCreateBO.getPriceVersionCreateBO().setTenantName(tenantName);
             Boolean ifSuccess = priceManagerBakService.createPriceVersionStructures(versionStructuresCreateBO);
@@ -111,7 +108,7 @@ public class ProxyElectricityPriceManagerController {
             if (ObjectUtil.isNull( lock )) {
                 return RdfaResult.fail( ErrorCodeEnum.RETRY_AFTER.getErrorCode(), ErrorCodeEnum.RETRY_AFTER.getErrorMsg() );
             }
-            return proxyElectricityPriceManagerService.updatePriceVersion( electricityPriceVersionUpdateBO );
+            return proxyElectricityPriceManagerService.updatePriceVersion(electricityPriceVersionUpdateBO);
         } catch (LockFailException e) {
             return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
         }finally {
@@ -152,13 +149,13 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/validateStructureAndRule")
     @ApiOperation( "校验电价体系以及电价规则" )
     public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateStructureAndRule(@RequestBody @Valid ElectricityPriceStructureAndRuleValidateReqVO validateReqVO){
-        ElectricityPriceStructureAndRuleValidateBO structureAndRuleValidateBO = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.structureAndRuleValidateVOToBO(validateReqVO);
+        ElectricityPriceStructureAndRuleValidateBO structureAndRuleValidateBO = ElectricityPriceVersionValidateConvertMapper.INSTANCE.structureAndRuleValidateVOToBO(validateReqVO);
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateStructureAndRule(structureAndRuleValidateBO);
         if(ObjectUtil.isNull(structureAndRuleValidateBO)){
             return RdfaResult.success(null);
         }
         ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
-                = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO);
+                = ElectricityPriceVersionValidateConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
 
@@ -188,7 +185,7 @@ public class ProxyElectricityPriceManagerController {
      */
     @PostMapping("/uploadTemplate")
     public List<ElectricityPriceRuleCreateReqVO> uploadTemplate(List<ElectricityPriceRuleCreateReqVO> priceRuleReqVOList, @RequestParam("fileName") MultipartFile file){
-        List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceRuleCreateReqVOListToBOList(priceRuleReqVOList);
+        List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = ElectricityPriceVersionCreateConvertMapper.INSTANCE.priceRuleCreateReqVOListToBOList(priceRuleReqVOList);
         ExcelReader reader;
         try {
             reader = ExcelUtil.getReader(file.getInputStream());
@@ -196,7 +193,7 @@ public class ProxyElectricityPriceManagerController {
             throw new PriceException(ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
         }
         List<ElectricityPriceRuleCreateBO> priceRuleCreateRespBOList = priceManagerBakService.uploadTemplate(reader, priceRuleCreateBOList);
-        return ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceRuleCreateReqBOListToVOList(priceRuleCreateRespBOList);
+        return ElectricityPriceVersionCreateConvertMapper.INSTANCE.priceRuleCreateReqBOListToVOList(priceRuleCreateRespBOList);
     }
 
     /**
@@ -209,13 +206,13 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/validateSeasonTime")
     @ApiOperation( "季节、分时相关校验" )
     public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateSeasonTime(@RequestBody @Valid List<ElectricitySeasonValidateReqVO> validateReqVO){
-        List<ElectricitySeasonCreateBO> seasonCreateBOList = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.seasonValidateReqVOListToBOList(validateReqVO);
+        List<ElectricitySeasonCreateBO> seasonCreateBOList = ElectricityPriceVersionValidateConvertMapper.INSTANCE.seasonValidateReqVOListToBOList(validateReqVO);
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateSeasonTime(seasonCreateBOList);
         if(ObjectUtil.isNull(validateRespBO)){
             return RdfaResult.success(null);
         }
         ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
-                = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE
+                = ElectricityPriceVersionValidateConvertMapper.INSTANCE
                 .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }

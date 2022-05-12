@@ -31,8 +31,6 @@ public class ElectricityPriceStructureRuleCreateBO implements Serializable {
 
     private String voltageLevels;
 
-    @NotNull
-    @Valid
     private ValidationList<ElectricitySeasonCreateBO> seasonCreateBOList;
 
     public String getIndustries() {

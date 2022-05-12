@@ -31,7 +31,7 @@ public class ElectricityPriceVersionStructuresCreateReqVO implements Serializabl
 
     @ApiModelProperty(value = "请求时间(yyyy-MM-dd HH:mm:ss)",required = true)
     @NotBlank(message = "请求时间不能为空")
-    @DateValue(format = {"yyyy-MM-dd HH:mm:ss"},message = "请求时间格式有误")
+    @DateValue(format = {"yyyy-MM-dd HH:mm:ss"},message = "请求时间戳格式有误")
     private String timestamp;
 
     public ElectricityPriceVersionCreateReqVO getPriceVersionCreateReqVO() {

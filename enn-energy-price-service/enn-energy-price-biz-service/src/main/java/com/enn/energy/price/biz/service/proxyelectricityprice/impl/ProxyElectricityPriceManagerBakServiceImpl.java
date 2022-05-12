@@ -142,7 +142,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             //4.1.3、创建电价规则以及电价明细
             List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = priceStructureAndRuleAndSeasonCreateBO.getPriceRuleCreateBOList().list;
             createPriceRuleAndPrice(createTime, priceVersionPO, priceStructureRuleList, priceRuleList, structureId, leftRuleEquipmentBindRecordList, priceRuleCreateBOList);
-            
+
             //根据三要素是否能匹配到当前体系下的所有三要素，剔除未能匹配到的绑定关系数据
             deleteBindRecordsNotSuitablePriceRule(matchedPriceEquipBindRecords, priceRuleList, leftRuleEquipmentBindRecordList);
         }
@@ -487,8 +487,8 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         List<ElectricityPriceStructureRuleCreateBO> noExistTimeSectionStructureRuleList
                 = customStructureRuleCreateBOList.stream().filter(priceStructureRule -> {
             boolean matchSuccess = true;
-            for (ElectricitySeasonCreateBO seasonCreateBO : priceStructureRule.getSeasonCreateBOList()) {
-                if (CollUtil.isNotEmpty(seasonCreateBO.getTimeSectionCreateBOList())) {
+            for (ElectricitySeasonCreateBO seasonCreateBO : priceStructureRule.getSeasonCreateBOList().list) {
+                if (CollUtil.isNotEmpty(seasonCreateBO.getTimeSectionCreateBOList().list)) {
                     matchSuccess = false;
                     break;
                 }
@@ -497,7 +497,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         }).collect(Collectors.toList());
         //判断默认的是否配置分时
         boolean noTimeSection = defaultStructureRuleCreateBOList.get(CommonConstant.INDUSTRY_TYPE).getSeasonCreateBOList().stream()
-                .allMatch(seasonCreateBO -> CollUtil.isEmpty(seasonCreateBO.getTimeSectionCreateBOList()));
+                .allMatch(seasonCreateBO -> CollUtil.isEmpty(seasonCreateBO.getTimeSectionCreateBOList().list));
         validateResult = validateIfLackDistributionPriceList(defaultStructureRuleCreateBOList, customStructureRuleCreateBOList, priceRuleValidateReqVOList, noExistTimeSectionStructureRuleList, validateRespBO, noTimeSection);
         if (validateResult){
             return validateRespBO;
@@ -522,7 +522,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         List<StructureRuleAndTimeTypeBO> customStructureRuleAndTimeTypeBOList = customStructureRuleCreateBOList.stream().map(customStructureRuleCreateBO -> {
             List<ElectricityTimeSectionCreateBO> customTimeSectionCreateBOList = new ArrayList<>();
             for (ElectricitySeasonCreateBO createBO : customStructureRuleCreateBO.getSeasonCreateBOList().list) {
-                customTimeSectionCreateBOList.addAll(createBO.getTimeSectionCreateBOList());
+                customTimeSectionCreateBOList.addAll(createBO.getTimeSectionCreateBOList().list);
             }
             Map<String, List<ElectricityTimeSectionCreateBO>> customPeriodsTimeSectionMap = customTimeSectionCreateBOList.stream()
                     .collect(Collectors.groupingBy(ElectricityTimeSectionCreateBO::getPeriods));
@@ -539,7 +539,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         if (!noTimeSection) {
             List<ElectricityTimeSectionCreateBO> defaultTimeSectionCreateBOList = new ArrayList<>();
             for (ElectricitySeasonCreateBO createBO : defaultStructureRuleCreateBOList.get(0).getSeasonCreateBOList().list) {
-                defaultTimeSectionCreateBOList.addAll(createBO.getTimeSectionCreateBOList());
+                defaultTimeSectionCreateBOList.addAll(createBO.getTimeSectionCreateBOList().list);
             }
             //默认的体系对应的分时类型
             Map<String, List<ElectricityTimeSectionCreateBO>> defaultStructureRuleAndTimeTypeBOMap

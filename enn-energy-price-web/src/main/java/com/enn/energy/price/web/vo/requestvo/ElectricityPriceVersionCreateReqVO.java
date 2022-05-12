@@ -1,5 +1,7 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import cn.hutool.core.date.DatePattern;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.Length;
@@ -50,7 +52,8 @@ public class ElectricityPriceVersionCreateReqVO implements Serializable {
 
     @ApiModelProperty(value = "版本生效期", required = true, dataType = "date")
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = DatePattern.NORM_DATE_PATTERN)
+    @DateTimeFormat(pattern = DatePattern.NORM_DATE_PATTERN)
     private Date startDate;
 
     @ApiModelProperty(value = "电价类型,0:目录电价;1:自定义电价;3:代购电价", required = true, dataType = "string")
