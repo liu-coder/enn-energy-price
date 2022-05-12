@@ -1,8 +1,11 @@
 package com.enn.energy.price.biz.service.bo.proxyprice;
 
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @author liujin
@@ -12,7 +15,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProvinceBO {
-    private String provinceCode;
-    private String province;
+public class ProvinceBO implements Serializable {
+    private String id;
+    private String areaCode;
+    private String name;
 }

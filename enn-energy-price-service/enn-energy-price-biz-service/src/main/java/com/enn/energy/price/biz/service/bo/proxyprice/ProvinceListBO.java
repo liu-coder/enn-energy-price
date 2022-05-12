@@ -17,5 +17,5 @@ import java.util.List;
 @NoArgsConstructor
 public class ProvinceListBO implements Serializable {
     private static final long serialVersionUID = 9135770276534879328L;
-    List<ProvinceBO> cityCodeList;
+    List<ProvinceBO> provinceBOList;
 }

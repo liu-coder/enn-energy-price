@@ -7,9 +7,11 @@ import java.util.List;
 
 @Mapper
 public interface CityCustomMapper {
+
     /**
-     * 查询城市列表
-     * @return 城市编码
+     *查询城市列表
+     * @param cityCode
+     * @return
      */
     List<CityCode> queryCityList(CityCode cityCode);
 

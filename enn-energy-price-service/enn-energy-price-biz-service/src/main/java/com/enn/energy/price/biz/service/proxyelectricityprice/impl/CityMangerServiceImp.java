@@ -31,13 +31,13 @@ public class CityMangerServiceImp implements CityManagerService {
     @Override
     public CityListBO queryCitys(ProvinceBO provinceBO) {
         CityCode cityCode = new CityCode();
-        cityCode.setParentId( provinceBO.getProvinceCode() );
+        cityCode.setParentId( provinceBO.getAreaCode() );
         cityCode.setState( BoolLogic.NO.getCode());
         List<CityCode> cityCodes = cityCustomMapper.queryCityList( cityCode );
         List<CityBO> cityBOList = cityCodes.stream().map( t -> {
             CityCode cityCode1 = new CityCode();
             cityCode1.setState( BoolLogic.NO.getCode() );
-            cityCode1.setParentId( t.getId() );
+            cityCode1.setParentId( t.getAreaCode() );
             List<CityCode> cityCodesList = cityCustomMapper.queryCityList( cityCode1 );
             CityBO cityBO = new CityBO();
             cityBO.setCity( t.getName() );
@@ -65,9 +65,9 @@ public class CityMangerServiceImp implements CityManagerService {
         if(CollectionUtil.isEmpty( cityCodes )){
             return null;
         }
-        List<ProvinceBO> provinceBOS = CityConverMapper.INSTANCE.CityCodePOListTOBOList(cityCodes);
+        List<ProvinceBO> provinceBOS = CityConverMapper.INSTANCE.CityCodePOListToBOList(cityCodes);
         ProvinceListBO provinceListBO = new ProvinceListBO();
-        provinceListBO.setCityCodeList(provinceBOS);
+        provinceListBO.setProvinceBOList(provinceBOS);
         return provinceListBO;
     }
 }
