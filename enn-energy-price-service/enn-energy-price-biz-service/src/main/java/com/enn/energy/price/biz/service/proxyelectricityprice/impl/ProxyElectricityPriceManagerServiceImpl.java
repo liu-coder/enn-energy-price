@@ -275,17 +275,23 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         //1.3查询版本下面的体系列表比对哪些缺失
         List<Long> deleteIdList = queryDeleteStructureIds( electricityPriceStructureUpdateBOList, electricityPriceVersionUpdateBO.getId() );
         //2.1 增加体系直接增加
-        addCollect.forEach( t->{
-            createStructure(t,electricityPriceVersionUpdateBO.getId());
-        } );
+        if(CollectionUtils.isNotEmpty(addCollect)){
+            addCollect.forEach( t->{
+                createStructure(t,electricityPriceVersionUpdateBO.getId());
+            } );
+        }
         //2.2 删除体系直接删除
-        deleteIdList.forEach( this::deleteStructure );
+        if(CollectionUtils.isNotEmpty( deleteIdList )){
+            deleteIdList.forEach( this::deleteStructure );
+        }
         //2.3 修改体系
-        updateCollect.forEach( t->{
-            /*updateStructure(t,electricityPriceVersionUpdateBO.getId());*/
-            updateStructurePlan3( t,electricityPriceVersionUpdateBO.getId() );
+        if(CollectionUtils.isNotEmpty(updateCollect)){
+            updateCollect.forEach( t->{
+                /*updateStructure(t,electricityPriceVersionUpdateBO.getId());*/
+                updateStructurePlan3( t,electricityPriceVersionUpdateBO.getId() );
 
-        } );
+            } );
+        }
         return RdfaResult.success( true );
 
     }
@@ -542,15 +548,16 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     return true;
                 }
                 return false;
-            } ).findFirst().get();
-            String structureRuleId = electricityPriceRule1.getStructureRuleId();
-            //更新设备表
-            t.setStructureId(structureId );
-            t.setStructureRuleId( structureRuleId );
-            t.setUpdator( tenantId );
-            t.setUpdateTime(DateUtil.date());
-            electricityPriceEquipmentMapper.updateByPrimaryKey(t);
-
+            } ).findFirst().orElse( null );
+            if(Optional.ofNullable(electricityPriceRule1).isPresent()){
+                String structureRuleId = electricityPriceRule1.getStructureRuleId();
+                //更新设备表
+                t.setStructureId(structureId );
+                t.setStructureRuleId( structureRuleId );
+                t.setUpdator( tenantId );
+                t.setUpdateTime(DateUtil.date());
+                electricityPriceEquipmentMapper.updateByPrimaryKey(t);
+            }
         } );
     }
 
@@ -624,7 +631,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                 //删除date_time
                 if(CollectionUtils.isNotEmpty( deleteDateIds )){
                     HashMap<String , Object> timeDeleteMap = new HashMap<>();
-                    timeDeleteMap.put( "ids", StringUtils.join( deleteDateIds,"," ));
+                    timeDeleteMap.put( "ids", deleteDateIds);
                     timeDeleteMap.put( "updateTime",DateUtil.date() );
                     timeDeleteMap.put( "state", BoolLogic.NO.getCode());
                     electricityPriceSeasonSectionCustomMapper.batchDeleteSeasonSectionByIds(timeDeleteMap  );
@@ -658,7 +665,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                                 List<Long> deleteIdList = datasourceIdList.stream().filter( hasIds::contains ).collect( Collectors.toList() );
                                 //删除
                                 HashMap<String, Object> deleteMap = new HashMap<>();
-                                deleteMap.put("ids",StringUtils.join( deleteIdList,"," ));
+                                deleteMap.put("ids",deleteIdList);
                                 deleteMap.put( "state", BoolLogic.YES.getCode());
                                 deleteMap.put( "updateTime",DateUtil.date() );
                                 electricityTimeSectionCustomMapper.batchDeleteTimeSectionByIds( deleteMap );
@@ -685,7 +692,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     //删除无用的time
                     List<Long> delete = v.stream().map( m -> m.getId() ).collect( Collectors.toList() );
                     HashMap<String, Object> deleteMap = new HashMap<>();
-                    deleteMap.put("ids",StringUtils.join( delete,"," ));
+                    deleteMap.put("ids",delete);
                     deleteMap.put( "state", BoolLogic.YES.getCode());
                     deleteMap.put( "updateTime",DateUtil.date() );
                     electricityTimeSectionCustomMapper.batchDeleteTimeSectionByIds( deleteMap );
@@ -1152,6 +1159,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         electricityPriceStructure.setState(BoolLogic.NO.getCode());
         electricityPriceStructure.setVersionId(versionId);
         electricityPriceStructure.setCreateTime(DateUtil.date());
+        electricityPriceStructure.setCreator( tenantId );
         electricityPriceStructureMapper.insert(electricityPriceStructure);
         Long[] defStructureRuleId = {null};
         //创建体系规则 季节分时与分时区间
@@ -1164,9 +1172,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             electricityPriceStructureRule.setState(BoolLogic.NO.getCode());
             electricityPriceStructureRule.setCreateTime(DateUtil.date());
             electricityPriceStructureRuleCustomMapper.insertElectricityPriceStructureRule(electricityPriceStructureRule);
-            //todo 尚未确定默认编码怎么存储的
-            if(electricityPriceStructureRule.getStrategies().equals( "default" )
-                    && electricityPriceStructureRule.getVoltageLevels().equals( "default" ) && electricityPriceStructureRule.getIndustries().equals( "default" )){
+            //默认体系规则
+            if(electricityPriceStructureRule.getStrategies().equals( CommonConstant.DEFAULT_TYPE )
+                    && electricityPriceStructureRule.getVoltageLevels().equals( CommonConstant.DEFAULT_TYPE ) && electricityPriceStructureRule.getIndustries().equals( CommonConstant.DEFAULT_TYPE )){
                 defStructureRuleId[0]=electricityPriceStructureRule.getId();
             }
 

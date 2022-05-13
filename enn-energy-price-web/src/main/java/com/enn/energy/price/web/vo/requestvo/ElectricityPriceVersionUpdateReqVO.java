@@ -37,12 +37,6 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "省编码",required = true)
     @NotBlank(message = "省编码不能为空")
     private String province;
-    @ApiModelProperty(value = "租户id",required = true)
-    @NotBlank(message = "租户id不能为空")
-    private String tenantId;
-    @ApiModelProperty(value = "租户名称",required = true)
-    @NotBlank(message = "租户名称不能为空")
-    private String tenantName;
     @ApiModelProperty(value = "电价版本开始时间,时间格式yyyy-MM-dd",required = true)
     @NotBlank(message = "电价版本开始时间不能为空")
     @DateValue(format = DatePattern.NORM_DATE_PATTERN, message = "电价版本开始时间格式有误")
