@@ -2,8 +2,12 @@ package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceDefaultStructureAndRuleBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureDeleteValidateBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureDetailBO;
 import com.enn.energy.price.web.vo.responsevo.*;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStructureDeleteValidateReqVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureDetailRespVO;
+import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -36,6 +40,12 @@ public interface ElectricityPriceStrutureConverMapper {
 
     List<ElectricityPriceStructureDetailRespVO> ElectricityPriceStructureDetailBOListToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBOList);
 
+    /**
+     * 电价体系删除转换
+     * @param vo
+     * @return
+     */
+    ElectricityPriceStructureDeleteValidateBO ElectricityPriceStructureDeleteValidateVOToBO(ElectricityPriceStructureDeleteValidateReqVO vo);
     ElectricityPriceStrategyForCreateRespVO ElectricityPriceStructureForCreaateBOToVO(ElectricityPriceStructureBO priceStructureBO);
 
     ElectricityPriceStructureDetailForCreateRespVO ElectricityPriceStructureDetailForCreaateBOToVO(ElectricityPriceStructureDetailBO priceStructureDetailBO);

@@ -7,8 +7,13 @@ import com.enn.energy.price.biz.service.bo.proxyprice.ProvinceListBO;
 import com.enn.energy.price.web.vo.requestvo.CityCodeReqVO;
 import com.enn.energy.price.web.vo.responsevo.CityListRespVO;
 import com.enn.energy.price.web.vo.responsevo.CityRespVO;
+import com.enn.energy.price.web.vo.responsevo.ProvinceListVO;
+import com.enn.energy.price.web.vo.responsevo.ProvinceVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 /**
  * 城市转换mapper
@@ -19,10 +24,11 @@ public interface CityConverMapper {
 
     /**
      * vo to bo
-     * @param cityCodeReqVO
+     * @param provinceVO
      * @return
      */
-    ProvinceBO cityCodeVOTOBO(CityCodeReqVO cityCodeReqVO);
+
+    ProvinceBO provinceVOToBO(ProvinceVO provinceVO);
 
 
     /**
@@ -36,12 +42,14 @@ public interface CityConverMapper {
      * @param cityListBO
      * @return
      */
+    @Mapping(target = "cityItemList", source = "cityItemList")
     CityListRespVO CityListBOTOVO(CityListBO cityListBO);
 
     /**
      * @param cityBO
      * @return
      */
+    @Mapping(target = "districtList",source = "districtList")
     CityRespVO CityBOTOVO(CityBO cityBO);
 
     /**
@@ -49,4 +57,14 @@ public interface CityConverMapper {
      * @return
      */
     CityRespVO.DistrictVO DistrictBOTOVO(CityBO.District district);
+
+    /**
+     * @param provinceBO
+     * @return
+     */
+    ProvinceVO ProvinceBOToVO(ProvinceBO provinceBO);
+
+
+    @Mapping(target = "provinceVOList", source = "provinceBOList")
+    ProvinceListVO ProvinceBOListToVOList(ProvinceListBO provinceBO);
 }

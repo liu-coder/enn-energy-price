@@ -9,12 +9,16 @@
         select
         <include refid="Base_Column_List" />
         from city_code
-        where state=#{state}
-        <if test="level !=null and level!=''">
-            and level=#{level}
-        </if>
-        <if test="parentId !=null and parentId !=''">
-            parent_id=#{parentId}
-        </if>
+        <where>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+            <if test="level !=null and level!=''">
+                and level=#{level}
+            </if>
+            <if test="parentId !=null and parentId !=''">
+                and parent_id=#{parentId}
+            </if>
+        </where>
     </select>
 </mapper>

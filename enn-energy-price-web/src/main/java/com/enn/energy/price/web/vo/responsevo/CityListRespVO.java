@@ -23,7 +23,7 @@ import java.util.List;
 public class CityListRespVO implements Serializable {
     private static final long serialVersionUID = 4299558331737988604L;
     @ApiModelProperty("城市编码列表")
-    List<CityRespVO> cityCodeList;
+    List<CityRespVO> cityItemList;
 
 
 

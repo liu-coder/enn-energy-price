@@ -7,6 +7,8 @@ import com.enn.energy.price.biz.service.proxyelectricityprice.CityManagerService
 import com.enn.energy.price.web.convertMapper.CityConverMapper;
 import com.enn.energy.price.web.vo.requestvo.CityCodeReqVO;
 import com.enn.energy.price.web.vo.responsevo.CityListRespVO;
+import com.enn.energy.price.web.vo.responsevo.ProvinceListVO;
+import com.enn.energy.price.web.vo.responsevo.ProvinceVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +27,7 @@ import java.util.Optional;
  * @Date 2022/5/7 9:40
  */
 @RequestMapping("/city")
-@Api("城市查询控制器")
+@Api("城市管理控制器")
 @RestController
 @Slf4j
 public class CityManagerController {
@@ -34,20 +36,20 @@ public class CityManagerController {
 
     @PostMapping("/queryProvinces")
     @ApiOperation( "查询省列表" )
-    public RdfaResult<CityListRespVO> queryProvinces(){
+    public RdfaResult<ProvinceListVO> queryProvinces(){
         ProvinceListBO provinceListBO = ctyManagerService.queryProvinces();
-        CityListRespVO cityListRespVO =null;
+        ProvinceListVO ProvinceListVO =null;
         if(Optional.ofNullable( provinceListBO ).isPresent()){
-            cityListRespVO = CityConverMapper.INSTANCE.CityCodeListBOTOVO( provinceListBO );
+            ProvinceListVO = CityConverMapper.INSTANCE.ProvinceBOListToVOList( provinceListBO );
         }
-        return RdfaResult.success( cityListRespVO );
+        return RdfaResult.success( ProvinceListVO );
     }
 
 
     @PostMapping("/queryCity")
     @ApiOperation( "查询省下面城市列表" )
-    public RdfaResult<CityListRespVO> queryCityCodes(@RequestBody CityCodeReqVO cityCodeReqVO){
-        ProvinceBO provinceBO = CityConverMapper.INSTANCE.cityCodeVOTOBO( cityCodeReqVO );
+    public RdfaResult<CityListRespVO> queryCityCodes(@RequestBody ProvinceVO provinceVO){
+        ProvinceBO provinceBO = CityConverMapper.INSTANCE.provinceVOToBO( provinceVO );
         CityListBO cityListBO = ctyManagerService.queryCitys( provinceBO );
         CityListRespVO cityListRespVO = CityConverMapper.INSTANCE.CityListBOTOVO( cityListBO );
         return RdfaResult.success( cityListRespVO );

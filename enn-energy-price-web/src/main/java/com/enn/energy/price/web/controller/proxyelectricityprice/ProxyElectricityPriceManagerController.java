@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.rdfa.framework.biz.ro.RdfaResult;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -322,6 +323,23 @@ public class ProxyElectricityPriceManagerController {
         }
         ElectricityPriceDefaultStructureAndRuleBO defaultStructureDetail = priceManagerBakService.getDefaultStructureDetail(CommonConstant.DICTIONARY_VOLTAGELEVEL_TYPE, provinceCode);
         return ElectricityPriceStrutureConverMapper.INSTANCE.electricityPriceStructureAndRuleBOToVO(defaultStructureDetail);
+    }
+
+    @ApiOperation(value = "版本删除校验")
+    @PostMapping("/versionDeleteValidate")
+    public RdfaResult<Boolean> versionDeleteValidate(@Valid @RequestBody ElectricityPriceVersionDeleteReqVO priceVersionDeleteReqVO){
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( priceVersionDeleteReqVO );
+        RdfaResult<Boolean> result = proxyElectricityPriceManagerService.versionDeleteValidate( electricityPriceVersionDeleteBO );
+        return result;
+    }
+
+
+    @ApiOperation(value = "体系删除校验")
+    @PostMapping("/structureDeleteValidate")
+    public RdfaResult<Boolean> structureDeleteValidate(@RequestBody @Valid ElectricityPriceStructureDeleteValidateReqVO structureDeleteValidateReqVO){
+        ElectricityPriceStructureDeleteValidateBO structureDeleteValidateBO = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureDeleteValidateVOToBO( structureDeleteValidateReqVO );
+        RdfaResult<Boolean> result=proxyElectricityPriceManagerService.structureDeleteValidate(structureDeleteValidateBO);
+        return result;
     }
 
 }

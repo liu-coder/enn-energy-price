@@ -62,9 +62,21 @@ public interface ProxyElectricityPriceManagerService {
     ElectricityPriceStructureDetailBO getStructureDetail(String structuredId);
 
 
+
     /**
-     * 根据类型获取对应的字典列表
-     * @param type
+     * 电价版本删除校验
+     * @param electricityPriceVersionDeleteBO
+     * @return
      */
+    RdfaResult<Boolean> versionDeleteValidate(ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO);
+
+    /**
+     * 体系删除校验
+     * @param structureDeleteValidateBO
+     * @return
+     */
+    RdfaResult<Boolean> structureDeleteValidate(ElectricityPriceStructureDeleteValidateBO structureDeleteValidateBO);
+
+
     Map<Integer, List<ElectricityPriceDictionaryBO>> getPriceElectricityDictionaries(String type, String province);
 }
