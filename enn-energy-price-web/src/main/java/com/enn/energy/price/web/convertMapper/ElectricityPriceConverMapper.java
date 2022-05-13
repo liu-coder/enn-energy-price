@@ -14,6 +14,8 @@ public interface ElectricityPriceConverMapper {
 
     ElectricityPriceDetailRespVO ElectricityPriceDetailBOToVO(ElectricityPriceDetailBO electricityPriceDetailBO);
 
+    List<ElectricityPriceDetailRespVO> ElectricityPriceDetailBOListToVOList(List<ElectricityPriceDetailBO> electricityPriceDetailBOS);
+
     ElectricityPriceDetailForCreateRespVO ElectricityPriceDetailForUpdateBOToVO(ElectricityPriceDetailBO electricityPriceDetailBO);
 
 }

@@ -1,6 +1,5 @@
 package com.enn.energy.price.web.vo.responsevo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonDetailBO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +20,5 @@ public class ElectricityPriceStructureRuleDetailRespVO implements Serializable {
     private String industries;
     private String strategies;
     private String voltageLevels;
-
     private List<ElectricityPriceSeasonDetailRespVO> priceSeasonDetailRespVOS;
 }

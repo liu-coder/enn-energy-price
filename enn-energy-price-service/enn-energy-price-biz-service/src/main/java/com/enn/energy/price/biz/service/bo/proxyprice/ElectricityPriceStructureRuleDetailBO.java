@@ -22,7 +22,6 @@ public class ElectricityPriceStructureRuleDetailBO implements Serializable {
     private String industries;
     private String strategies;
     private String voltageLevels;
-
     private List<ElectricityPriceSeasonDetailBO> electricityPriceSeasonDetailBOS;
 
 

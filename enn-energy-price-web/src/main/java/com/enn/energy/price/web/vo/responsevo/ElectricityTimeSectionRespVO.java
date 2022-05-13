@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.vo.responsevo;
 
+import com.enn.energy.price.common.enums.PeriodsEum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ElectricityTimeSectionRespVO implements Serializable {
-    private Integer timeSectionId;
+    private Integer id;
     private String periods;
+    private String periodsName;
     private String startTime;
     private String endTime;
+
+    public String getPeriodsName() {
+        return PeriodsEum.getDesc( periods );
+    }
 }

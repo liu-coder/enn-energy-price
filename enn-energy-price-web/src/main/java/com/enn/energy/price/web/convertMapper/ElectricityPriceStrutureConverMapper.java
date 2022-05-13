@@ -15,9 +15,36 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper
+@Mapper(uses = { ElectricityPriceStructureRuleConverMapper.class })
 public interface ElectricityPriceStrutureConverMapper {
     ElectricityPriceStrutureConverMapper INSTANCE = Mappers.getMapper(ElectricityPriceStrutureConverMapper.class);
+
+    List<ElectricityPriceStructureDetailRespVO> ElectricityPriceStructureDetailBOListToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBOList);
+
+    /**
+     * @param priceStructureDetailBO
+     * @return
+     */
+    @Mappings( {
+            @Mapping( source = "priceStructureDetailBO.electricityPriceDetailBOList",target = "priceDetailRespVOList"),
+            @Mapping( source = "priceStructureDetailBO.electricityPriceStructureRuleDetailBOS",target = "structureRuleDetailRespVOList")
+    } )
+    ElectricityPriceStructureDetailRespVO ElectricityPriceStructureDetailBOToVO(ElectricityPriceStructureDetailBO priceStructureDetailBO);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * @param priceStructureBO
@@ -32,13 +59,8 @@ public interface ElectricityPriceStrutureConverMapper {
     List<ElectricityPriceStructureRespVO> ElectricityPriceStructureRespBOListToVOList(List<ElectricityPriceStructureBO> priceStructureBOList);
 
 
-    /**
-     * @param priceStructureDetailBO
-     * @return
-     */
-    ElectricityPriceStructureDetailRespVO ElectricityPriceStructureDetailBOToVO(ElectricityPriceStructureDetailBO priceStructureDetailBO);
 
-    List<ElectricityPriceStructureDetailRespVO> ElectricityPriceStructureDetailBOListToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBOList);
+
 
     /**
      * 电价体系删除转换
@@ -53,7 +75,7 @@ public interface ElectricityPriceStrutureConverMapper {
     List<ElectricityPriceStructureDetailForCreateRespVO> ElectricityPriceStructureDetailForCreaateBOToVOList(List<ElectricityPriceStructureDetailBO> priceStructureDetailBO);
 
     /**
-     * @param priceStructureDetailBO
+     * @param priceDefaultStructureAndRuleBO
      * @return
      */
     @Mappings({
