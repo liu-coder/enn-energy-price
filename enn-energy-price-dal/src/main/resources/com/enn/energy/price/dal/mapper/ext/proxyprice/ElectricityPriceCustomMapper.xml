@@ -12,6 +12,7 @@
             #{priceId}
         </foreach>
     </update>
+
     <update id="batchDeletePriceByRuleIds">
         update electricity_price
         set state=#{state},update_time=#{updateTime}
@@ -19,6 +20,7 @@
         <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
             #{ruleId}
         </foreach>
+        and state=0
     </update>
 
 

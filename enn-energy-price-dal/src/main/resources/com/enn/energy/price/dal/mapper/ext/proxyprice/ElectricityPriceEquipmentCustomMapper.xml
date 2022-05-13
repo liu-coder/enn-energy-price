@@ -22,8 +22,8 @@
             </if>
         </set>
         where rule_id in
-        <foreach collection="ruleIds" separator="," open="(" close=")" item="i" index="index" >
-            #{i.ruleId}
+        <foreach collection="ruleIds" separator="," open="(" close=")" item="ruleId" index="index" >
+            #{ruleId}
         </foreach>
         and state=0
     </update>

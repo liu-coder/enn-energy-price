@@ -5,6 +5,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionBOConvertMapper;
@@ -298,11 +299,13 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         map.put( "state",BoolLogic.NO.getCode() );
         List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( map );
         //根据电价体系id删除
-        electricityPriceStructures.forEach( t->{
-            deleteStructure( t.getId() );
-        } );
-        //根据版本id删除电价体系与设备的关联关系
-        electricityPriceEquipmentCustomMapper.deleteEquipmentBindingByVersionId(electricityPriceVersionDeleteBO.getId());
+        if(CollectionUtils.isNotEmpty(electricityPriceStructures  )){
+            electricityPriceStructures.forEach( t->{
+                deleteStructure( t.getId() );
+            } );
+            /*//根据版本id删除电价体系与设备的关联关系
+            electricityPriceEquipmentCustomMapper.deleteEquipmentBindingByVersionId(electricityPriceVersionDeleteBO.getId());*/
+        }
         //查询当前版本的上个版本
         ElectricityPriceVersion electricityPriceVersion=new ElectricityPriceVersion();
         electricityPriceVersion.setProvinceCode( electricityPriceVersionDeleteBO.getProvinceCode() );
@@ -310,10 +313,12 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         electricityPriceVersion.setEndDate(  DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN));
         ElectricityPriceVersion beforePriceVersion = electricityPriceVersionCustomMapper.queryBeforePriceVersion( electricityPriceVersion );
         //更新上一个版本 并删除当前版本
-        beforePriceVersion.setEndDate( DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN) );
-        beforePriceVersion.setUpdator( tenantId );
-        beforePriceVersion.setUpdateTime( DateUtil.date() );
-        electricityPriceVersionMapper.updateByPrimaryKey( beforePriceVersion );
+        if(ObjectUtil.isNotNull( beforePriceVersion )){
+            beforePriceVersion.setEndDate( DateUtil.parse(electricityPriceVersionDeleteBO.getEndDate(), DatePattern.NORM_DATE_PATTERN) );
+            beforePriceVersion.setUpdator( tenantId );
+            beforePriceVersion.setUpdateTime( DateUtil.date() );
+            electricityPriceVersionMapper.updateByPrimaryKey( beforePriceVersion );
+        }
         HashMap<String, Object> versionUpdateMap = new HashMap<>();
         versionUpdateMap.put( "id", electricityPriceVersionDeleteBO.getId());
         versionUpdateMap.put( "afterState", BoolLogic.YES.getCode());
@@ -1077,11 +1082,15 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         structureRuleQueryMap.put( "state", BoolLogic.NO.getCode());
         List<ElectricityPriceStructureRule> electricityPriceStructureRules = electricityPriceStructureRuleCustomMapper.queryElectricityPriceRulesByCondition( structureRuleQueryMap);
         List<Long> electricityPriceStructureRuleIds = electricityPriceStructureRules.stream().map( ElectricityPriceStructureRule::getId ).collect( Collectors.toList() );
-        deleteStructureRuleByStructureRuleIds(electricityPriceStructureRuleIds);
+        if(CollectionUtils.isNotEmpty( electricityPriceStructureRuleIds )){
+            deleteStructureRuleByStructureRuleIds(electricityPriceStructureRuleIds);
+        }
         //批量删除体系规则下对应的规则与价格(根据体系id)
         List<ElectricityPriceRule> electricityPriceRules = electricityPriceRuleCustomMapper.queryRuleListByStructureId( String.valueOf( structureId ) );
         List<Long> electricityPriceRuleIds = electricityPriceRules.stream().map( ElectricityPriceRule::getId ).collect( Collectors.toList() );
-        batchDeleteRulePriceAndEquipment(electricityPriceRuleIds);
+        if(CollectionUtils.isNotEmpty(electricityPriceRuleIds)){
+            batchDeleteRulePriceAndEquipment(electricityPriceRuleIds);
+        }
     }
 
     /**
@@ -1089,15 +1098,14 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      */
     public void deleteStructureRuleByStructureRuleIds(List<Long> electricityPriceStructureRuleIds){
         //根据体系规则id删除体系规则
-        String ids = StringUtils.join( electricityPriceStructureRuleIds, "," );
         HashMap<String, Object> map = new HashMap<>();
-        map.put( "ids",ids );
+        map.put( "ids", electricityPriceStructureRuleIds );
         map.put("state", BoolLogic.YES.getCode() );
         map.put( "updateTime",DateUtil.date() );
         electricityPriceStructureRuleCustomMapper.batchDeleteStructureRuleByIds(map);
         //根据体系规则id查询出体系规则下对应的季节id ,根据季节id删除季节与分时信息
         HashMap<String, Object> seasonQueryMap = new HashMap<>();
-        seasonQueryMap.put( "structureRuleIds",ids );
+        seasonQueryMap.put( "structureRuleIds",electricityPriceStructureRuleIds );
         seasonQueryMap.put( "state", BoolLogic.NO.getCode());
         List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( seasonQueryMap );
         //多个季节区间公用一个季节区间id,需要去重,得到体系规则下的多个季节列表
@@ -1110,10 +1118,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * 删除季节分时与分时区间
      */
     public void batchDeleteSeasonAndTime(Set<String> seasonSectionIds){
-        String seasonIdsString = StringUtils.join( seasonSectionIds, "," );
         //根据季节sectionId删除季节与分时信息
         Map<String, Object> map = new HashMap<>();
-        map.put( "seasonSectionIds",seasonIdsString );
+        map.put( "seasonSectionIds",seasonSectionIds );
         map.put("state", BoolLogic.YES.getCode() );
         map.put( "updateTime",DateUtil.date() );
         electricityPriceSeasonSectionCustomMapper.batchDeleteSeasonSectionBySectionIds(map );
@@ -1124,18 +1131,13 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
      * 批量删除规则与价格,与设备绑定关系
      */
     public void batchDeleteRulePriceAndEquipment(List<Long> electricityPriceRuleIds){
-        String ruleIdsString= StringUtils.join( electricityPriceRuleIds, "," );
         Map<String,Object> map=new HashMap<>();
-        map.put( "ruleIds", ruleIdsString);
+        map.put( "ruleIds", electricityPriceRuleIds);
         map.put( "updateTime",DateUtil.date() );
         map.put( "state",BoolLogic.YES.getCode());
         electricityPriceRuleCustomMapper.bacthDeletePriceRuleByRuleIds( map );
         electricityPriceCustomMapper.batchDeletePriceByRuleIds( map );
-        HashMap<String, Object> equipmentMap = new HashMap<>();
-        equipmentMap.put( "ruleIds", ruleIdsString);
-        equipmentMap.put( "updateTime",DateUtil.date() );
-        equipmentMap.put( "state",BoolLogic.YES.getCode());
-        electricityPriceEquipmentCustomMapper.batchDeleteEquipmentBindingByConditions( equipmentMap );
+        electricityPriceEquipmentCustomMapper.batchDeleteEquipmentBindingByConditions( map );
     }
 
 
