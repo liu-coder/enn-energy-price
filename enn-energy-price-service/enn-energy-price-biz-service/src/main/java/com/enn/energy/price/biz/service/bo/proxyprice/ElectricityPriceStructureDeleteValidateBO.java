@@ -1,5 +1,6 @@
 package com.enn.energy.price.biz.service.bo.proxyprice;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,7 @@ public class ElectricityPriceStructureDeleteValidateBO implements Serializable {
     private String versionId;
     private String startDate;
     private String endDate;
+    private String provinceCode;
+    private String cityCodes;
+    private String districtCodes;
 }

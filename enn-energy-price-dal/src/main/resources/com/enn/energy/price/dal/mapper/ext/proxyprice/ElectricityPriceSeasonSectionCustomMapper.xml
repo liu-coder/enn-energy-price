@@ -65,10 +65,17 @@
         select
         <include refid="Base_Column_List" />
         from electricity_season_section
-        where state=0 and  structure_rule_id in
-        <foreach collection="structureRuleIds" item="structureRuleId" open="(" close=")" separator=",">
-            #{structureRuleId}
-        </foreach>
+        <where>
+            <if test="state!=null">
+                and state=0
+            </if>
+            <if test="structureRuleIds!=null ">
+                and structure_rule_id in
+                <foreach collection="structureRuleIds" item="id" open="(" separator="," close=")" >
+                    #{id}
+                </foreach>
+            </if>
+        </where>
     </select>
     <select id="querySeasonSectionListByStructureRuleId"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">

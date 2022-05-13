@@ -22,13 +22,18 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_structure
-        where state=#{state}
-        <if test="versionId != null">
-            and version_id = #{versionId}
-        </if>
-        <if test="id != null">
-            and id = #{id}
-        </if>
+        <where>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+            <if test="versionId != null">
+                and version_id = #{versionId}
+            </if>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+        </where>
+
     </select>
     <select id="selectByPrimaryKey" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         select

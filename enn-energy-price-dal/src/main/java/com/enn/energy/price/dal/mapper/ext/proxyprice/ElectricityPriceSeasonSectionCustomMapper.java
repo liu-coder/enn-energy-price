@@ -17,10 +17,10 @@ public interface ElectricityPriceSeasonSectionCustomMapper {
 
     /**
      * 根据体系规则ids 查询季节分时区间
-     * @param structureRuleIds
+     * @param map
      * @return
      */
-    List<ElectricitySeasonSection> querySeasonSectionIdsByStructureRuleIds(@Param( "structureRuleIds" ) String structureRuleIds);
+    List<ElectricitySeasonSection> querySeasonSectionIdsByStructureRuleIds(Map<String,Object> map);
 
 
     /**

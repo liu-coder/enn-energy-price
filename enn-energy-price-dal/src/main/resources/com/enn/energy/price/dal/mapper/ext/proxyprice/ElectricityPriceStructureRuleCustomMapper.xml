@@ -57,10 +57,15 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_structure_rule
-        where state=#{state}
-        <if test="structureId !=null">
-            and structure_id = #{structureId}
-        </if>
+        <where>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+            <if test="structureId !=null">
+                and structure_id = #{structureId}
+            </if>
+        </where>
+
     </select>
 
 
