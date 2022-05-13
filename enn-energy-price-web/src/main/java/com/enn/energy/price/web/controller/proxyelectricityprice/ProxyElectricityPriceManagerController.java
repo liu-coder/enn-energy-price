@@ -299,7 +299,7 @@ public class ProxyElectricityPriceManagerController {
      */
     @ApiOperation( "根据省编码查找最迟的版本以及版本下的所有体系详细内容")
     @GetMapping("/getLastVersionStructures")
-    public RdfaResult<ElectricityPriceStructureListRespVO> getLastVersionStructures(@RequestParam String provinceCode){
+    public RdfaResult<ElectricityPriceStructureListRespVO> getLastVersionStructures(@RequestParam @ApiParam(required = true, name = "provinceCode", value = "省编码") String provinceCode){
         if(StrUtil.isEmpty(provinceCode)){
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }
@@ -317,7 +317,7 @@ public class ProxyElectricityPriceManagerController {
      */
     @ApiOperation( "获取默认的体系详细内容")
     @GetMapping("/getDefaultStructureDetail")
-    public ElectricityPriceDefaultStructureAndRuleRespVO getDefaultStructureDetail(@RequestParam(value = "provinceCode") String provinceCode){
+    public ElectricityPriceDefaultStructureAndRuleRespVO getDefaultStructureDetail(@RequestParam(value = "provinceCode") @ApiParam(required = true, name = "provinceCode", value = "省编码") String provinceCode){
         if(StrUtil.isEmpty(provinceCode)){
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }

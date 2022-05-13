@@ -52,14 +52,14 @@
             #{id}
         </foreach>
     </select>
-    <select id="queryElectricityPriceRulesByCondition"
+    <select id="queryElectricityPriceRulesByCondition" parameterType="map"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule">
         select
         <include refid="Base_Column_List" />
         from electricity_price_structure_rule
         where state=#{state}
         <if test="structureId !=null">
-            structure_id = #{structureId}
+            and structure_id = #{structureId}
         </if>
     </select>
 

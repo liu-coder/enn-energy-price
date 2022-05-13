@@ -45,4 +45,13 @@ public interface ElectricityPriceSeasonSectionCustomMapper {
      */
     int batchUpdateSeason(List updateDateList);
 
+    /**
+     * 根据体系规则ids 查询季节分时区间
+     * @param structureRuleId
+     * @return
+     */
+    List<ElectricitySeasonSection> querySeasonSectionListByStructureRuleId(@Param( "structureRuleId" ) String structureRuleId);
+
+
+
 }

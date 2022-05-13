@@ -140,7 +140,8 @@
 
     <select id="queryStructuresByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         select
-        <include refid="Base_Column_List" />
+        s.id, s.structure_id, s.structure_name, s.province_code, s.city_codes, s.district_codes, s.state,
+        s.parentId, s.version_id, s.creator, s.updator, s.create_time, s.update_time
         from electricity_price_structure s
         left join electricity_price_version v
         on s.version_id = v.version_id and v.state = 0

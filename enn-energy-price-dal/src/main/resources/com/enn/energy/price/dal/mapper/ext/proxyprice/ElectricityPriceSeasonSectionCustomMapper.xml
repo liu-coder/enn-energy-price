@@ -70,4 +70,12 @@
             #{structureRuleId}
         </foreach>
     </select>
+    <select id="querySeasonSectionListByStructureRuleId"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricitySeasonSection">
+        select
+        <include refid="Base_Column_List" />
+        from electricity_season_section
+        where state = 0
+        and  structure_rule_id = #{structureRuleId}
+    </select>
 </mapper>
