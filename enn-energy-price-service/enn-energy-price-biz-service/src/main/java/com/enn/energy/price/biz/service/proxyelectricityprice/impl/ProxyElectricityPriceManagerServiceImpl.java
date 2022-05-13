@@ -375,7 +375,10 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             ElectricityPriceStructureRuleDetailBO electricityPriceStructureRuleDetailBO = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.ElectricityPriceStructureRulePOTOBO( t);
             List<ElectricityPriceSeasonDetailBO> seasonDetailList=new ArrayList<>();
             //根据体系规则id查找季节列表
-            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( t.getStructureRuleId() );
+            HashMap<String, Object> seasonQueryMap = new HashMap<>();
+            seasonQueryMap.put( "structureRuleIds", Collections.singletonList( t.getId() ) );
+            seasonQueryMap.put( "state", BoolLogic.NO.getCode());
+            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( seasonQueryMap );
             //筛选出季节
             Set<String> SeasonSectionIds = electricitySeasonSections.stream().map( ElectricitySeasonSection::getSeasonSectionId ).collect( Collectors.toSet() );
             //对季节区间进行合并(同一个季节)
@@ -457,12 +460,40 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         if(DateUtil.parse(electricityPriceVersionDeleteBO.getStartDate(), DatePattern.NORM_DATE_PATTERN).isBefore( DateUtil.date() )){
             return RdfaResult.fail( ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorCode(), ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorMsg());
         }
+        //判断版本下体系是否绑定了设备
+        HashMap<String, Object> queryStructureMap = new HashMap<>();
+        queryStructureMap.put( "versionId",electricityPriceVersionDeleteBO.getId() );
+        queryStructureMap.put( "state", BoolLogic.NO.getCode());
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions( queryStructureMap );
+        Set<String> bindingEquipmentStructureNameSet = electricityPriceStructures.stream().filter( t -> judgeStructureEquipmentBinding( t.getId(), t.getProvinceCode(), t.getCityCodes(), t.getDistrictCodes() ) ).collect( Collectors.toList() ).stream().map( t -> t.getStructureName() ).collect( Collectors.toSet() );
+        if(CollectionUtils.isNotEmpty( bindingEquipmentStructureNameSet )){
+            return RdfaResult.fail( ErrorCodeEnum.VERSION_IS_NOT_ALLOW_DELETE.getErrorCode(),"版本下体系名为"+StringUtils.join( bindingEquipmentStructureNameSet,"," )+"绑定了设备,不能删除" );
+        }
         return RdfaResult.success( true );
     }
 
+    private boolean judgeStructureEquipmentBinding(Long id, String provinceCode, String cityCodes, String districtCodes) {
+        //根据体系id查询设备表
+        List<ElectricityPriceEquipment> electricityPriceEquipments = electricityPriceEquipmentCustomMapper.queryEquipmentBindingByStructureId( String.valueOf( id ) );
+        //todo 暂未知设备表怎么存储的
+        List<ElectricityPriceEquipment> collect = electricityPriceEquipments.stream().filter( t -> {
+            //判断值是否匹配体系的区域,
+            return true;
+        } ).collect( Collectors.toList() );
+        if(CollectionUtils.isNotEmpty( collect )){
+            return true;
+        }
+        return false;
+    }
+
     @Override
-    public RdfaResult<Boolean> structureDeleteValidate(ElectricityPriceStructureDeleteValidateBO structureDeleteValidateBO) {
-        if(DateUtil.parse(structureDeleteValidateBO.getEndDate(), DatePattern.NORM_DATE_PATTERN).isBefore( DateUtil.date() )){
+    public RdfaResult<Boolean> structureDeleteValidate(ElectricityPriceStructureDeleteValidateBO s) {
+        if(DateUtil.parse(s.getEndDate(), DatePattern.NORM_DATE_PATTERN).isBefore( DateUtil.date() )){
+            return RdfaResult.fail( ErrorCodeEnum.STRUCTURE_IS_NOT_ALLOW_DELETE.getErrorCode(), ErrorCodeEnum.STRUCTURE_IS_NOT_ALLOW_DELETE.getErrorMsg());
+        }
+        //根据体系id查询体系区域
+        boolean b = judgeStructureEquipmentBinding( Long.valueOf( s.getStructureId() ), s.getProvinceCode(), s.getCityCodes(), s.getDistrictCodes() );
+        if(b){
             return RdfaResult.fail( ErrorCodeEnum.STRUCTURE_IS_NOT_ALLOW_DELETE.getErrorCode(), ErrorCodeEnum.STRUCTURE_IS_NOT_ALLOW_DELETE.getErrorMsg());
         }
         return RdfaResult.success( true );
@@ -558,7 +589,10 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
             structureRule.setUpdateTime( DateUtil.date() );
             electricityPriceStructureRuleCustomMapper.updateStructureRule( structureRule );
             //根据体系规则id查询季节列表
-            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( String.valueOf( t.getStructureRuleId() ) );
+            HashMap<String, Object> seasonQueryMap = new HashMap<>();
+            seasonQueryMap.put( "structureRuleIds",Collections.singletonList( t.getStructureRuleId() ) );
+            seasonQueryMap.put( "state", BoolLogic.NO.getCode());
+            List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( seasonQueryMap );
             Set<String> collect = electricitySeasonSections.stream().map( m -> m.getSeasonSectionId() ).collect( Collectors.toSet() );
             //判断哪些seasonSectionId删除了
             List<String> havaSeasonIds = t.getElectricityPriceSeasonUpdateReqVOList().stream().filter( l -> StringUtils.isNotEmpty( l.getSeasonSectionId() ) ).map( n -> n.getSeasonSectionId() ).collect( Collectors.toList() );
@@ -1062,7 +1096,10 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         map.put( "updateTime",DateUtil.date() );
         electricityPriceStructureRuleCustomMapper.batchDeleteStructureRuleByIds(map);
         //根据体系规则id查询出体系规则下对应的季节id ,根据季节id删除季节与分时信息
-        List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( ids );
+        HashMap<String, Object> seasonQueryMap = new HashMap<>();
+        seasonQueryMap.put( "structureRuleIds",ids );
+        seasonQueryMap.put( "state", BoolLogic.NO.getCode());
+        List<ElectricitySeasonSection> electricitySeasonSections = electricityPriceSeasonSectionCustomMapper.querySeasonSectionIdsByStructureRuleIds( seasonQueryMap );
         //多个季节区间公用一个季节区间id,需要去重,得到体系规则下的多个季节列表
         Set<String> seasonSectionIds = electricitySeasonSections.stream().map( ElectricitySeasonSection::getSeasonSectionId ).collect( Collectors.toSet() );
         batchDeleteSeasonAndTime(seasonSectionIds);

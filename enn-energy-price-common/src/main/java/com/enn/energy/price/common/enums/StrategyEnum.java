@@ -3,6 +3,8 @@ package com.enn.energy.price.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @AllArgsConstructor
 @Getter
 public enum StrategyEnum {
@@ -12,4 +14,13 @@ public enum StrategyEnum {
 
     private Byte code;
     private String desc;
+
+
+    public String getDesc(Byte code){
+        StrategyEnum strategyEnum = Arrays.stream( values() ).filter( t -> t.getCode().equals( code ) ).findFirst().orElse( null );
+        if(null != strategyEnum){
+            return strategyEnum.getDesc();
+        }
+        return null;
+    }
 }

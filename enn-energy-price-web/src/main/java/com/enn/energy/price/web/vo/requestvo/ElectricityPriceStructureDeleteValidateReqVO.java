@@ -35,4 +35,11 @@ public class ElectricityPriceStructureDeleteValidateReqVO implements Serializabl
     @NotBlank(message = "版本结束时间不能为空")
     @DateValue(format = DatePattern.NORM_DATE_PATTERN, message = "版本结束时间格式不对")
     private String endDate;
+    @ApiModelProperty("省编码")
+    private String provinceCode;
+    @ApiModelProperty("市编码")
+    private String cityCodes;
+    @ApiModelProperty("区县编码")
+    private String districtCodes;
+
 }

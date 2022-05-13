@@ -111,6 +111,6 @@
             e.level_price as levelPrice,e.valley_price as valleyPrice
         from (select r.id as ruleId,r.industry,r.strategy,r.voltage_level as voltageLevel
               from electricity_price_rule r where r.structure_id=#{structureId} and r.state=0) t
-                 left join electricity_price e on t.rule_id=e.rule_id and r.state=0
+                 left join electricity_price e on t.ruleId=e.rule_id and e.state=0
     </select>
 </mapper>
