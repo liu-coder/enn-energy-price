@@ -50,9 +50,6 @@
     <update id="updateByStructureId" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         update electricity_price_structure
         <set>
-            <if test="structureId != null">
-                structure_id=#{structureId},
-            </if>
             <if test="structureName != null">
                 structure_name=#{structureName},
             </if>
@@ -88,7 +85,7 @@
             </if>
         </set>
         where state = 0
-        <if test="id!=null">
+        <if test="structureId!=null">
             and structure_id = #{structureId}
         </if>
     </update>
