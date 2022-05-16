@@ -21,8 +21,6 @@ public class ElectricityPriceVersionUpdateBO implements Serializable {
     private String id;
     private String versionName;
     private String province;
-    private String tenantId;
-    private String tenantName;
     private String startDate;
     private String endDate;
     private List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList;

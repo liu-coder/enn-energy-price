@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -16,7 +17,7 @@ import java.io.Serializable;
  */
 @Data
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
 public class SeasonDateVO implements Serializable {
     private static final long serialVersionUID = -7180031461745554430L;
     @ApiModelProperty(value = "季节开始时间,时间格式MM-dd",required = true)

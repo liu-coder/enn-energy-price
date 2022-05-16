@@ -1,6 +1,7 @@
 package com.enn.energy.price.web.vo.requestvo;
 
 import cn.hutool.core.date.DatePattern;
+import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,7 +50,7 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "电价体系列表",required = true)
     @NotEmpty(message = "电价体系不能为空")
     @Valid
-    private List<ElectricityPriceStructureUpdateReqVO> electricityPriceStructureUpdateReqVOList;
+    private ValidationList<ElectricityPriceStructureUpdateReqVO> electricityPriceStructureUpdateReqVOList;
 
 
 
