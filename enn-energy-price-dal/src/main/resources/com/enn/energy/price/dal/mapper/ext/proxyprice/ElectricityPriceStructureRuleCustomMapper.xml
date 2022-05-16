@@ -23,19 +23,21 @@
         and state=0
     </update>
     <update id="updateStructureRule">
-        update electricity_price_structure_rule set
-        <if test="industries!=null">
-            industries=#{industries,jdbcType=VARCHAR},
-        </if>
-        <if test="strategies!=null">
-            strategies=#{strategies,jdbcType=VARCHAR},
-        </if>
-        <if test="voltageLevels!=null">
-            voltage_levels=#{voltageLevels,jdbcType=VARCHAR},
-        </if>
-        <if test="updateTime!=null">
-            update_time=#{updateTime,jdbcType=TIMESTAMP},
-        </if>
+        update electricity_price_structure_rule
+        <set>
+            <if test="industries!=null">
+                industries=#{industries,jdbcType=VARCHAR},
+            </if>
+            <if test="strategies!=null">
+                strategies=#{strategies,jdbcType=VARCHAR},
+            </if>
+            <if test="voltageLevels!=null">
+                voltage_levels=#{voltageLevels,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
         <where>
             <if test="id!=null">
                 id=#{id}
