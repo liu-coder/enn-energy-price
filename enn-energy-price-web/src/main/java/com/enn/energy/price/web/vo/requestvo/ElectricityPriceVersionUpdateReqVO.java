@@ -1,6 +1,7 @@
 package com.enn.energy.price.web.vo.requestvo;
 
 import cn.hutool.core.date.DatePattern;
+import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -32,6 +32,9 @@
             <if test="id != null">
                 and id = #{id}
             </if>
+            <if test="structureId!=null">
+                and structure_id=#{structureId}
+            </if>
         </where>
 
     </select>
@@ -44,45 +47,49 @@
     </select>
 
 
-    <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
+    <update id="updateByStructureId" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         update electricity_price_structure
-        set
-        <if test="structureId != null">
-            structure_id=#{structureId},
-        </if>
-        <if test="structureName != null">
-            structure_name=#{structureName},
-        </if>
-        <if test="provinceCode != null">
-            province_code=#{provinceCode},
-        </if>
-        <if test="cityCodes != null">
-            city_codes=#{cityCodes},
-        </if>
-        <if test="districtCodes != null">
-            district_codes,
-        </if>
-        <if test="state != null">
-            state=#{state},
-        </if>
-        <if test="parentid != null">
-            parentId=#{parentid},
-        </if>
-        <if test="versionId != null">
-            version_id=#{versionId},
-        </if>
-        <if test="creator != null">
-            creator=#{creator},
-        </if>
-        <if test="updator != null">
-            updator=#{updator},
-        </if>
-        <if test="createTime != null">
-            create_time=#{createTime},
-        </if>
-        <if test="updateTime != null">
-            update_time=#{updateTime},
-        </if>
-        where id = #{id,jdbcType=BIGINT} and  state = 0,
+        <set>
+            <if test="structureName != null">
+                structure_name=#{structureName},
+            </if>
+            <if test="provinceCode != null">
+                province_code=#{provinceCode},
+            </if>
+            <if test="cityCodes != null">
+                city_codes=#{cityCodes},
+            </if>
+            <if test="districtCodes != null">
+                district_codes=#{districtCodes},
+            </if>
+            <if test="state != null">
+                state=#{state},
+            </if>
+            <if test="parentid != null">
+                parentId=#{parentid},
+            </if>
+            <if test="versionId != null">
+                version_id=#{versionId},
+            </if>
+            <if test="creator != null">
+                creator=#{creator},
+            </if>
+            <if test="updator != null">
+                updator=#{updator},
+            </if>
+            <if test="createTime != null">
+                create_time=#{createTime},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+        </set>
+        <where>
+            state = 0
+            <if test="structureId!=null">
+                and structure_id = #{structureId}
+            </if>
+        </where>
+
     </update>
 </mapper>

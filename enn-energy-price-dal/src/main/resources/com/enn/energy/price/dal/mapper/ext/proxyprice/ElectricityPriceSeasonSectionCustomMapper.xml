@@ -12,6 +12,7 @@
         <foreach collection="seasonSectionIds" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+        and state=0
     </update>
     <update id="batchDeleteSeasonSectionByIds">
         update electricity_season_section
@@ -20,6 +21,7 @@
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
+        and state=0
     </update>
     <update id="batchUpdateSeason">
         update electricity_season_section

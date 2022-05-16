@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ElectricityPriceSeasonDetailRespVO implements Serializable {
-    private Long seasonSectionId;
+    private String seasonSectionId;
     private String seasonName;
     private List<SeansonDateRespVO> seansonDateRespVOS;
     private List<ElectricityPriceStrategyRespVO> electricityPriceStrategyVOS;

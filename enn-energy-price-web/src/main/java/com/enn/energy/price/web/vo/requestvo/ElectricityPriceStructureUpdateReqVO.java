@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.vo.requestvo;
 
+import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.List;
 public class ElectricityPriceStructureUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 804237214764593129L;
     @ApiModelProperty(value = "体系id,新增的体系不传id,修改的体系需要传")
-    private Long id;
+    private String id;
     @ApiModelProperty(value = "体系名称",required = true)
     @NotBlank(message = "体系名称不能为空")
     @Length(min = 1, max = 50, message = "体系名称最大长度50")
