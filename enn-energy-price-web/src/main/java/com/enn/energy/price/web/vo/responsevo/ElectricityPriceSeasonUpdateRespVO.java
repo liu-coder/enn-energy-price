@@ -1,17 +1,14 @@
 package com.enn.energy.price.web.vo.responsevo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStrategyReqVO;
-import com.enn.energy.price.web.vo.requestvo.SeasonDateVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author liujin
@@ -33,10 +30,10 @@ public class ElectricityPriceSeasonUpdateRespVO implements Serializable {
     @ApiModelProperty("季节时间列表")
     @NotEmpty(message = "季节时间列表不能为空")
     @Valid
-    private ValidationList<SeasonDateRespVO> seasonSectionRespVOList;
+    private List<SeasonDateRespVO> seasonSectionRespVOList;
 
     @ApiModelProperty(value = "修正策略列表")
     @Valid
-    private ValidationList<ElectricityPriceStrategyRespVO> structureRuleSeasonStrategyRespVOList;
+    private List<ElectricityPriceStrategyRespVO> structureRuleSeasonStrategyRespVOList;
 
 }

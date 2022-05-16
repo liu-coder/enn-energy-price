@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import top.rdfa.framework.biz.ro.RdfaResult;
@@ -154,11 +155,11 @@ public class ProxyElectricityPriceManagerController {
     public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateStructureAndRule(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO validateReqVO){
         ElectricityPriceVersionUpdateBO structureAndRuleValidateBO = CommonBOVOConvertMapper.INSTANCE.priceVersionReqVOToBO(validateReqVO);
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateStructureAndRule(structureAndRuleValidateBO);
-        if(ObjectUtil.isNull(structureAndRuleValidateBO)){
+        if(ObjectUtil.isNull(validateRespBO)){
             return RdfaResult.success(null);
         }
         ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
-                = ElectricityPriceVersionValidateConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO);
+                = CommonBOVOConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }
 
@@ -169,8 +170,11 @@ public class ProxyElectricityPriceManagerController {
      * @param response
      */
     @GetMapping("/downLoadTemplate")
-    public void downLoadTemplate(HttpServletResponse response){
-        ExcelWriter excelWriter = priceManagerBakService.downLoadTemplate();
+    public void downLoadTemplate(@ApiParam(value = "省编码", name = "provinceCode", required = true) String provinceCode, HttpServletResponse response){
+        if(StrUtil.isBlank(provinceCode)){
+            throw new PriceException(ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorCode(), ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorMsg());
+        }
+        ExcelWriter excelWriter = priceManagerBakService.downLoadTemplate(provinceCode);
         try {
             response.setHeader("Content-Disposition", excelWriter.getDisposition("template.xls", CharsetUtil.CHARSET_UTF_8));
             excelWriter.flush(response.getOutputStream());
@@ -183,20 +187,22 @@ public class ProxyElectricityPriceManagerController {
      * @describtion 导入模板
      * @author sunjidong
      * @date 2022/5/7 20:38
-     * @param  priceRuleReqVOList  file
+     * @param  importDataReqVO  file
      * @return List<ElectricityPriceRuleCreateReqVO>
      */
     @PostMapping("/uploadTemplate")
-    public List<ElectricityPriceRuleCreateReqVO> uploadTemplate(List<ElectricityPriceRuleCreateReqVO> priceRuleReqVOList, @RequestParam("fileName") MultipartFile file){
-        List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList = ElectricityPriceVersionCreateConvertMapper.INSTANCE.priceRuleCreateReqVOListToBOList(priceRuleReqVOList);
+    public RdfaResult<UploadTemplateRespVO> uploadTemplate(ElectricityPriceImportDataReqVO importDataReqVO, @RequestParam("fileName") MultipartFile file){
+        ElectricityPriceImportDataBO importDataBO = CommonBOVOConvertMapper.INSTANCE.importDataReqVOToBO(importDataReqVO);
         ExcelReader reader;
         try {
             reader = ExcelUtil.getReader(file.getInputStream());
         } catch (IOException e) {
             throw new PriceException(ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorCode(), ErrorCodeEnum.UPLOAD_TEMPLATE_EXCEPTION.getErrorMsg());
         }
-        List<ElectricityPriceRuleCreateBO> priceRuleCreateRespBOList = priceManagerBakService.uploadTemplate(reader, priceRuleCreateBOList);
-        return ElectricityPriceVersionCreateConvertMapper.INSTANCE.priceRuleCreateReqBOListToVOList(priceRuleCreateRespBOList);
+        List<ElectricityPriceUpdateBO> priceRuleCreateRespBOList = priceManagerBakService.uploadTemplate(reader, importDataBO);
+        UploadTemplateRespVO uploadTemplateRespVO = new UploadTemplateRespVO();
+        uploadTemplateRespVO.setPriceUpdateBOList(priceRuleCreateRespBOList);
+        return RdfaResult.success(uploadTemplateRespVO);
     }
 
     /**
@@ -209,13 +215,16 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/validateSeasonTime")
     @ApiOperation( "季节、分时相关校验" )
     public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateSeasonTime(@RequestBody @Valid List<ElectricitySeasonValidateReqVO> validateReqVOList){
+        if(CollUtil.isEmpty(validateReqVOList)){
+            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
+        }
         List<ElectricitySeasonCreateBO> seasonCreateBOList = CommonBOVOConvertMapper.INSTANCE.seasonValidateReqVOListToBOList(validateReqVOList);
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateSeasonTime(seasonCreateBOList);
         if(ObjectUtil.isNull(validateRespBO)){
             return RdfaResult.success(null);
         }
         ElectricityPriceStructureAndRuleValidateRespVO structureAndRuleValidateRespVO
-                = ElectricityPriceVersionValidateConvertMapper.INSTANCE
+                = CommonBOVOConvertMapper.INSTANCE
                 .priceStructureAndRuleValidateRespBOToVO(validateRespBO);
         return new RdfaResult<>(Boolean.FALSE, ErrorCodeEnum.VALIDATE_FAIL.getErrorCode(), ErrorCodeEnum.VALIDATE_FAIL.getErrorMsg(), structureAndRuleValidateRespVO);
     }

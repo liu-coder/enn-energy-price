@@ -33,5 +33,5 @@ public class ElectricityPriceVersionUpdateBO implements Serializable {
     private String lastVersionId;
     private String startDate;
     private String endDate;
-    private ValidationList<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList;
+    private List<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList;
 }

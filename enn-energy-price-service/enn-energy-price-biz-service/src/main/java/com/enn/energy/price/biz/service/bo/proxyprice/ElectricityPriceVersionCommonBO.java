@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author liujin
@@ -31,5 +32,5 @@ public class ElectricityPriceVersionCommonBO implements Serializable {
     private String lastVersionId;
     private String startDate;
     private String endDate;
-    private ValidationList<ElectricityPriceStructureDetailBO> electricityPriceStructureUpdateBOList;
+    private List<ElectricityPriceStructureDetailBO> electricityPriceStructureUpdateBOList;
 }

@@ -26,5 +26,5 @@ public class ElectricityPriceStructureRuleUpdateBO implements Serializable {
     private String strategies;
     private String voltageLevels;
     private Integer changeType;
-    private ValidationList<ElectricityPriceSeasonUpdateBO> electricityPriceSeasonUpdateReqVOList;
+    private List<ElectricityPriceSeasonUpdateBO> electricityPriceSeasonUpdateReqVOList;
 }

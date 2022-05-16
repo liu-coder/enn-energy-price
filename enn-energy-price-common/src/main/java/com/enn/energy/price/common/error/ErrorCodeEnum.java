@@ -40,6 +40,19 @@ public enum ErrorCodeEnum {
     UPLOAD_TEMPLATE_EXCEPTION("E30008","模板上传异常"),
     VERSION_IS_NOT_ALLOW_DELETE("E30009","只允许删除未来版本"),
     STRUCTURE_IS_NOT_ALLOW_DELETE("E30010","历史体系不允许删除"),
+    PROVINCE_CODE_CAN_NOT_NULL("E30011","省编码不能为空"),
+    ILLEGAL_INDUSTRY("E30012","用电分类不合法"),
+    ILLEGAL_STRATEGY("E30013","定价类型不合法"),
+    ILLEGAL_VOLTAGElEVEL("E30014","电压等级不合法"),
+    ILLEGAL_NUMBER0("E30015","最大需量数值不合法"),
+    ILLEGAL_NUMBER1("E30016","变压器容量基础电价数值不合法"),
+    ILLEGAL_NUMBER2("E30017","电度用电价格数值不合法"),
+    ILLEGAL_NUMBER3("E30018","电度输配价格数值不合法"),
+    ILLEGAL_NUMBER4("E30019","政府附加价格数值不合法"),
+    ILLEGAL_NUMBER5("E30020","峰时阶段价格数值不合法"),
+    ILLEGAL_NUMBER6("E30021","尖时阶段价格数值不合法"),
+    ILLEGAL_NUMBER7("E30022","平时阶段价格数值不合法"),
+    ILLEGAL_NUMBER8("E30023","谷时阶段价格数值不合法")
     ;
     private String errorCode;
     private String errorMsg;

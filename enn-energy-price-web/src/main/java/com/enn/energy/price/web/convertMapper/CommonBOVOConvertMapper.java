@@ -1,5 +1,6 @@
 package com.enn.energy.price.web.convertMapper;
 
+import com.enn.energy.price.biz.service.bo.ElectricityPriceDictionaryBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.web.vo.requestvo.*;
 import com.enn.energy.price.web.vo.responsevo.*;
@@ -34,6 +35,8 @@ public interface CommonBOVOConvertMapper {
 
     ElectricityPriceUpdateBO priceRuleAndDetailReqVOToBO(ElectricityPriceUpdateReqVO priceRuleAndDetailReqVO);
 
+    List<ElectricityPriceUpdateBO> priceRuleAndDetailListReqVOToBO(List<ElectricityPriceUpdateReqVO> priceRuleAndDetailListReqVO);
+
     @Mapping(source = "structureRuleReqVO.electricityPriceSeasonUpdateReqVOList", target = "electricityPriceSeasonUpdateReqVOList")
     ElectricityPriceStructureRuleUpdateBO structureRuleReqVOToBO(ElectricityPriceSeasonRuleUpdateReqVO structureRuleReqVO);
 
@@ -55,12 +58,35 @@ public interface CommonBOVOConvertMapper {
 
     @Mappings({
             @Mapping(source = "seasonValidateReqVO.seasonSectionValidateReqVOList", target = "seasonSectionCreateBOList"),
-            @Mapping(source = "seasonValidateReqVO.timeSectionValidateReqVOList", target = "timeSectionCreateBOList"),
+            @Mapping(source = "seasonValidateReqVO.timeSectionValidateReqVOList", target = "timeSectionCreateBOList")
     })
     ElectricitySeasonCreateBO seasonValidateReqVOToBO(ElectricitySeasonValidateReqVO seasonValidateReqVO);
 
     List<ElectricitySeasonCreateBO> seasonValidateReqVOListToBOList(List<ElectricitySeasonValidateReqVO> seasonCreateReqVOList);
 
+    @Mapping(source = "importDataReqVO.updateReqVOList", target = "updateReqVOList")
+    ElectricityPriceImportDataBO importDataReqVOToBO(ElectricityPriceImportDataReqVO importDataReqVO);
+
+    /**
+     * @param electricityPriceVersionUpdateReqVO
+     * @return bo
+     */
+    ElectricityPriceVersionDeleteBO  electricityPriceVersionDeleteReqVOToBO(ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO);
+
+    /**
+     * 电价体系删除转换
+     * @param vo
+     * @return
+     */
+    ElectricityPriceStructureDeleteValidateBO ElectricityPriceStructureDeleteValidateVOToBO(ElectricityPriceStructureDeleteValidateReqVO vo);
+
+    /**
+     * vo to bo
+     * @param provinceVO
+     * @return
+     */
+
+    ProvinceBO provinceVOToBO(ProvinceVO provinceVO);
 
 //BO->VO
 
@@ -71,6 +97,9 @@ public interface CommonBOVOConvertMapper {
     ElectricityPriceStructureDetailRespVO versionStructureRespBOToVO(ElectricityPriceStructureDetailBO versionStructureBO);
 
     ElectricityPriceDetailRespVO priceRuleAndDetailRespBOToVO(ElectricityPriceDetailBO priceRuleAndDetailBO);
+
+    List<ElectricityPriceDetailRespVO> priceRuleAndDetailListBOToVO(List<ElectricityPriceDetailBO> priceRuleAndDetailListBO);
+
 
     @Mapping(source = "structureRuleBO.electricityPriceSeasonDetailBOS", target = "priceSeasonDetailRespVOS")
     ElectricityPriceStructureRuleDetailRespVO structureRuleRespBOToVO(ElectricityPriceStructureRuleDetailBO structureRuleBO);
@@ -93,5 +122,81 @@ public interface CommonBOVOConvertMapper {
     @Mapping(source = "structureListDetailBO.structureDetailBOList", target = "structureDetailForCreateRespVOList")
     ElectricityPriceStructureListRespVO structureListDetailBOToVO(ElectricityPriceStructureListDetailBO structureListDetailBO);
 
+    ElectricityPriceStructureAndRuleValidateRespVO priceStructureAndRuleValidateRespBOToVO(ElectricityPriceStructureAndRuleValidateRespBO validateRespBO);
+
+    /**
+     * @param electricityPriceDictionaryBO
+     * @return
+     */
+    ElectricityPriceDictionaryRespVO ElectricityPriceDictionaryBOToVO(ElectricityPriceDictionaryBO electricityPriceDictionaryBO);
+
+
+    /**
+     * @param electricityPriceDictionaryBOs
+     * @return
+     */
+    List<ElectricityPriceDictionaryRespVO> ElectricityPriceDictionaryBOListToVOList(List<ElectricityPriceDictionaryBO> electricityPriceDictionaryBOs);
+
+
+    /**
+     * @param electricityPriceVersionBOS
+     * @return
+     */
+    List<ElectricityPriceVersionRespVO> electricityPriceVersionRespBOListToVOList(List<ElectricityPriceVersionBO> electricityPriceVersionBOS);
+
+    /**
+     * @param electricityPriceVersion
+     * @return
+     */
+    ElectricityPriceVersionRespVO electricityPriceVersionRespBOToVO(ElectricityPriceVersionBO electricityPriceVersion);
+
+    /**
+     * @param priceStructureBO
+     * @return
+     */
+    ElectricityPriceStructureRespVO ElectricityPriceStructureRespBOToVO(ElectricityPriceStructureBO priceStructureBO);
+
+    /**
+     * @param priceStructureBOList
+     * @return
+     */
+    List<ElectricityPriceStructureRespVO> ElectricityPriceStructureRespBOListToVOList(List<ElectricityPriceStructureBO> priceStructureBOList);
+
+    /**
+     * @param cityCode
+     * @return
+     */
+    CityListRespVO CityCodeListBOTOVO(ProvinceListBO cityCode);
+
+
+    /**
+     * @param cityListBO
+     * @return
+     */
+    @Mapping(target = "cityItemList", source = "cityItemList")
+    CityListRespVO CityListBOTOVO(CityListBO cityListBO);
+
+    /**
+     * @param cityBO
+     * @return
+     */
+    @Mapping(target = "districtList",source = "districtList")
+    CityRespVO CityBOTOVO(CityBO cityBO);
+
+    /**
+     * @param district
+     * @return
+     */
+    CityRespVO.DistrictVO DistrictBOTOVO(CityBO.District district);
+
+    /**
+     * @param provinceBO
+     * @return
+     */
+    ProvinceVO ProvinceBOToVO(ProvinceBO provinceBO);
+
+
+    @Mapping(target = "provinceVOList", source = "provinceBOList")
+    ProvinceListVO ProvinceBOListToVOList(ProvinceListBO provinceBO);
 }
 

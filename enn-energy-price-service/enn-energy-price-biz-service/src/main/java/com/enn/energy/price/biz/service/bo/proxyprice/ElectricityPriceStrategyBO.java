@@ -23,5 +23,5 @@ public class ElectricityPriceStrategyBO implements Serializable {
     private String temperature;
     private Integer changeType;
     private Boolean comply;
-    private ValidationList<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOList;
+    private List<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOList;
 }

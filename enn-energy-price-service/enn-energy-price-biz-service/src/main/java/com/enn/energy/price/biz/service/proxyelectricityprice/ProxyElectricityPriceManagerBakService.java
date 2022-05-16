@@ -35,7 +35,7 @@ public interface ProxyElectricityPriceManagerBakService {
      */
     ElectricityPriceStructureAndRuleValidateRespBO validateStructureAndRule(ElectricityPriceVersionUpdateBO structureAndRuleValidateBO);
 
-    ExcelWriter downLoadTemplate();
+    ExcelWriter downLoadTemplate(String provinceCode);
 
     /**
      * @describtion 上传模板
@@ -44,7 +44,7 @@ public interface ProxyElectricityPriceManagerBakService {
      * @param
      * @return
      */
-    List<ElectricityPriceRuleCreateBO> uploadTemplate(ExcelReader reader, List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList);
+    List<ElectricityPriceUpdateBO> uploadTemplate(ExcelReader reader, ElectricityPriceImportDataBO importDataBO);
 
     /**
      * @describtion 校验季节以及分时

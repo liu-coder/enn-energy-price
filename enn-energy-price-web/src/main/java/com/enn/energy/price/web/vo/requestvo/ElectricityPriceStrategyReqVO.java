@@ -1,6 +1,5 @@
 package com.enn.energy.price.web.vo.requestvo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import com.enn.energy.price.web.validator.DecimalTemperatureValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -33,5 +33,5 @@ public class ElectricityPriceStrategyReqVO implements Serializable {
     private Integer changeType;
     @ApiModelProperty(value = "电价分时区间列表",required = true)
     @NotEmpty(message = "电价分时区间列表不能为空")
-    private ValidationList<ElectricityTimeSectionUpdateReqVO> electricityTimeSectionUpdateReqVOList;
+    private List<@Valid ElectricityTimeSectionUpdateReqVO> electricityTimeSectionUpdateReqVOList;
 }

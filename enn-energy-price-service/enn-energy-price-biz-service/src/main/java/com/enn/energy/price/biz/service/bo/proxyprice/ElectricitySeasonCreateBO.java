@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 季节名称BO
@@ -25,9 +26,9 @@ public class ElectricitySeasonCreateBO implements Serializable {
 
     private Date startDate;
 
-    private ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList;
+    private List<SeasonDateBO> seasonSectionCreateBOList;
 
-    private ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList;
+    private List<ElectricityPriceStrategyBO> timeSectionCreateBOList;
 
     public String getSeasonSectionName() {
         return seasonSectionName;
@@ -37,28 +38,28 @@ public class ElectricitySeasonCreateBO implements Serializable {
         this.seasonSectionName = seasonSectionName;
     }
 
-    public ValidationList<ElectricitySeasonSectionCreateBO> getSeasonSectionCreateBOList() {
-        return seasonSectionCreateBOList;
-    }
-
-    public void setSeasonSectionCreateBOList(ValidationList<ElectricitySeasonSectionCreateBO> seasonSectionCreateBOList) {
-        this.seasonSectionCreateBOList = seasonSectionCreateBOList;
-    }
-
-    public ValidationList<ElectricityTimeSectionCreateBO> getTimeSectionCreateBOList() {
-        return timeSectionCreateBOList;
-    }
-
-    public void setTimeSectionCreateBOList(ValidationList<ElectricityTimeSectionCreateBO> timeSectionCreateBOList) {
-        this.timeSectionCreateBOList = timeSectionCreateBOList;
-    }
-
     public Date getStartDate() {
         return startDate;
     }
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public List<SeasonDateBO> getSeasonSectionCreateBOList() {
+        return seasonSectionCreateBOList;
+    }
+
+    public void setSeasonSectionCreateBOList(List<SeasonDateBO> seasonSectionCreateBOList) {
+        this.seasonSectionCreateBOList = seasonSectionCreateBOList;
+    }
+
+    public List<ElectricityPriceStrategyBO> getTimeSectionCreateBOList() {
+        return timeSectionCreateBOList;
+    }
+
+    public void setTimeSectionCreateBOList(List<ElectricityPriceStrategyBO> timeSectionCreateBOList) {
+        this.timeSectionCreateBOList = timeSectionCreateBOList;
     }
 
     @Override

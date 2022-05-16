@@ -1,6 +1,5 @@
 package com.enn.energy.price.web.vo.requestvo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -39,7 +38,6 @@ public class ElectricityPriceSeasonRuleUpdateReqVO implements Serializable {
     private Integer changeType;
     @ApiModelProperty(value = "季节分时列表")
     @NotEmpty(message = "季节分时列表不能为空")
-    @Valid
-    private ValidationList<ElectricityPriceSeasonUpdateReqVO> electricityPriceSeasonUpdateReqVOList;
+    private List<@Valid ElectricityPriceSeasonUpdateReqVO> electricityPriceSeasonUpdateReqVOList;
 
 }

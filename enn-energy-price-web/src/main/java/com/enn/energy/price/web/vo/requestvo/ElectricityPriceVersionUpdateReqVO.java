@@ -1,23 +1,17 @@
 package com.enn.energy.price.web.vo.requestvo;
 
 import cn.hutool.core.date.DatePattern;
-import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import com.enn.energy.price.web.validator.DateValue;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -64,7 +58,6 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     private String bindType;
     @ApiModelProperty(value = "电价体系列表",required = true)
     @NotEmpty(message = "电价体系不能为空")
-    @Valid
-    private ValidationList<ElectricityPriceStructureUpdateReqVO> electricityPriceStructureUpdateReqVOList;
+    private List<@Valid ElectricityPriceStructureUpdateReqVO> electricityPriceStructureUpdateReqVOList;
 
 }

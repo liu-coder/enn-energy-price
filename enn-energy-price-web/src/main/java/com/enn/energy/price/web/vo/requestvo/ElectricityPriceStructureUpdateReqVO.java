@@ -1,17 +1,14 @@
 package com.enn.energy.price.web.vo.requestvo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -51,11 +48,9 @@ public class ElectricityPriceStructureUpdateReqVO implements Serializable {
 
     @ApiModelProperty(value = "电价价格列表",required = true)
     @NotEmpty(message = "电价价格列表不能为空")
-    @Valid
-    private ValidationList<ElectricityPriceUpdateReqVO> electricityPriceUpdateReqVOList;
+    private List<@Valid ElectricityPriceUpdateReqVO> electricityPriceUpdateReqVOList;
 
     @ApiModelProperty(value = "电价季节分时列表",required = true)
     @NotEmpty(message = "电价季节分时列表不能为空")
-    @Valid
-    private ValidationList<ElectricityPriceSeasonRuleUpdateReqVO> electricityPriceSeasonRuleUpdateReqVOList;
+    private List<@Valid ElectricityPriceSeasonRuleUpdateReqVO> electricityPriceSeasonRuleUpdateReqVOList;
 }
