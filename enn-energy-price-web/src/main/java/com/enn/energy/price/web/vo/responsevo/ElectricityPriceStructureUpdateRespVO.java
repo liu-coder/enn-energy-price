@@ -1,6 +1,8 @@
-package com.enn.energy.price.web.vo.requestvo;
+package com.enn.energy.price.web.vo.responsevo;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceSeasonRuleUpdateReqVO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceUpdateReqVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -13,7 +15,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author liujin
@@ -24,10 +25,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel("电价价格体系修改vo")
-public class ElectricityPriceStructureUpdateReqVO implements Serializable {
+public class ElectricityPriceStructureUpdateRespVO implements Serializable {
     private static final long serialVersionUID = 804237214764593129L;
-    @ApiModelProperty(value = "体系id,新增的体系不传id,修改的体系需要传")
-    private Long id;
     @ApiModelProperty(value = "体系名称",required = true)
     @NotBlank(message = "体系名称不能为空")
     @Length(min = 1, max = 50, message = "体系名称最大长度50")
@@ -52,10 +51,10 @@ public class ElectricityPriceStructureUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "电价价格列表",required = true)
     @NotEmpty(message = "电价价格列表不能为空")
     @Valid
-    private ValidationList<ElectricityPriceUpdateReqVO> electricityPriceUpdateReqVOList;
+    private ValidationList<ElectricityPriceUpdateRespVO> priceRuleAndDetailRespVOList;
 
     @ApiModelProperty(value = "电价季节分时列表",required = true)
     @NotEmpty(message = "电价季节分时列表不能为空")
     @Valid
-    private ValidationList<ElectricityPriceSeasonRuleUpdateReqVO> electricityPriceSeasonRuleUpdateReqVOList;
+    private ValidationList<ElectricityPriceSeasonRuleUpdateRespVO> structureRuleRespVOList;
 }

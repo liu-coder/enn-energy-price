@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author liujin
@@ -16,7 +14,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityPriceVersionUpdateBO implements Serializable {
+public class ElectricityPriceVersionCommonBO implements Serializable {
     private static final long serialVersionUID = -6507351604437158608L;
 
     private String id;
@@ -33,5 +31,5 @@ public class ElectricityPriceVersionUpdateBO implements Serializable {
     private String lastVersionId;
     private String startDate;
     private String endDate;
-    private ValidationList<ElectricityPriceStructureUpdateBO> electricityPriceStructureUpdateBOList;
+    private ValidationList<ElectricityPriceStructureDetailBO> electricityPriceStructureUpdateBOList;
 }

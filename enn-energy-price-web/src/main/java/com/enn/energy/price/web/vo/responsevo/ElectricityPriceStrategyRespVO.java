@@ -19,5 +19,5 @@ import java.util.List;
 public class ElectricityPriceStrategyRespVO implements Serializable {
     private String compare;
     private String temperature;
-    private List<ElectricityTimeSectionRespVO> electricityTimeSectionUpdateBOList;
+    private List<ElectricityTimeSectionRespVO> seasonStrategyTimeSectionRespVOList;
 }

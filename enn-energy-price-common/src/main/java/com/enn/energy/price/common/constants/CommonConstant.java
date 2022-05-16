@@ -301,6 +301,17 @@ public class CommonConstant {
     public static final String START_TIME = "00:00";
 
     /**
+     * 体系id
+     */
+    public static final String STRUCTURE_ID = "structureId";
+
+    /**
+     * 拼接符
+     */
+    public static final String REDIS_APPEND = "%s:%s:%s";
+
+
+    /**
      * redis key
      */
     public static class RedisKey {

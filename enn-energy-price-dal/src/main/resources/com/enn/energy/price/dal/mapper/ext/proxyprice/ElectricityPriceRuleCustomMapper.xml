@@ -40,7 +40,7 @@
     <select id="selectRulesByRuleIdList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from electricity_price_rule where rule_id in
+        from electricity_price_rule where id in
         <foreach item="item" collection="list" separator="," close=")" open="(">
             #{item}
         </foreach>

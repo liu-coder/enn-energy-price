@@ -410,7 +410,9 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     electricityPriceStrategyBO.setCompare( split[0] );
                     electricityPriceStrategyBO.setTemperature( split[1] );
                     List<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOS = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.ElectricityTimeSectionPOListToBOList( v );
-                    electricityPriceStrategyBO.setElectricityTimeSectionUpdateBOList( electricityTimeSectionUpdateBOS );
+                    ValidationList<ElectricityTimeSectionUpdateBO> electricityTimeSectionUpdateBOList = new ValidationList<>();
+                    electricityTimeSectionUpdateBOList.addAll(electricityTimeSectionUpdateBOS);
+                    electricityPriceStrategyBO.setElectricityTimeSectionUpdateBOList( electricityTimeSectionUpdateBOList );
                     electricityPriceStrategyBOList.add( electricityPriceStrategyBO );
 
                 });
@@ -441,14 +443,18 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
         return electricityPriceStructureDetailBO;
     }
 
-
+/**
+ * 获取字典列表
+ * @author sunjidong
+ * @date 2022/5/15 10:27
+ */
     @Override
     public Map<Integer, List<ElectricityPriceDictionaryBO>> getPriceElectricityDictionaries(String type, String province) {
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put( CommonConstant.TYPE, Integer.parseInt(type) );
-        hashMap.put( CommonConstant.PROVINCE, province );
+        hashMap.put(CommonConstant.TYPE, Integer.parseInt(type));
+        hashMap.put(CommonConstant.PROVINCE, province);
         hashMap.put(CommonConstant.STATE, CommonConstant.VALID);
-        List<ElectricityPriceDictionary> electricityPriceDictionaries = electricityPriceDictionaryCustomMapper.selectDictionaryByCondition( hashMap );
+        List<ElectricityPriceDictionary> electricityPriceDictionaries = electricityPriceDictionaryCustomMapper.selectDictionaryByCondition(hashMap);
         List<ElectricityPriceDictionaryBO> dictionaryBOList = BeanUtil.mapList(electricityPriceDictionaries, ElectricityPriceDictionaryBO.class);
         return dictionaryBOList.stream()
                 .collect(Collectors.groupingBy(ElectricityPriceDictionaryBO ::getType));

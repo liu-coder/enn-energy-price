@@ -20,21 +20,33 @@ public class ElectricityPriceStructureListRespVO implements Serializable {
 
     private static final long serialVersionUID = 7664192924328097571L;
 
-    @ApiModelProperty(value = "所有体系以及体系对应的详细配置内容",dataType = "list")
-    List<ElectricityPriceStructureDetailForCreateRespVO> structureDetailForCreateRespVOList;
+    @ApiModelProperty(value = "父版本id",dataType = "list")
+    private String lastVersionId;
 
-    public List<ElectricityPriceStructureDetailForCreateRespVO> getStructureDetailForCreateRespVOList() {
+    @ApiModelProperty(value = "所有体系以及体系对应的详细配置内容",dataType = "list")
+    List<ElectricityPriceStructureDetailRespVO> structureDetailForCreateRespVOList;
+
+    public String getLastVersionId() {
+        return lastVersionId;
+    }
+
+    public void setLastVersionId(String lastVersionId) {
+        this.lastVersionId = lastVersionId;
+    }
+
+    public List<ElectricityPriceStructureDetailRespVO> getStructureDetailForCreateRespVOList() {
         return structureDetailForCreateRespVOList;
     }
 
-    public void setStructureDetailForCreateRespVOList(List<ElectricityPriceStructureDetailForCreateRespVO> structureDetailForCreateRespVOList) {
+    public void setStructureDetailForCreateRespVOList(List<ElectricityPriceStructureDetailRespVO> structureDetailForCreateRespVOList) {
         this.structureDetailForCreateRespVOList = structureDetailForCreateRespVOList;
     }
 
     @Override
     public String toString() {
         return "ElectricityPriceStructureListRespVO{" +
-                "structureDetailForCreateRespVOList=" + structureDetailForCreateRespVOList +
+                "lastVersionId='" + lastVersionId + '\'' +
+                ", structureDetailForCreateRespVOList=" + structureDetailForCreateRespVOList +
                 '}';
     }
 }

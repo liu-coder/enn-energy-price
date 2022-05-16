@@ -34,10 +34,18 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
 
     @NotEmpty(message = "季节区间不能为空")
     @Valid
-    private ValidationList<ElectricitySeasonSectionValidateReqVO> seasonSectionValidateReqVOList;
+    private ValidationList<SeasonDateVO> seasonSectionValidateReqVOList;
 
     @Valid
-    private ValidationList<ElectricityTimeSectionValidateReqVO> timeSectionValidateReqVOList;
+    private ValidationList<ElectricityPriceStrategyReqVO> timeSectionValidateReqVOList;
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
     public String getSeasonSectionName() {
         return seasonSectionName;
@@ -47,28 +55,20 @@ public class ElectricitySeasonValidateReqVO implements Serializable {
         this.seasonSectionName = seasonSectionName;
     }
 
-    public ValidationList<ElectricitySeasonSectionValidateReqVO> getSeasonSectionValidateReqVOList() {
+    public ValidationList<SeasonDateVO> getSeasonSectionValidateReqVOList() {
         return seasonSectionValidateReqVOList;
     }
 
-    public void setSeasonSectionValidateReqVOList(ValidationList<ElectricitySeasonSectionValidateReqVO> seasonSectionValidateReqVOList) {
+    public void setSeasonSectionValidateReqVOList(ValidationList<SeasonDateVO> seasonSectionValidateReqVOList) {
         this.seasonSectionValidateReqVOList = seasonSectionValidateReqVOList;
     }
 
-    public ValidationList<ElectricityTimeSectionValidateReqVO> getTimeSectionValidateReqVOList() {
+    public ValidationList<ElectricityPriceStrategyReqVO> getTimeSectionValidateReqVOList() {
         return timeSectionValidateReqVOList;
     }
 
-    public void setTimeSectionValidateReqVOList(ValidationList<ElectricityTimeSectionValidateReqVO> timeSectionValidateReqVOList) {
+    public void setTimeSectionValidateReqVOList(ValidationList<ElectricityPriceStrategyReqVO> timeSectionValidateReqVOList) {
         this.timeSectionValidateReqVOList = timeSectionValidateReqVOList;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
     }
 
     @Override

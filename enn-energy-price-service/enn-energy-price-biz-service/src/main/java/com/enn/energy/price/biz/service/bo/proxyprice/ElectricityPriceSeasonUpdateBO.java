@@ -20,7 +20,7 @@ public class ElectricityPriceSeasonUpdateBO implements Serializable {
     private String seasonSectionId;
     private String seasonName;
     private Integer changeType;
-    private List<SeasonDateBO> seasonDateList;
-    private List<ElectricityPriceStrategyBO> electricityPriceStrategyBOList;
+    private ValidationList<SeasonDateBO> seasonDateList;
+    private ValidationList<ElectricityPriceStrategyBO> electricityPriceStrategyBOList;
 
 }

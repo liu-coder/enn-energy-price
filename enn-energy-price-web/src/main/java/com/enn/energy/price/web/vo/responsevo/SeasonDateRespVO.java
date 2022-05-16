@@ -1,11 +1,10 @@
-package com.enn.energy.price.web.vo.requestvo;
+package com.enn.energy.price.web.vo.responsevo;
 
 import com.enn.energy.price.web.validator.DateValue;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -16,10 +15,9 @@ import java.io.Serializable;
  * @Date 2022/5/6 17:52
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class SeasonDateVO implements Serializable {
+public class SeasonDateRespVO implements Serializable {
     private static final long serialVersionUID = -7180031461745554430L;
     @ApiModelProperty(value = "季节开始时间,时间格式MM-dd",required = true)
     @DateValue(format = "MM-dd", message = "季节开始时间格式有误")

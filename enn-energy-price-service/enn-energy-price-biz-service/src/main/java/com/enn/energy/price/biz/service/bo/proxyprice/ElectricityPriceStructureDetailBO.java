@@ -23,6 +23,7 @@ public class ElectricityPriceStructureDetailBO implements Serializable {
     private String provinceCode;
     private String cityCodes;
     private String districtCodes;
+    private String parentid;
     private List<ElectricityPriceDetailBO> electricityPriceDetailBOList;
     private List<ElectricityPriceStructureRuleDetailBO> electricityPriceStructureRuleDetailBOS;
 }
