@@ -84,12 +84,12 @@ public class DisLockService {
     }
 
     /**
-     * 获取并发锁
+     * 获取并发锁对象
      *
      * @param lockKey
      * @return lock
      */
-    public Lock tryLock(String lockKey) {
+    public Lock getLock(String lockKey) {
 
         return rdfaDistributeLockFactory.getLock(lockKey);
     }
