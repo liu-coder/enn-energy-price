@@ -19,4 +19,6 @@ public interface ElectricityPriceTimeConverMapper {
 
     ElectricityTimeSectionForCreateRespVO ElectricityTimeSectionForCreateBOToVO(ElectricityTimeSectionUpdateBO timeSectionUpdateBO);
 
+    ElectricityTimeSectionUpdateBO ElectricityTimeSectionUpdateReqVOTOBO(ElectricityTimeSectionUpdateReqVO  electricityTimeSectionUpdateReqVO);
+
 }

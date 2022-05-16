@@ -1,6 +1,10 @@
 package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceDetailBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceUpdateBO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceSeasonUpdateReqVO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceUpdateReqVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDetailForCreateRespVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceDetailRespVO;
 import org.mapstruct.Mapper;
@@ -17,5 +21,7 @@ public interface ElectricityPriceConverMapper {
     List<ElectricityPriceDetailRespVO> ElectricityPriceDetailBOListToVOList(List<ElectricityPriceDetailBO> electricityPriceDetailBOS);
 
     ElectricityPriceDetailForCreateRespVO ElectricityPriceDetailForUpdateBOToVO(ElectricityPriceDetailBO electricityPriceDetailBO);
+
+    ElectricityPriceUpdateBO ElectricityPriceUpdateReqVOTOBO(ElectricityPriceUpdateReqVO electricityPriceUpdateReqVO);
 
 }

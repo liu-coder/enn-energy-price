@@ -16,10 +16,7 @@ import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPr
 import com.enn.energy.price.common.constants.CommonConstant;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceSeasonConverMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceStrutureConverMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConverMapper;
+import com.enn.energy.price.web.convertMapper.*;
 import com.enn.energy.price.web.vo.requestvo.*;
 import com.enn.energy.price.web.vo.responsevo.*;
 import io.swagger.annotations.Api;
@@ -103,7 +100,7 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/updatePriceVersion")
     @ApiOperation( "修改电价版本" )
     public RdfaResult<Boolean> updatePriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO electricityPriceVersionUpdateReqVO){
-        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOToBO( electricityPriceVersionUpdateReqVO );
+        ElectricityPriceVersionUpdateBO electricityPriceVersionUpdateBO = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionUpdateReqVOToBO( electricityPriceVersionUpdateReqVO );
         String lockKey =  String.format("%s:%s:%s", CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX,
                 tenantId, electricityPriceVersionUpdateBO.getId());
         Lock lock = null;
@@ -123,7 +120,7 @@ public class ProxyElectricityPriceManagerController {
     @PostMapping("/deletePriceVersion")
     @ApiOperation( "删除电价版本" )
     public RdfaResult<Boolean> deletePriceVersion(@RequestBody @Valid ElectricityPriceVersionDeleteReqVO electricityPriceVersionDeleteReqVO){
-        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( electricityPriceVersionDeleteReqVO );
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( electricityPriceVersionDeleteReqVO );
         String lockKey =  String.format("%s:%s:%s", CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX,
                 tenantId, electricityPriceVersionDeleteBO.getId());
         Lock lock = null;
@@ -225,7 +222,7 @@ public class ProxyElectricityPriceManagerController {
         if(CollectionUtils.isEmpty(electricityPriceVersionBOS)){
             return RdfaResult.success( null );
         }
-        List<ElectricityPriceVersionRespVO> priceVersionRespVOList = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionRespBOListToVOList( electricityPriceVersionBOS );
+        List<ElectricityPriceVersionRespVO> priceVersionRespVOList = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionRespBOListToVOList( electricityPriceVersionBOS );
         ElectricityPriceVersionRespVOList respVOList = ElectricityPriceVersionRespVOList.builder().electricityPriceVersionRespVOList( priceVersionRespVOList ).build();
         return RdfaResult.success(respVOList) ;
     }
@@ -328,7 +325,7 @@ public class ProxyElectricityPriceManagerController {
     @ApiOperation(value = "版本删除校验")
     @PostMapping("/versionDeleteValidate")
     public RdfaResult<Boolean> versionDeleteValidate(@Valid @RequestBody ElectricityPriceVersionDeleteReqVO priceVersionDeleteReqVO){
-        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( priceVersionDeleteReqVO );
+        ElectricityPriceVersionDeleteBO electricityPriceVersionDeleteBO = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionDeleteReqVOToBO( priceVersionDeleteReqVO );
         RdfaResult<Boolean> result = proxyElectricityPriceManagerService.versionDeleteValidate( electricityPriceVersionDeleteBO );
         return result;
     }

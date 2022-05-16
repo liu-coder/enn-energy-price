@@ -26,7 +26,7 @@ import java.util.List;
 public class ElectricityPriceStructureUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 804237214764593129L;
     @ApiModelProperty(value = "体系id,新增的体系不传id,修改的体系需要传")
-    private Long id;
+    private String id;
     @ApiModelProperty(value = "体系名称",required = true)
     @NotBlank(message = "体系名称不能为空")
     private String structureName;

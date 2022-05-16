@@ -16,7 +16,7 @@
     <update id="batchDeleteStructureRuleByIds">
         update electricity_price_structure_rule
         set state=#{state},update_time=#{updateTime}
-        WHERE id IN
+        WHERE structure_rule_id IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>

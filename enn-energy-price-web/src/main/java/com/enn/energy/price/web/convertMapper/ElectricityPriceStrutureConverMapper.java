@@ -1,9 +1,7 @@
 package com.enn.energy.price.web.convertMapper;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceDefaultStructureAndRuleBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureDeleteValidateBO;
-import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStructureDetailBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.*;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStructureUpdateReqVO;
 import com.enn.energy.price.web.vo.responsevo.*;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStructureDeleteValidateReqVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceStructureDetailRespVO;
@@ -31,6 +29,11 @@ public interface ElectricityPriceStrutureConverMapper {
     } )
     ElectricityPriceStructureDetailRespVO ElectricityPriceStructureDetailBOToVO(ElectricityPriceStructureDetailBO priceStructureDetailBO);
 
+    @Mappings({
+            @Mapping(source = "electricityPriceUpdateReqVOList",target = "electricityPriceUpdateBOList"),
+            @Mapping( source = "electricityPriceSeasonRuleUpdateReqVOList",target = "electricityPriceStructureRuleUpdateBOList")
+    })
+    ElectricityPriceStructureUpdateBO ElectricityPriceStructureUpdateReqVOTOBO(ElectricityPriceStructureUpdateReqVO electricityPriceStructureUpdateReqVO);
 
 
 

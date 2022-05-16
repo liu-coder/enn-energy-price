@@ -32,6 +32,9 @@
             <if test="id != null">
                 and id = #{id}
             </if>
+            <if test="structureId!=null">
+                and structure_id=#{structureId}
+            </if>
         </where>
 
     </select>
@@ -44,7 +47,7 @@
     </select>
 
 
-    <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
+    <update id="updateByStructureId" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         update electricity_price_structure
         <set>
             <if test="structureId != null">
@@ -86,7 +89,7 @@
         </set>
         where state = 0
         <if test="id!=null">
-            and id = #{id,jdbcType=BIGINT}
+            and structure_id = #{structureId}
         </if>
     </update>
 </mapper>

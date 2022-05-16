@@ -50,7 +50,7 @@
     <update id="bacthDeletePriceRuleByRuleIds">
         update electricity_price_rule
         set state=#{state}, update_time=#{updateTime}
-        WHERE id IN
+        WHERE rule_id IN
         <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
             #{ruleId}
         </foreach>

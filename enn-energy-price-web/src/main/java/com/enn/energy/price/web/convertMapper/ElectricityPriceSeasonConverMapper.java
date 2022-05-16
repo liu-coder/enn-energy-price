@@ -1,7 +1,12 @@
 package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonDetailBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStrategyBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.SeasonDateBO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceSeasonUpdateReqVO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStrategyReqVO;
+import com.enn.energy.price.web.vo.requestvo.SeasonDateVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailForCreateRespVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailRespVO;
 import com.enn.energy.price.web.vo.responsevo.SeansonDateRespVO;
@@ -35,5 +40,17 @@ public interface ElectricityPriceSeasonConverMapper {
 
     ElectricityPriceSeasonDetailForCreateRespVO ElectricityPriceSeasonDetailForCreateBOToVO(ElectricityPriceSeasonDetailBO electricityPriceSeasonDetailBO);
 
+    @Mappings( {
+            @Mapping(source = "electricityPriceStrategyReqVOList",target = "electricityPriceStrategyBOList"),
+            @Mapping( source = "seasonDateVO",target = "seasonDateList")
+    } )
+    ElectricityPriceSeasonUpdateBO ElectricityPriceSeasonUpdateReqVOTOBO(ElectricityPriceSeasonUpdateReqVO electricityPriceSeasonUpdateReqVO);
+
+    List<ElectricityPriceSeasonUpdateBO> electricityPriceSeasonVOListToBOList(List<ElectricityPriceSeasonUpdateReqVO> electricityPriceSeasonUpdateReqVO);
+
+    SeasonDateBO seasonDateVOTOBO(SeasonDateVO seasonDateVO);
+
+    @Mapping( source = "electricityTimeSectionUpdateReqVOList",target = "electricityTimeSectionUpdateBOList")
+    ElectricityPriceStrategyBO ElectricityPriceStrategyReqVOTOBO(ElectricityPriceStrategyReqVO electricityPriceStrategyReqVOTOVO);
 
 }
