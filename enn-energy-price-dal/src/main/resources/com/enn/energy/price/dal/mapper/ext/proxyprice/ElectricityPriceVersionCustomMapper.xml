@@ -111,7 +111,7 @@
         s.parentId, s.version_id, s.creator, s.updator, s.create_time, s.update_time
         from electricity_price_structure s
         left join electricity_price_version v
-        on s.version_id = v.id and v.state = 0
+        on s.version_id = v.version_id and v.state = 0
         where v.province_code = #{provinceCode} and end_date = #{endDate,jdbcType=DATE}
         and s.state = 0
     </select>

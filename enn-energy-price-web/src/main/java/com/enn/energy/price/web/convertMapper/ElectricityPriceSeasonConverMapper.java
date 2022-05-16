@@ -7,10 +7,8 @@ import com.enn.energy.price.biz.service.bo.proxyprice.SeasonDateBO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceSeasonUpdateReqVO;
 import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStrategyReqVO;
 import com.enn.energy.price.web.vo.requestvo.SeasonDateVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailForCreateRespVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailRespVO;
 import com.enn.energy.price.web.vo.responsevo.SeansonDateRespVO;
-import com.enn.energy.price.web.vo.responsevo.SeasonDateForCreateRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -34,11 +32,6 @@ public interface ElectricityPriceSeasonConverMapper {
 
 
     List<SeansonDateRespVO> seansonDateBOListToVOList(List<SeasonDateBO> seasonDateBOS);
-
-
-    SeasonDateForCreateRespVO SeansonDateForCreateBOToVO(SeasonDateBO seansonDateBO);
-
-    ElectricityPriceSeasonDetailForCreateRespVO ElectricityPriceSeasonDetailForCreateBOToVO(ElectricityPriceSeasonDetailBO electricityPriceSeasonDetailBO);
 
     @Mappings( {
             @Mapping(source = "electricityPriceStrategyReqVOList",target = "electricityPriceStrategyBOList"),

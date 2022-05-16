@@ -1,6 +1,5 @@
 package com.enn.energy.price.web.vo.requestvo;
 
-import com.enn.energy.price.biz.service.bo.proxyprice.ValidationList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

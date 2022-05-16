@@ -18,7 +18,6 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class SeasonDateVO implements Serializable {
     private static final long serialVersionUID = -7180031461745554430L;
     @ApiModelProperty(value = "季节开始时间,时间格式MM-dd",required = true)

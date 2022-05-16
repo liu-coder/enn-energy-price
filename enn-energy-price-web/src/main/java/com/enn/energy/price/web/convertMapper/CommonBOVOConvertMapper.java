@@ -112,7 +112,7 @@ public interface CommonBOVOConvertMapper {
 
     SeansonDateRespVO seasonSectionReqVOToBO(SeasonDateBO seasonSectionReqVO);
 
-    @Mapping(source = "structureRuleSeasonStrategyRespBO.electricityTimeSectionUpdateBOList", target = "seasonStrategyTimeSectionRespVOList")
+    @Mapping(source = "structureRuleSeasonStrategyRespBO.electricityTimeSectionUpdateBOList", target = "electricityTimeSectionUpdateBOList")
     ElectricityPriceStrategyRespVO structureRuleSeasonStrategyRespBOToVO(ElectricityPriceStrategyBO structureRuleSeasonStrategyRespBO);
 
     ElectricityTimeSectionRespVO seasonStrategyTimeSectionReqBOToVO(ElectricityTimeSectionUpdateBO seasonStrategyTimeSectionBO);
