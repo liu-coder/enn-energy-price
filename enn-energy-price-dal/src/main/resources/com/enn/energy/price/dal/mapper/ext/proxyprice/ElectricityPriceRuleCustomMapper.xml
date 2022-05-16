@@ -73,6 +73,9 @@
             <if test="updateTime != null">
                 update_time = #{updateTime},
             </if>
+            <if test="structureRuleId!=null">
+                structure_rule_id=#{structureRuleId},
+            </if>
         </set>
         <where>
             <if test="id!=null">
@@ -80,6 +83,9 @@
             </if>
             <if test="state!=null">
                 and state=#{state}
+            </if>
+            <if test="ruleId!=null">
+                and rule_id=#{ruleId}
             </if>
         </where>
     </update>
