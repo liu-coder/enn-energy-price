@@ -31,6 +31,14 @@ public interface ElectricityPriceStructureCustomMapper {
     int updateByPrimaryKey(ElectricityPriceStructure record);
 
     /**
+     * 获取代理电价体系
+     *
+     * @param map
+     * @return
+     */
+    ElectricityPriceStructure selectElectricityPriceStructureByParams(Map<String,Object> map);
+
+    /**
      * 根据id查询体系
      * @param id
      * @return

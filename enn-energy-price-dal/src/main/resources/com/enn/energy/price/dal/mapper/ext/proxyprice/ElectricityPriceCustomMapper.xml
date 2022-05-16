@@ -94,7 +94,9 @@
         <include refid="Base_Column_List" />
         from electricity_price
         where
-        state=#{state}
+        <if test="state!=null">
+            state=#{state}
+        </if>
         <if test="ruleId!=null">
             and rule_id =#{ruleId}
         </if>
@@ -114,5 +116,26 @@
         from (select r.id as ruleId,r.industry,r.strategy,r.voltage_level as voltageLevel
               from electricity_price_rule r where r.structure_id=#{structureId} and r.state=0) t
                  left join electricity_price e on t.ruleId=e.rule_id and e.state=0
+    </select>
+    <select id="getPriceDetailByRuleId" resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO">
+        SELECT
+            t.rule_id AS ruleId,
+            t.voltage_level AS voltageLevel,
+            t.industry AS industry,
+            t.strategy AS strategy,
+            e.transformer_capacity_price AS transformerCapacityPrice,
+            e.max_capacity_price AS maxCapacityPrice,
+            e.consumption_price AS consumptionPrice,
+            e.distribution_price AS distributionPrice,
+            e.gov_add_price AS govAddPrice,
+            e.sharp_price AS sharpPrice,
+            e.peak_price AS peakPrice,
+            e.level_price AS levelPrice,
+            e.valley_price AS valleyPrice
+        FROM
+            electricity_price_rule t
+                LEFT JOIN electricity_price e ON t.rule_id = e.rule_id
+                AND e.state =0
+        where t.rule_id = #{ruleId}
     </select>
 </mapper>

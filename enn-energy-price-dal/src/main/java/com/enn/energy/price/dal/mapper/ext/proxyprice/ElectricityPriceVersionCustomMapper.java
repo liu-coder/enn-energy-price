@@ -3,9 +3,7 @@ package com.enn.energy.price.dal.mapper.ext.proxyprice;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
@@ -13,23 +11,25 @@ import java.util.Map;
 public interface ElectricityPriceVersionCustomMapper {
     /**
      * 更新电价版本信息根据map
+     *
      * @param map
      * @return
      */
-    int updateElectricityPriceVersionCondition(Map<String,Object> map);
+    int updateElectricityPriceVersionCondition(Map<String, Object> map);
 
     /**
+     * @param
+     * @return
      * @describtion
      * @author sunjidong
      * @date 2022/5/3 16:13
-     * @param
-     * @return
      */
     long countByPriceVersionExample(ElectricityPriceVersion electricityPriceVersion);
 
 
     /**
      * 查询当前版本的前一个版本
+     *
      * @param electricityPriceVersion
      * @return
      */
@@ -45,13 +45,15 @@ public interface ElectricityPriceVersionCustomMapper {
 
     /**
      * 根据条件查询价格版本列表
+     *
      * @param map
      * @return
      */
-    List<ElectricityPriceVersion> queryPriceVersionList(Map<String,Object> map);
+    List<ElectricityPriceVersion> queryPriceVersionList(Map<String, Object> map);
 
     /**
      * 根据条件查询价格体系列表
+     *
      * @param priceVersion
      * @return
      */
@@ -59,15 +61,26 @@ public interface ElectricityPriceVersionCustomMapper {
 
     /**
      * 查询当前版本的前一个版本
-     * @param electricityPriceVersion
-     * @return
-     */
-    List<ElectricityPriceVersion> queryPriceVersionByCondition(ElectricityPriceVersion electricityPriceVersion);
-
-    /**
-     * 查询当前版本的前一个版本
+     *
      * @param electricityPriceVersion
      * @return
      */
     ElectricityPriceVersion queryNextPriceVersion(ElectricityPriceVersion electricityPriceVersion);
+
+    /**
+     * 根据版本id查版本信息
+     *
+     * @param versionId
+     * @return
+     */
+    ElectricityPriceVersion selectElectricityPriceVersionByVersionId(String versionId);
+
+    /**
+     * 根据当前版本信息获取下一版本的信息
+     *
+     * @param electricityPriceVersion
+     * @return
+     */
+    ElectricityPriceVersion selectNextElectricityPriceVersion(ElectricityPriceVersion electricityPriceVersion);
+
 }

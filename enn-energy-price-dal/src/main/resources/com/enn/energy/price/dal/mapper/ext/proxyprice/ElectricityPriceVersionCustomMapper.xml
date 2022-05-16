@@ -128,11 +128,32 @@
         <include refid="Base_Column_List" />
         from electricity_price_version
         <where>
-            <if test="provinceCode!=null">
-                and province_code=#{provinceCode}
+            <if test="versionId != null">
+                and version_id = #{versionId,jdbcType=VARCHAR}
             </if>
-            <if test="state!=null">
-                and state=#{state}
+            <if test="provinceCode != null">
+                and  province_code = #{provinceCode,jdbcType=VARCHAR}
+            </if>
+            <if test="cityCode != null">
+                and  city_code = #{cityCode,jdbcType=VARCHAR}
+            </if>
+            <if test="districtCode != null">
+                and  district_code = #{districtCode,jdbcType=VARCHAR}
+            </if>
+            <if test="startDate != null">
+                and start_date = #{startDate,jdbcType=DATE}
+            </if>
+            <if test="endDate != null">
+                and end_date = #{endDate,jdbcType=DATE}
+            </if>
+            <if test="state != null">
+                and state = #{state,jdbcType=INTEGER}
+            </if>
+            <if test="lastVersionId != null">
+                and last_version_id = #{lastVersionId,jdbcType=VARCHAR}
+            </if>
+            <if test="isCurEffectFlag != null">
+                and start_date  <![CDATA[<=]]> now()  and end_date  <![CDATA[>=]]> now()
             </if>
         </where>
                 order by create_time asc
@@ -148,36 +169,30 @@
         and s.state = 0
     </select>
 
-    <select id="queryPriceVersionByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
-        select
-        <include refid="Base_Column_List" />
-        from electricity_price_version
-        <where>
-            <if test="versionId != null">
-                and version_id = #{versionId,jdbcType=VARCHAR}
-            </if>
-            <if test="provinceCode != null">
-                and  province_code = #{provinceCode,jdbcType=VARCHAR}
-            </if>
-            <if test="startDate != null">
-                and start_date = #{startDate,jdbcType=DATE}
-            </if>
-            <if test="endDate != null">
-                and end_date = #{endDate,jdbcType=DATE}
-            </if>
-            <if test="state != null">
-                and state = #{state,jdbcType=INTEGER}
-            </if>
-            <if test="lastVersionId != null">
-                and last_version_id = #{lastVersionId,jdbcType=VARCHAR}
-            </if>
-        </where>
-    </select>
     <select id="queryNextPriceVersion" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
         select
         <include refid="Base_Column_List" />
         from electricity_price_version
         where province_code=#{provinceCode} and state=0 and start_date > #{startDate}
+        order by start_date asc limit 1
+    </select>
+
+    <select id="selectElectricityPriceVersionByVersionId"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
+        select
+        <include refid="Base_Column_List"/>
+        from electricity_price_version
+        where version_id = #{versionId}
+    </select>
+
+    <select id="selectNextElectricityPriceVersion"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
+        select
+        <include refid="Base_Column_List"/>
+        from electricity_price_version
+        where province_code = #{provinceCode}
+        and state = 0
+        and start_date  <![CDATA[>=]]> #{endDate}
         order by start_date asc limit 1
     </select>
 </mapper>

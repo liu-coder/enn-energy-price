@@ -15,6 +15,7 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
 
     /**
      * 版本体系bo转po
+     *
      * @param electricityPriceStructureUpdateBO
      * @return
      */
@@ -22,6 +23,7 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
 
     /**
      * 电价体系规则bo转po
+     *
      * @param electricityPriceStructureRuleUpdateBo
      * @return
      */
@@ -82,7 +84,6 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
 
 
     /**
-     *
      * @param ectricityPriceStructure
      * @return
      */
@@ -105,13 +106,13 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
      * @param electricityPriceDetailPOS
      * @return
      */
-    List<ElectricityPriceDetailBO>  electricityPriceDetailPOListToBOList(List<ElectricityPriceDetailPO> electricityPriceDetailPOS);
+    List<ElectricityPriceDetailBO> electricityPriceDetailPOListToBOList(List<ElectricityPriceDetailPO> electricityPriceDetailPOS);
 
     /**
      * @param electricityPriceDetailPO
      * @return
      */
-    ElectricityPriceDetailBO  electricityPriceDetailPOToBO(ElectricityPriceDetailPO electricityPriceDetailPO);
+    ElectricityPriceDetailBO electricityPriceDetailPOToBO(ElectricityPriceDetailPO electricityPriceDetailPO);
 
     /**
      * @param electricityPrice

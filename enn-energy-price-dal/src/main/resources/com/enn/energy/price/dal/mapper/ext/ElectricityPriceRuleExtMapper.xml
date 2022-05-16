@@ -29,6 +29,18 @@
             <if test="versionId != null">
                 and version_id = #{versionId}
             </if>
+            <if test="structureId != null">
+                and structure_id = #{structureId}
+            </if>
+            <if test="industry != null">
+                and industry = #{industry}
+            </if>
+            <if test="strategy != null">
+                and strategy = #{strategy}
+            </if>
+            <if test="structureId != null">
+                and structure_id = #{structureId}
+            </if>
             <if test="state != null">
                 and state = #{state}
             </if>

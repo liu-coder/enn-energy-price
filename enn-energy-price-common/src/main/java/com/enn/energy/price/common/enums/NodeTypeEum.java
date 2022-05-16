@@ -6,18 +6,18 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum ChangeTypeEum {
-    ADD(0,"add"),
-    DELETE(1,"delete"),
-    UPDATE(2,"update");
-    Integer type;
-    String msg;
+public enum NodeTypeEum {
+    ENTERPRISSE("0", "企业"),
+    NODE("1", "目录（根节点）"),
+    DEVICE("2", "设备");
+    String type;
+    String name;
 
-    public static ChangeTypeEum findMsgByType(Integer type) {
+    public static NodeTypeEum findMsgByType(Integer type) {
         if (ObjectUtil.isNull(type)) {
             return null;
         }
-        for (ChangeTypeEum changeTypeEum : values()) {
+        for (NodeTypeEum changeTypeEum : values()) {
             if (changeTypeEum.getType().equals(type)) {
                 return changeTypeEum;
             }

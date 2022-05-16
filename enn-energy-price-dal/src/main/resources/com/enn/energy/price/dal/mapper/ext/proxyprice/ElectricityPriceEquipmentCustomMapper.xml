@@ -2,14 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceEquipmentCustomMapper">
     <sql id="Base_Column_List">
-        id, equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
+        id
+        , equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
         structure_rule_id, system_code, adjust, state, creator, updator, create_time, update_time
     </sql>
     <update id="deleteEquipmentBindingByVersionId">
-        update electricity_price_equipment set state=1 where version_id=#{versionId} and state=0
+        update electricity_price_equipment
+        set state=1
+        where version_id = #{versionId}
+          and state = 0
     </update>
-
-
 
     <update id="batchDeleteEquipmentBindingByConditions">
         update electricity_price_equipment
@@ -22,7 +24,7 @@
             </if>
         </set>
         where rule_id in
-        <foreach collection="ruleIds" separator="," open="(" close=")" item="ruleId" index="index" >
+        <foreach collection="ruleIds" separator="," open="(" close=")" item="ruleId" index="index">
             #{ruleId}
         </foreach>
         and state=0
@@ -30,23 +32,24 @@
 
     <select id="queryEquipmentBinding" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from electricity_price_equipment where version_id=#{versionId} and state=0
     </select>
     <select id="queryEquipmentBindingByStructureId"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from electricity_price_equipment where structure_id = #{structureId} and state=0
     </select>
     <select id="countRuleEquipmentBindRecordsById" resultType="java.lang.Long">
         select count(*)
         from electricity_price_equipment
         where id = #{id}
-          and   state = 0
+          and state = 0
     </select>
 
-    <select id="listRuleEquipmentBindRecords" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment" resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView">
+    <select id="listRuleEquipmentBindRecords" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment"
+            resultType="com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView">
         select
         epe.id, epe.equipment_id, epe.equipment_name, epe.rule_id, epe.version_id, epe.tenant_id,
         epe.tenant_name, epe.structure_id, epe.structure_rule_id, epe.system_code, epe.adjust, epe.state,
@@ -67,9 +70,10 @@
         </where>
     </select>
 
-    <select id="listRuleEquipmentBindRecordsByRuleIdList" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+    <select id="listRuleEquipmentBindRecordsByRuleIdList"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
         select
-        epe.id,  epe.rule_id, epe.version_id, epe.tenant_id,
+        epe.id, epe.rule_id, epe.version_id, epe.tenant_id,
         epe.structure_id, epe.structure_rule_id
         from electricity_price_equipment epe
         where epe.rule_id in
@@ -79,4 +83,61 @@
         and state = 0
     </select>
 
+    <select id="queryIsExistEquipmentBind"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        select
+        <include refid="Base_Column_List"/>
+        from electricity_price_equipment
+        where
+        equipment_id =#{equipmentId} and rule_id = #{ruleId} and version_id = #{versionId}
+        and structure_id = #{structureId} and state=0
+    </select>
+    <select id="getElectricityPriceEquipmentByNodeIds"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        electricity_price_equipment AS epe
+        INNER JOIN electricity_price_version AS epv ON epe.version_id = epv.version_id
+        where epe.equipment_id in
+        <foreach collection="nodeIds" open="(" close=")" separator="," index="index" item="nodeId">
+            #{nodeId}
+        </foreach>
+        AND epe.state = 0
+        AND epv.start_date <![CDATA[<=]]>  NOW() AND epv.end_date <![CDATA[>=]]>  NOW()
+    </select>
+    <select id="getElectricityPriceEquipmentNotExistRule"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        electricity_price_equipment epe
+        WHERE
+        NOT EXISTS ( SELECT rule_id FROM electricity_price_rule epr WHERE epr.rule_id = epe.rule_id )
+        AND epe.rule_id in
+        <foreach collection="ruleIds" open="(" close=")" separator="," index="index" item="ruleId">
+            #{ruleId}
+        </foreach>
+    </select>
+
+    <select id="queryElectricityPriceEquipmentByMap"
+            resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        select
+        <include refid="Base_Column_List"/>
+        from electricity_price_equipment
+        <where>
+            <if test="versionId!=null">
+                and version_id=#{versionId}
+            </if>
+            <if test="equipmentId!=null">
+                and equipment_id=#{equipmentId}
+            </if>
+            <if test="structureId!=null">
+                and structure_id=#{structureId}
+            </if>
+            <if test="ruleId!=null">
+                and rule_id=#{ruleId}
+            </if>
+        </where>
+    </select>
 </mapper>

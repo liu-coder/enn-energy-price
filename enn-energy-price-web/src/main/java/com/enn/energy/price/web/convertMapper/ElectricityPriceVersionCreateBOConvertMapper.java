@@ -79,5 +79,13 @@ public interface ElectricityPriceVersionCreateBOConvertMapper {
     })
     ElectricityPriceStructureAndRuleValidateBO structureAndRuleValidateVOToBO(ElectricityPriceStructureAndRuleValidateReqVO validateReqVO);
 
-     ElectricityPriceStructureAndRuleValidateRespVO priceStructureAndRuleValidateRespBOToVO(ElectricityPriceStructureAndRuleValidateRespBO validateRespBO);
+    ElectricityPriceStructureAndRuleValidateRespVO priceStructureAndRuleValidateRespBOToVO(ElectricityPriceStructureAndRuleValidateRespBO validateRespBO);
+
+    @Mapping(source = "electricityPriceBindReqVO.nextVersionStructurePrice", target = "nextVersionStructurePriceBO")
+    ElectricityPriceBindBO priceBindReqVOToBO(ElectricityPriceBindReqVO electricityPriceBindReqVO);
+
+    ElectricityPriceBindRemoveBO priceBindRemoveReqVOToBO(ElectricityPriceBindRemoveReqVO electricityPriceBindRemoveReqVO);
+
+    ElectricityPriceBindVersionsBO electricityPriceBindVersionsReqVOToBO(ElectricityPriceBindVersionsReqVO electricityPriceBindVersionsReqVO);
+
 }

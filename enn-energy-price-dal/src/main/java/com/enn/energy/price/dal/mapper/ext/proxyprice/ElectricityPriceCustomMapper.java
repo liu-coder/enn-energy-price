@@ -31,6 +31,8 @@ public interface ElectricityPriceCustomMapper {
      */
     List<ElectricityPriceDetailPO> getPriceDetailListByStructureId(@Param( "structureId" ) String structureId);
 
+    ElectricityPriceDetailPO getPriceDetailByRuleId(@Param( "ruleId" ) String ruleId);
+
 
     /**
      * 获取电价

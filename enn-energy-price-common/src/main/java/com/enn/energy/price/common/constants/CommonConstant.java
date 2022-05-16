@@ -306,5 +306,7 @@ public class CommonConstant {
     public static class RedisKey {
         public final static String LOCK_PROXY_PRICE_VERSION_CREATE_PREFIX = "proxyprice:lock:version:create";
         public final static String LOCK_PROXY_PRICE_VERSION_UPDATE_PREFIX = "proxyprice:lock:version:delete";
+        public final static String LOCK_PROXY_PRICE_BIND_PREFIX = "proxyprice:lock:price:bind";
+        public final static String LOCK_PROXY_PRICE_UNBOUND_PREFIX = "proxyprice:lock:price:unbound";
     }
 }
