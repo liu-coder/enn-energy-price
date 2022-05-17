@@ -1020,15 +1020,15 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             String[] industryArray = industries.toArray(new String[industries.size()]);
             excelWriter.addSelect(new CellRangeAddressList(2, 500, 0, 0),  industryArray);
         }
-        if(CollUtil.isNotEmpty(voltageLevelList)){
-            List<String> voltageLevels = voltageLevelList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
-            String[] voltageLevelArray = voltageLevels.toArray( new String [voltageLevels.size()] );
-            excelWriter.addSelect(new CellRangeAddressList(2, 500, 2, 2), voltageLevelArray);
-        }
         if(CollUtil.isNotEmpty(strategyList)){
             List<String> strategies = strategyList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
             String[] strategyArray = strategies.toArray( new String [strategies.size()] );
             excelWriter.addSelect(new CellRangeAddressList(2, 500, 1, 1), strategyArray);
+        }
+        if(CollUtil.isNotEmpty(voltageLevelList)){
+            List<String> voltageLevels = voltageLevelList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
+            String[] voltageLevelArray = voltageLevels.toArray( new String [voltageLevels.size()] );
+            excelWriter.addSelect(new CellRangeAddressList(2, 500, 2, 2), voltageLevelArray);
         }
 
         excelWriter.autoSizeColumnAll();
@@ -1056,53 +1056,83 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         String provinceCode = importDataBO.getProvinceCode();
         List<ElectricityPriceUpdateBO> priceRuleCreateBOList = importDataBO.getUpdateReqVOList();
         List<List<Object>> records = reader.read(2);
+        //该省的三要素字典
+        Map<Integer, List<ElectricityPriceDictionaryBO>> priceElectricityDictionaries = priceManagerService.getPriceElectricityDictionaries(null, provinceCode);
+        //用电行业
+        List<ElectricityPriceDictionaryBO> industryList = priceElectricityDictionaries.get(CommonConstant.INDUSTRY_TYPE);
+        //电价类型
+        List<ElectricityPriceDictionaryBO> voltageLevelList = priceElectricityDictionaries.get(CommonConstant.VOLTAGELEVEL_TYPE);
+        //两部制、一部制
+        List<ElectricityPriceDictionaryBO> strategyList = priceElectricityDictionaries.get(CommonConstant.STRATEGY_TYPE);
+        //先把excel数据转换为ElectricityPriceUpdateBO，并把三要素名称转为code
+        List<ElectricityPriceUpdateBO> priceRuleRecords = records.stream().map(rowRecord -> {
+            ElectricityPriceUpdateBO priceRuleCreateBO = new ElectricityPriceUpdateBO();
+            String industryName = StrUtil.isBlank((String) rowRecord.get(0)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(0);
+            String strategyName = StrUtil.isBlank((String) rowRecord.get(1)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(1);
+            String voltageLevelName = StrUtil.isBlank((String) rowRecord.get(2)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(2);
+            String industryCode = CommonConstant.STR_BLANK;
+            if(CollUtil.isNotEmpty(industryList)){
+                industryCode = industryList.stream().filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(industryName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
+            }
+            String voltageLevelCode = CommonConstant.STR_BLANK;
+            if(CollUtil.isNotEmpty(voltageLevelList)){
+                voltageLevelCode = voltageLevelList.stream()
+                        .filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(voltageLevelName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
+            }
+            String strategyCode = CommonConstant.STR_BLANK;
+            if(CollUtil.isNotEmpty(strategyList)){
+                strategyCode = strategyList.stream()
+                        .filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(strategyName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
+            }
+            priceRuleCreateBO.setIndustry(industryCode);
+            priceRuleCreateBO.setStrategy(strategyCode);
+            priceRuleCreateBO.setVoltageLevel(voltageLevelCode);
+            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(10));
+            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(11));
+            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(3));
+            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(4));
+            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(5));
+            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(6));
+            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(7));
+            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(8));
+            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(9));
+            return priceRuleCreateBO;
+        }).collect(Collectors.toList());
+
         //判断原有的和导入的是否有相同的三要素，有的话，就覆盖价格
+        List<ElectricityPriceUpdateBO> finalPriceRuleRecords = priceRuleRecords;
         priceRuleCreateBOList = priceRuleCreateBOList.stream().map(priceRuleCreateBO -> {
-            for (List<Object> rowRecord : records) {
-                if (priceRuleCreateBO.getIndustry().equals(rowRecord.get(0))
-                        && priceRuleCreateBO.getStrategy().equals(rowRecord.get(1))
-                        && priceRuleCreateBO.getVoltageLevel().equals(rowRecord.get(2))) {
-                    priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? null : (String) rowRecord.get(10));
-                    priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? null : (String) rowRecord.get(11));
-                    priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? null : (String) rowRecord.get(3));
-                    priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? null : (String) rowRecord.get(4));
-                    priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? null : (String) rowRecord.get(5));
-                    priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? null : (String) rowRecord.get(6));
-                    priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? null : (String) rowRecord.get(7));
-                    priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? null : (String) rowRecord.get(8));
-                    priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? null : (String) rowRecord.get(9));
+            for (ElectricityPriceUpdateBO rowRecord : finalPriceRuleRecords) {
+                if (priceRuleCreateBO.getIndustry().equals(rowRecord.getIndustry())
+                        && priceRuleCreateBO.getStrategy().equals(rowRecord.getStrategy())
+                        && priceRuleCreateBO.getVoltageLevel().equals(rowRecord.getVoltageLevel())) {
+                    priceRuleCreateBO.setMaxCapacityPrice(rowRecord.getMaxCapacityPrice());
+                    priceRuleCreateBO.setTransformerCapacityPrice(rowRecord.getTransformerCapacityPrice());
+                    priceRuleCreateBO.setConsumptionPrice(rowRecord.getConsumptionPrice());
+                    priceRuleCreateBO.setDistributionPrice(rowRecord.getDistributionPrice());
+                    priceRuleCreateBO.setGovAddPrice(rowRecord.getGovAddPrice());
+                    priceRuleCreateBO.setSharpPrice(rowRecord.getSharpPrice());
+                    priceRuleCreateBO.setPeakPrice(rowRecord.getSharpPrice());
+                    priceRuleCreateBO.setLevelPrice(rowRecord.getLevelPrice());
+                    priceRuleCreateBO.setValleyPrice(rowRecord.getValleyPrice());
                 }
             }
             return priceRuleCreateBO;
         }).collect(Collectors.toList());
+
         List<ElectricityPriceUpdateBO> priceRuleCreateRespBOList = new ArrayList<>(priceRuleCreateBOList);
         List<ElectricityPriceUpdateBO> finalPriceRuleCreateBOList = priceRuleCreateBOList;
-        List<ElectricityPriceUpdateBO> priceRuleRecords = records.stream().filter(rowRecord -> {
+        priceRuleRecords = priceRuleRecords.stream().filter(rowRecord -> {
             boolean matchResult = true;
             for (ElectricityPriceUpdateBO priceRuleCreateBO : finalPriceRuleCreateBOList) {
-                if (priceRuleCreateBO.getIndustry().equals(rowRecord.get(0))
-                        && priceRuleCreateBO.getStrategy().equals(rowRecord.get(1))
-                        && priceRuleCreateBO.getVoltageLevel().equals(rowRecord.get(2))) {
+                if (priceRuleCreateBO.getIndustry().equals(rowRecord.getIndustry())
+                        && priceRuleCreateBO.getStrategy().equals(rowRecord.getStrategy())
+                        && priceRuleCreateBO.getVoltageLevel().equals(rowRecord.getVoltageLevel())) {
                     matchResult = false;
                     break;
                 }
             }
             return matchResult;
-        }).map(rowRecord -> {
-            ElectricityPriceUpdateBO priceRuleCreateBO = new ElectricityPriceUpdateBO();
-            priceRuleCreateBO.setIndustry(StrUtil.isBlank((String) rowRecord.get(0)) ? null : (String) rowRecord.get(0));
-            priceRuleCreateBO.setStrategy(StrUtil.isBlank((String) rowRecord.get(1)) ? null : (String) rowRecord.get(1));
-            priceRuleCreateBO.setVoltageLevel(StrUtil.isBlank((String) rowRecord.get(2)) ? null : (String) rowRecord.get(2));
-            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? null : (String)rowRecord.get(10));
-            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? null : (String)rowRecord.get(11));
-            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? null : (String)rowRecord.get(3));
-            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? null : (String)rowRecord.get(4));
-            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? null : (String)rowRecord.get(5));
-            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? null : (String)rowRecord.get(6));
-            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? null : (String)rowRecord.get(7));
-            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? null : (String)rowRecord.get(8));
-            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? null : (String)rowRecord.get(9));
-            return priceRuleCreateBO;
         }).collect(Collectors.toList());
         priceRuleCreateRespBOList.addAll(priceRuleRecords);
         return priceRuleCreateRespBOList;
@@ -1119,22 +1149,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         if(CollUtil.isEmpty(records)){
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }
-        List<ElectricityPriceUpdateBO> priceRuleRecords = records.stream().map(rowRecord -> {
-            ElectricityPriceUpdateBO priceRuleCreateBO = new ElectricityPriceUpdateBO();
-            priceRuleCreateBO.setIndustry(StrUtil.isBlank((String) rowRecord.get(0)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(0));
-            priceRuleCreateBO.setStrategy(StrUtil.isBlank((String) rowRecord.get(1)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(1));
-            priceRuleCreateBO.setVoltageLevel(StrUtil.isBlank((String) rowRecord.get(2)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(2));
-            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(10));
-            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(11));
-            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(3));
-            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(4));
-            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(5));
-            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(6));
-            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(7));
-            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(8));
-            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(9));
-            return priceRuleCreateBO;
-        }).collect(Collectors.toList());
+
         //该省的三要素字典
         Map<Integer, List<ElectricityPriceDictionaryBO>> priceElectricityDictionaries = priceManagerService.getPriceElectricityDictionaries(null, provinceCode);
         //用电行业
@@ -1155,6 +1170,41 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         if(CollUtil.isNotEmpty(strategyList)){
             strategyNameList = strategyList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
         }
+
+        List<ElectricityPriceUpdateBO> priceRuleRecords = records.stream().map(rowRecord -> {
+            ElectricityPriceUpdateBO priceRuleCreateBO = new ElectricityPriceUpdateBO();
+            String industryName = StrUtil.isBlank((String) rowRecord.get(0)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(0);
+            String strategyName = StrUtil.isBlank((String) rowRecord.get(1)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(1);
+            String voltageLevelName = StrUtil.isBlank((String) rowRecord.get(2)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(2);
+            /*String industryCode = CommonConstant.STR_BLANK;
+            if(CollUtil.isNotEmpty(industryList)){
+                industryCode = industryList.stream().filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(industryName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
+            }
+            String voltageLevelCode = CommonConstant.STR_BLANK;
+            if(CollUtil.isNotEmpty(voltageLevelList)){
+                voltageLevelCode = voltageLevelList.stream()
+                        .filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(voltageLevelName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
+            }
+            String strategyCode = CommonConstant.STR_BLANK;
+            if(CollUtil.isNotEmpty(strategyList)){
+                strategyCode = strategyList.stream()
+                        .filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(strategyName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
+            }*/
+            priceRuleCreateBO.setIndustry(industryName);
+            priceRuleCreateBO.setStrategy(strategyName);
+            priceRuleCreateBO.setVoltageLevel(voltageLevelName);
+            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(10));
+            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(11));
+            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(3));
+            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(4));
+            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(5));
+            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(6));
+            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(7));
+            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(8));
+            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(9));
+            return priceRuleCreateBO;
+        }).collect(Collectors.toList());
+
         //保存校验结果
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
 
@@ -1181,9 +1231,6 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                                                                                  List<String> voltageLevelNameList
                                                                                  ){
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
-        List<String> finalIndustryNameList = industryNameList;
-        List<String> finalStrategyNameList = strategyNameList;
-        List<String> finalVoltageLevelNameList = voltageLevelNameList;
         List<String> illegalIndustryList = new ArrayList<>();
         List<String> illegalStrategyList = new ArrayList<>();
         List<String> illegalVoltageLevelList = new ArrayList<>();
@@ -1191,7 +1238,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String industryName = rowRecord.getIndustry().trim();
-            if (!finalIndustryNameList.contains(industryName)) {
+            if (!industryNameList.contains(industryName)) {
                 illegalIndustryList.add(String.valueOf(i + 3));
             }
         }
@@ -1205,7 +1252,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String strategyName = rowRecord.getStrategy().trim();
-            if (!finalStrategyNameList.contains(strategyName)) {
+            if (!strategyNameList.contains(strategyName)) {
                 illegalStrategyList.add(String.valueOf(i + 3));
             }
         }
@@ -1219,7 +1266,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String voltageLevelName = rowRecord.getVoltageLevel().trim();
-            if (!finalVoltageLevelNameList.contains(voltageLevelName)) {
+            if (!voltageLevelNameList.contains(voltageLevelName)) {
                 illegalVoltageLevelList.add(String.valueOf(i + 3));
             }
         }
@@ -1573,21 +1620,20 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
     /**
      * 取消区域时，校验是否绑定了设备
      *
-     * @param id
+     * @param structureId
      * @return ElectricityPriceStructureCreateBO
      * @author sunjidong
      * @date 2022/5/9 10:18
      */
     @Override
-    public ElectricityPriceStructureCreateBO validateDeleteArea(String id, List<String> districtCodeList) {
+    public ElectricityPriceStructureCreateBO validateDeleteArea(String structureId, List<String> districtCodeList) {
         //通过体系id查找此体系绑定的设备所在的区域
-        List<ElectricityPriceEquipment> electricityPriceEquipmentList = electricityPriceEquipmentCustomMapper.queryEquipmentBindingByStructureId(id);
+        List<ElectricityPriceEquipment> electricityPriceEquipmentList = electricityPriceEquipmentCustomMapper.queryEquipmentBindingByStructureId(structureId);
         if (CollUtil.isEmpty(electricityPriceEquipmentList)) {
             return null;
         }
-        long idPrimary = Long.parseLong(id);
         //首先找到此体系下原适用的区域
-        ElectricityPriceStructure electricityPriceStructure = electricityPriceStructureCustomMapper.selectByPrimaryKey(idPrimary);
+        ElectricityPriceStructure electricityPriceStructure = electricityPriceStructureCustomMapper.selectByPrimaryKey(structureId);
         String districtCodes = electricityPriceStructure.getDistrictCodes();
         String[] districtCodeArray = districtCodes.split(CommonConstant.AREA_SPLIT);
         Stream<String> districtCodeStream = Arrays.stream(districtCodeArray);

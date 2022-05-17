@@ -167,6 +167,7 @@ public class ProxyElectricityPriceManagerController {
      * @date 2022/5/7 20:38
      * @param response
      */
+    @ApiOperation( "下载模板" )
     @GetMapping("/downLoadTemplate")
     public void downLoadTemplate(@ApiParam(value = "省编码", name = "provinceCode", required = true) String provinceCode, HttpServletResponse response){
         if(StrUtil.isBlank(provinceCode)){
@@ -189,7 +190,8 @@ public class ProxyElectricityPriceManagerController {
      * @return List<ElectricityPriceRuleCreateReqVO>
      */
     @PostMapping("/uploadTemplate")
-    public RdfaResult<UploadTemplateRespVO> uploadTemplate(ElectricityPriceImportDataReqVO importDataReqVO, @RequestParam("fileName") MultipartFile file){
+    @ApiOperation( "上传模板" )
+    public RdfaResult<UploadTemplateRespVO> uploadTemplate(@RequestPart ElectricityPriceImportDataReqVO importDataReqVO, @RequestPart(value = "file",required = true) MultipartFile file){
         if(StrUtil.isBlank(importDataReqVO.getProvinceCode())){
             throw new PriceException(ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorCode(), ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorMsg());
         }
@@ -214,6 +216,7 @@ public class ProxyElectricityPriceManagerController {
      * @return List<ElectricityPriceRuleCreateReqVO>
      */
     @PostMapping("/validateTemplate")
+    @ApiOperation("校验模板内的数据")
     public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateTemplate(String provinceCode, @RequestParam("fileName") MultipartFile file){
         if(StrUtil.isBlank(provinceCode)){
             throw new PriceException(ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorCode(), ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorMsg());
@@ -314,14 +317,14 @@ public class ProxyElectricityPriceManagerController {
     }
 
     @ApiOperation( "取消区域时，校验是否绑定了设备" )
-    @GetMapping("/validateDeleteArea")
-    public RdfaResult<ElectricityPriceStructureCreateBO> validateDeleteArea(@ApiParam(required = true, name = "id", value = "主键Id") String id,
-                                                  @ApiParam(required = true, name = "structureId", value = "体系Id") String structureId,
-                                                  @ApiParam(required = true, name = "districtCodeList", value = "体系区域") List<String> districtCodeList){
-        if(CollUtil.isEmpty(districtCodeList) || StrUtil.isEmpty(id) || StrUtil.isEmpty(structureId)){
+    @PostMapping("/validateDeleteArea")
+    public RdfaResult<ElectricityPriceStructureCreateBO> validateDeleteArea(@Valid ElectricityPriceDeleteAreaValidateReqVo validateReqVo){
+        List<String> districtCodeList = validateReqVo.getDistrictCodeList();
+        String structureId = validateReqVo.getStructureId();
+        if(CollUtil.isEmpty(districtCodeList) || StrUtil.isEmpty(structureId)){
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }
-        ElectricityPriceStructureCreateBO noCancelArea = priceManagerBakService.validateDeleteArea(id, districtCodeList);
+        ElectricityPriceStructureCreateBO noCancelArea = priceManagerBakService.validateDeleteArea(structureId, districtCodeList);
         if(ObjectUtil.isNull(noCancelArea)){
             return RdfaResult.success(null);
         }

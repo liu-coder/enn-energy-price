@@ -42,7 +42,7 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_structure
-        where id = #{id,jdbcType=BIGINT}
+        where structure_id = #{structureId}
         and state = 0
     </select>
 

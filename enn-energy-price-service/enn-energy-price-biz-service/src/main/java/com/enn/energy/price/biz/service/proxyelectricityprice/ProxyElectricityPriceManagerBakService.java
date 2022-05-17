@@ -80,7 +80,7 @@ public interface ProxyElectricityPriceManagerBakService {
      * @param
      * @return
      */
-    ElectricityPriceStructureCreateBO validateDeleteArea(String id, List<String> districtCodeList);
+    ElectricityPriceStructureCreateBO validateDeleteArea(String structureId, List<String> districtCodeList);
 
     /**
      * @describtion 根据省编码查找版本以及版本下的所有体系详细内容

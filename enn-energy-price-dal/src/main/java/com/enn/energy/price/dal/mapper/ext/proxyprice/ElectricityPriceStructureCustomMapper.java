@@ -35,5 +35,5 @@ public interface ElectricityPriceStructureCustomMapper {
      * @param id
      * @return
      */
-    ElectricityPriceStructure selectByPrimaryKey(Long id);
+    ElectricityPriceStructure selectByPrimaryKey(String structureId);
 }
