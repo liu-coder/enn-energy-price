@@ -1,6 +1,5 @@
 package com.enn.energy.price.biz.service.bo.proxyprice;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
@@ -27,9 +26,6 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
 
     private Boolean ifExistSameTimeSection;
 
-
-
-
     private Boolean ifExistDuplicatedRule;
 
     private List<String> cantEditPriceRules;
@@ -52,44 +48,30 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
 
     private List<String> noDeleteBillRulesList;
 
+    private List<String> illegalPeekList;
+
+    private List<String> illegalSharpList;
+
+    private List<String> illegalLevelList;
+
+    private List<String> illegalValleyList;
+
+    private List<String> illegalGovAddPriceList;
+
+    private List<String> illegalDistributionPriceList;
+
+    private List<String> illegalConsumptionPriceList;
+
+    private List<String> illegalMaxCapacityPriceList;
+
+    private List<String> illegalTransformerCapacityPriceList;
+
     public Boolean getIfExistDuplicatedStructureRule() {
         return ifExistDuplicatedStructureRule;
     }
 
     public void setIfExistDuplicatedStructureRule(Boolean ifExistDuplicatedStructureRule) {
         this.ifExistDuplicatedStructureRule = ifExistDuplicatedStructureRule;
-    }
-
-    public Boolean getIfExistIntersectionSeasonSectionRule() {
-        return ifExistIntersectionSeasonSectionRule;
-    }
-
-    public void setIfExistIntersectionSeasonSectionRule(Boolean ifExistIntersectionSeasonSectionRule) {
-        this.ifExistIntersectionSeasonSectionRule = ifExistIntersectionSeasonSectionRule;
-    }
-
-    public Boolean getIfNotReachWholeYearSeasonSection() {
-        return ifNotReachWholeYearSeasonSection;
-    }
-
-    public void setIfNotReachWholeYearSeasonSection(Boolean ifNotReachWholeYearSeasonSection) {
-        this.ifNotReachWholeYearSeasonSection = ifNotReachWholeYearSeasonSection;
-    }
-
-    public Boolean getIfExistIntersectionTimeSection() {
-        return ifExistIntersectionTimeSection;
-    }
-
-    public void setIfExistIntersectionTimeSection(Boolean ifExistIntersectionTimeSection) {
-        this.ifExistIntersectionTimeSection = ifExistIntersectionTimeSection;
-    }
-
-    public Boolean getIfNotReachWholeDayTimeSection() {
-        return ifNotReachWholeDayTimeSection;
-    }
-
-    public void setIfNotReachWholeDayTimeSection(Boolean ifNotReachWholeDayTimeSection) {
-        this.ifNotReachWholeDayTimeSection = ifNotReachWholeDayTimeSection;
     }
 
     public Boolean getIfExistDuplicatedRule() {
@@ -180,6 +162,112 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
         this.cantEditPriceRules = cantEditPriceRules;
     }
 
+
+
+    public List<String> getIllegalPeekList() {
+        return illegalPeekList;
+    }
+
+    public void setIllegalPeekList(List<String> illegalPeekList) {
+        this.illegalPeekList = illegalPeekList;
+    }
+
+    public List<String> getIllegalSharpList() {
+        return illegalSharpList;
+    }
+
+    public void setIllegalSharpList(List<String> illegalSharpList) {
+        this.illegalSharpList = illegalSharpList;
+    }
+
+    public List<String> getIllegalLevelList() {
+        return illegalLevelList;
+    }
+
+    public void setIllegalLevelList(List<String> illegalLevelList) {
+        this.illegalLevelList = illegalLevelList;
+    }
+
+    public List<String> getIllegalValleyList() {
+        return illegalValleyList;
+    }
+
+    public void setIllegalValleyList(List<String> illegalValleyList) {
+        this.illegalValleyList = illegalValleyList;
+    }
+
+    public List<String> getIllegalGovAddPriceList() {
+        return illegalGovAddPriceList;
+    }
+
+    public void setIllegalGovAddPriceList(List<String> illegalGovAddPriceList) {
+        this.illegalGovAddPriceList = illegalGovAddPriceList;
+    }
+
+    public List<String> getIllegalDistributionPriceList() {
+        return illegalDistributionPriceList;
+    }
+
+    public void setIllegalDistributionPriceList(List<String> illegalDistributionPriceList) {
+        this.illegalDistributionPriceList = illegalDistributionPriceList;
+    }
+
+    public List<String> getIllegalConsumptionPriceList() {
+        return illegalConsumptionPriceList;
+    }
+
+    public void setIllegalConsumptionPriceList(List<String> illegalConsumptionPriceList) {
+        this.illegalConsumptionPriceList = illegalConsumptionPriceList;
+    }
+
+    public List<String> getIllegalMaxCapacityPriceList() {
+        return illegalMaxCapacityPriceList;
+    }
+
+    public void setIllegalMaxCapacityPriceList(List<String> illegalMaxCapacityPriceList) {
+        this.illegalMaxCapacityPriceList = illegalMaxCapacityPriceList;
+    }
+
+    public List<String> getIllegalTransformerCapacityPriceList() {
+        return illegalTransformerCapacityPriceList;
+    }
+
+    public void setIllegalTransformerCapacityPriceList(List<String> illegalTransformerCapacityPriceList) {
+        this.illegalTransformerCapacityPriceList = illegalTransformerCapacityPriceList;
+    }
+
+    public Boolean getIfExistIntersectionSeasonSectionRule() {
+        return ifExistIntersectionSeasonSectionRule;
+    }
+
+    public void setIfExistIntersectionSeasonSectionRule(Boolean ifExistIntersectionSeasonSectionRule) {
+        this.ifExistIntersectionSeasonSectionRule = ifExistIntersectionSeasonSectionRule;
+    }
+
+    public Boolean getIfNotReachWholeYearSeasonSection() {
+        return ifNotReachWholeYearSeasonSection;
+    }
+
+    public void setIfNotReachWholeYearSeasonSection(Boolean ifNotReachWholeYearSeasonSection) {
+        this.ifNotReachWholeYearSeasonSection = ifNotReachWholeYearSeasonSection;
+    }
+
+    public Boolean getIfExistIntersectionTimeSection() {
+        return ifExistIntersectionTimeSection;
+    }
+
+    public void setIfExistIntersectionTimeSection(Boolean ifExistIntersectionTimeSection) {
+        this.ifExistIntersectionTimeSection = ifExistIntersectionTimeSection;
+    }
+
+    public Boolean getIfNotReachWholeDayTimeSection() {
+        return ifNotReachWholeDayTimeSection;
+    }
+
+    public void setIfNotReachWholeDayTimeSection(Boolean ifNotReachWholeDayTimeSection) {
+        this.ifNotReachWholeDayTimeSection = ifNotReachWholeDayTimeSection;
+    }
+
     public Boolean getIfExistSameTimeSection() {
         return ifExistSameTimeSection;
     }
@@ -208,6 +296,15 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
                 ", lackDistributionPriceList=" + lackDistributionPriceList +
                 ", lackTimePartPriceList=" + lackTimePartPriceList +
                 ", noDeleteBillRulesList=" + noDeleteBillRulesList +
+                ", illegalPeekList=" + illegalPeekList +
+                ", illegalSharpList=" + illegalSharpList +
+                ", illegalLevelList=" + illegalLevelList +
+                ", illegalValleyList=" + illegalValleyList +
+                ", illegalGovAddPriceList=" + illegalGovAddPriceList +
+                ", illegalDistributionPriceList=" + illegalDistributionPriceList +
+                ", illegalConsumptionPriceList=" + illegalConsumptionPriceList +
+                ", illegalMaxCapacityPriceList=" + illegalMaxCapacityPriceList +
+                ", illegalTransformerCapacityPriceList=" + illegalTransformerCapacityPriceList +
                 '}';
     }
 }

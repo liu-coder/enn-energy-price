@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelFileUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
@@ -189,6 +190,9 @@ public class ProxyElectricityPriceManagerController {
      */
     @PostMapping("/uploadTemplate")
     public RdfaResult<UploadTemplateRespVO> uploadTemplate(ElectricityPriceImportDataReqVO importDataReqVO, @RequestParam("fileName") MultipartFile file){
+        if(StrUtil.isBlank(importDataReqVO.getProvinceCode())){
+            throw new PriceException(ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorCode(), ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorMsg());
+        }
         ElectricityPriceImportDataBO importDataBO = CommonBOVOConvertMapper.INSTANCE.importDataReqVOToBO(importDataReqVO);
         ExcelReader reader;
         try {
@@ -200,6 +204,32 @@ public class ProxyElectricityPriceManagerController {
         UploadTemplateRespVO uploadTemplateRespVO = new UploadTemplateRespVO();
         uploadTemplateRespVO.setPriceUpdateBOList(priceRuleCreateRespBOList);
         return RdfaResult.success(uploadTemplateRespVO);
+    }
+
+    /**
+     * @describtion 导入模板
+     * @author sunjidong
+     * @date 2022/5/7 20:38
+     * @param file
+     * @return List<ElectricityPriceRuleCreateReqVO>
+     */
+    @PostMapping("/validateTemplate")
+    public RdfaResult<ElectricityPriceStructureAndRuleValidateRespVO> validateTemplate(String provinceCode, @RequestParam("fileName") MultipartFile file){
+        if(StrUtil.isBlank(provinceCode)){
+            throw new PriceException(ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorCode(), ErrorCodeEnum.PROVINCE_CODE_CAN_NOT_NULL.getErrorMsg());
+        }
+        ExcelReader reader;
+        try {
+            boolean xls = ExcelFileUtil.isXls(file.getInputStream());
+            if(!xls){
+                throw new PriceException(ErrorCodeEnum.TEMPLATE_FORMAT_ILLEGAL.getErrorCode(), ErrorCodeEnum.TEMPLATE_FORMAT_ILLEGAL.getErrorMsg());
+            }
+            reader = ExcelUtil.getReader(file.getInputStream());
+        } catch (IOException e) {
+            throw new PriceException(ErrorCodeEnum.TEMPLATE_NOT_EXISTS.getErrorCode(), ErrorCodeEnum.TEMPLATE_NOT_EXISTS.getErrorMsg());
+        }
+        ElectricityPriceStructureAndRuleValidateRespBO validateRespBO = priceManagerBakService.validateTemplate(provinceCode, reader);
+        return RdfaResult.success(CommonBOVOConvertMapper.INSTANCE.priceStructureAndRuleValidateRespBOToVO(validateRespBO));
     }
 
     /**

@@ -52,7 +52,9 @@ public enum ErrorCodeEnum {
     ILLEGAL_NUMBER5("E30020","峰时阶段价格数值不合法"),
     ILLEGAL_NUMBER6("E30021","尖时阶段价格数值不合法"),
     ILLEGAL_NUMBER7("E30022","平时阶段价格数值不合法"),
-    ILLEGAL_NUMBER8("E30023","谷时阶段价格数值不合法")
+    ILLEGAL_NUMBER8("E30023","谷时阶段价格数值不合法"),
+    TEMPLATE_FORMAT_ILLEGAL("E30024","模板格式不合法"),
+    TEMPLATE_NOT_EXISTS("E30025","模板上传异常")
     ;
     private String errorCode;
     private String errorMsg;

@@ -47,6 +47,15 @@ public interface ProxyElectricityPriceManagerBakService {
     List<ElectricityPriceUpdateBO> uploadTemplate(ExcelReader reader, ElectricityPriceImportDataBO importDataBO);
 
     /**
+     * @describtion 校验模板合法性
+     * @author sunjidong
+     * @date 2022/5/8 8:11
+     * @param reader
+     * @return ElectricityPriceUpdateBO
+     */
+    ElectricityPriceStructureAndRuleValidateRespBO validateTemplate(String provinceCode, ExcelReader reader);
+
+    /**
      * @describtion 校验季节以及分时
      * @author sunjidong
      * @date 2022/5/9 10:18

@@ -504,7 +504,13 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             return validateRespBO;
         }
 
-        //6、校验当为两部制时，是否缺少容需量用电价格
+        //6、校验电价规则的价格
+        ElectricityPriceStructureAndRuleValidateRespBO validatePriceRespBO = doValidatePrice(priceRuleValidateReqVOList);
+        if(ObjectUtil.isNotNull(validatePriceRespBO)){
+            return validatePriceRespBO;
+        }
+
+        //7、校验当为两部制时，是否缺少容需量用电价格
         Map<String, List<ElectricityPriceUpdateBO>> priceRuleValidateReqVOListGroupingByStrategy = priceRuleValidateReqVOList.stream()
                 .collect(Collectors.groupingBy(ElectricityPriceUpdateBO::getStrategy));
         validateResult = validateStrategyPrice(validateRespBO, priceRuleValidateReqVOListGroupingByStrategy);
@@ -512,7 +518,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             return validateRespBO;
         }
 
-        //7、校验是否缺少电度电价
+        //8、校验是否缺少电度电价
         //先将默认的和非默认的分开
         Map<Boolean, List<ElectricityPriceStructureRuleUpdateBO>> priceStructureRulePartitions
                 = priceStructureRuleValidateList.stream()
@@ -548,7 +554,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             }
         }
 
-        //8、校验是否缺少分时电价
+        //9、校验是否缺少分时电价
         //自定义配置，存在分时的集合
         customStructureRuleCreateBOList.removeAll(noExistTimeSectionStructureRuleList);
         validateResult = validateIfLackTimePartPriceList(validateRespBO, priceRuleValidateReqVOList, defaultStructureRuleCreateBOList, customStructureRuleCreateBOList, noTimeSection);
@@ -1050,30 +1056,6 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         String provinceCode = importDataBO.getProvinceCode();
         List<ElectricityPriceUpdateBO> priceRuleCreateBOList = importDataBO.getUpdateReqVOList();
         List<List<Object>> records = reader.read(2);
-        //首先判断导入的数据三要素是否合法
-        Map<Integer, List<ElectricityPriceDictionaryBO>> priceElectricityDictionaries = priceManagerService.getPriceElectricityDictionaries(null, provinceCode);
-        //用电行业
-        List<ElectricityPriceDictionaryBO> industryList = priceElectricityDictionaries.get(CommonConstant.INDUSTRY_TYPE);
-        List<String> industryNameList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(industryList)){
-            industryNameList = industryList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
-        }
-        //电价类型
-        List<ElectricityPriceDictionaryBO> voltageLevelList = priceElectricityDictionaries.get(CommonConstant.VOLTAGELEVEL_TYPE);
-        List<String> voltageLevelNameList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(voltageLevelList)){
-            voltageLevelNameList = voltageLevelList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
-        }
-        //两部制、一部制
-        List<ElectricityPriceDictionaryBO> strategyList = priceElectricityDictionaries.get(CommonConstant.STRATEGY_TYPE);
-        List<String> strategyNameList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(strategyList)){
-            strategyNameList = strategyList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
-        }
-
-        //校验数据的合法性
-        validateImportData(records, industryNameList, voltageLevelNameList, strategyNameList);
-
         //判断原有的和导入的是否有相同的三要素，有的话，就覆盖价格
         priceRuleCreateBOList = priceRuleCreateBOList.stream().map(priceRuleCreateBO -> {
             for (List<Object> rowRecord : records) {
@@ -1131,52 +1113,285 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
      * @author sunjidong
      * @date 2022/5/16 22:19
      */
-    private void validateImportData(List<List<Object>> records, List<String> industryNameList, List<String> voltageLevelNameList, List<String> strategyNameList) {
+    @Override
+    public ElectricityPriceStructureAndRuleValidateRespBO validateTemplate(String provinceCode, ExcelReader reader) {
+        List<List<Object>> records = reader.read(2);
+        if(CollUtil.isEmpty(records)){
+            throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
+        }
+        List<ElectricityPriceUpdateBO> priceRuleRecords = records.stream().map(rowRecord -> {
+            ElectricityPriceUpdateBO priceRuleCreateBO = new ElectricityPriceUpdateBO();
+            priceRuleCreateBO.setIndustry(StrUtil.isBlank((String) rowRecord.get(0)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(0));
+            priceRuleCreateBO.setStrategy(StrUtil.isBlank((String) rowRecord.get(1)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(1));
+            priceRuleCreateBO.setVoltageLevel(StrUtil.isBlank((String) rowRecord.get(2)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(2));
+            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(10));
+            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(11));
+            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(3));
+            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(4));
+            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(5));
+            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(6));
+            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(7));
+            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(8));
+            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(9));
+            return priceRuleCreateBO;
+        }).collect(Collectors.toList());
+        //该省的三要素字典
+        Map<Integer, List<ElectricityPriceDictionaryBO>> priceElectricityDictionaries = priceManagerService.getPriceElectricityDictionaries(null, provinceCode);
+        //用电行业
+        List<ElectricityPriceDictionaryBO> industryList = priceElectricityDictionaries.get(CommonConstant.INDUSTRY_TYPE);
+        List<String> industryNameList = new ArrayList<>();
+        if(CollUtil.isNotEmpty(industryList)){
+            industryNameList = industryList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
+        }
+        //电价类型
+        List<ElectricityPriceDictionaryBO> voltageLevelList = priceElectricityDictionaries.get(CommonConstant.VOLTAGELEVEL_TYPE);
+        List<String> voltageLevelNameList = new ArrayList<>();
+        if(CollUtil.isNotEmpty(voltageLevelList)){
+            voltageLevelNameList = voltageLevelList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
+        }
+        //两部制、一部制
+        List<ElectricityPriceDictionaryBO> strategyList = priceElectricityDictionaries.get(CommonConstant.STRATEGY_TYPE);
+        List<String> strategyNameList = new ArrayList<>();
+        if(CollUtil.isNotEmpty(strategyList)){
+            strategyNameList = strategyList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
+        }
+        //保存校验结果
+        ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
+
+        validateRespBO = doValidateCombination(priceRuleRecords, industryNameList, strategyNameList, voltageLevelNameList);
+        if(ObjectUtil.isNotNull(validateRespBO)){
+            return validateRespBO;
+        }
+
+        validateRespBO = doValidatePrice(priceRuleRecords);
+        if(ObjectUtil.isNotNull(validateRespBO)){
+            return validateRespBO;
+        }
+        return null;
+    }
+
+    /**
+     * 校验体系的组合是否合法
+     * @author sunjidong
+     * @date 2022/5/17 14:33
+     */
+    private ElectricityPriceStructureAndRuleValidateRespBO doValidateCombination(List<ElectricityPriceUpdateBO> priceRuleRecords,
+                                                                                 List<String> industryNameList,
+                                                                                 List<String> strategyNameList,
+                                                                                 List<String> voltageLevelNameList
+                                                                                 ){
+        ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
         List<String> finalIndustryNameList = industryNameList;
         List<String> finalStrategyNameList = strategyNameList;
         List<String> finalVoltageLevelNameList = voltageLevelNameList;
-        //校验数据的合法性
-        for (List<Object> rowRecord : records) {
-            String industryName = ((String) rowRecord.get(0)).trim();
-            String strategyName = ((String) rowRecord.get(1)).trim();
-            String voltageLevelName = ((String) rowRecord.get(2)).trim();
+        List<String> illegalIndustryList = new ArrayList<>();
+        List<String> illegalStrategyList = new ArrayList<>();
+        List<String> illegalVoltageLevelList = new ArrayList<>();
+        //校验用电类型的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String industryName = rowRecord.getIndustry().trim();
             if (!finalIndustryNameList.contains(industryName)) {
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_INDUSTRY.getErrorCode(), ErrorCodeEnum.ILLEGAL_INDUSTRY.getErrorMsg());
-            }
-            if (!finalStrategyNameList.contains(strategyName)) {
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_INDUSTRY.getErrorCode(), ErrorCodeEnum.ILLEGAL_INDUSTRY.getErrorMsg());
-            }
-            if (!finalVoltageLevelNameList.contains(voltageLevelName)) {
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_INDUSTRY.getErrorCode(), ErrorCodeEnum.ILLEGAL_INDUSTRY.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(10)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(10)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER0.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER0.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(11)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(11)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER1.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER1.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(3)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(3)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER2.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER2.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(4)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(4)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER3.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER3.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(5)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(5)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER4.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER4.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(6)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(6)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER5.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER5.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(7)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(7)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER6.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER6.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(8)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(8)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER7.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER7.getErrorMsg());
-            }
-            if(StrUtil.isNotBlank((String) rowRecord.get(9)) && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, ((String) rowRecord.get(9)))){
-                throw new PriceException(ErrorCodeEnum.ILLEGAL_NUMBER8.getErrorCode(), ErrorCodeEnum.ILLEGAL_NUMBER8.getErrorMsg());
+                illegalIndustryList.add(String.valueOf(i + 3));
             }
         }
+        if(CollUtil.isNotEmpty(illegalIndustryList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalIndustry(illegalIndustryList);
+            return validateRespBO;
+        }
+
+        //校验定价类型的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String strategyName = rowRecord.getStrategy().trim();
+            if (!finalStrategyNameList.contains(strategyName)) {
+                illegalStrategyList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalStrategyList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalStrategy(illegalStrategyList);
+            return validateRespBO;
+        }
+
+        //校验电压等级的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String voltageLevelName = rowRecord.getVoltageLevel().trim();
+            if (!finalVoltageLevelNameList.contains(voltageLevelName)) {
+                illegalVoltageLevelList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalVoltageLevelList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalVoltageLevel(illegalVoltageLevelList);
+            return validateRespBO;
+        }
+        return null;
+    }
+
+    /**
+     * 校验电价规则的电价是否合法
+     * @author sunjidong
+     * @date 2022/5/17 14:34
+     */
+    private ElectricityPriceStructureAndRuleValidateRespBO doValidatePrice(List<ElectricityPriceUpdateBO> priceRuleRecords){
+        List<String> illegalPeekList = new ArrayList<>();
+
+        List<String> illegalSharpList = new ArrayList<>();
+
+        List<String> illegalLevelList = new ArrayList<>();
+
+        List<String> illegalValleyList = new ArrayList<>();
+
+        List<String> illegalGovAddPriceList = new ArrayList<>();
+
+        List<String> illegalDistributionPriceList = new ArrayList<>();
+
+        List<String> illegalConsumptionPriceList = new ArrayList<>();
+
+        List<String> illegalMaxCapacityPriceList = new ArrayList<>();
+
+        List<String> illegalTransformerCapacityPriceList = new ArrayList<>();
+
+        ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
+
+        //校验电镀用电的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String consumptionPrice = rowRecord.getConsumptionPrice().trim();
+            if(StrUtil.isNotBlank(consumptionPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, consumptionPrice)){
+                illegalConsumptionPriceList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalConsumptionPriceList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalConsumptionPriceList(illegalConsumptionPriceList);
+            return validateRespBO;
+        }
+
+        //校验电镀输配的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String distributionPrice = rowRecord.getDistributionPrice().trim();
+            if(StrUtil.isNotBlank(distributionPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, distributionPrice)){
+                illegalDistributionPriceList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalDistributionPriceList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalDistributionPriceList(illegalDistributionPriceList);
+            return validateRespBO;
+        }
+
+        //校验政府性附加的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String govAddPrice = rowRecord.getGovAddPrice().trim();
+            if(StrUtil.isNotBlank(govAddPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, govAddPrice)){
+                illegalGovAddPriceList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalGovAddPriceList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalGovAddPriceList(illegalGovAddPriceList);
+            return validateRespBO;
+        }
+
+        //校验尖的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String sharp = rowRecord.getSharpPrice().trim();
+            if(StrUtil.isNotBlank(sharp)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, sharp)){
+                illegalSharpList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalSharpList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalSharpList(illegalSharpList);
+            return validateRespBO;
+        }
+
+        //校验峰的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String peek = rowRecord.getPeakPrice().trim();
+            if(StrUtil.isNotBlank(peek)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, peek)){
+                illegalPeekList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalPeekList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalPeekList(illegalPeekList);
+            return validateRespBO;
+        }
+
+        //校验平的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String level = rowRecord.getLevelPrice().trim();
+            if(StrUtil.isNotBlank(level)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, level)){
+                illegalLevelList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalLevelList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalLevelList(illegalLevelList);
+            return validateRespBO;
+        }
+
+        //校验谷的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String valley = rowRecord.getValleyPrice().trim();
+            if(StrUtil.isNotBlank(valley)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, valley)){
+                illegalValleyList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalValleyList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalValleyList(illegalValleyList);
+            return validateRespBO;
+        }
+
+        //校验最大需量的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String maxCapacityPrice = rowRecord.getMaxCapacityPrice().trim();
+            if(StrUtil.isNotBlank(maxCapacityPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, maxCapacityPrice)){
+                illegalMaxCapacityPriceList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalMaxCapacityPriceList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalMaxCapacityPriceList(illegalMaxCapacityPriceList);
+            return validateRespBO;
+        }
+
+        //校验容需量的合法性
+        for (int i = 0; i < priceRuleRecords.size(); i++) {
+            ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
+            String transformerCapacityPrice = rowRecord.getTransformerCapacityPrice().trim();
+            if(StrUtil.isNotBlank(transformerCapacityPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, transformerCapacityPrice)){
+                illegalTransformerCapacityPriceList.add(String.valueOf(i + 3));
+            }
+        }
+        if(CollUtil.isNotEmpty(illegalTransformerCapacityPriceList)){
+            validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
+            validateRespBO.setIllegalTransformerCapacityPriceList(illegalTransformerCapacityPriceList);
+            return validateRespBO;
+        }
+        return null;
     }
 
     /**
@@ -1288,6 +1503,11 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         return false;
     }
 
+    /**
+     * 校验季节以及分时的区间
+     * @author sunjidong
+     * @date 2022/5/17 13:59
+     */
     private boolean validateSeasonTimeDetail(ElectricityPriceStructureAndRuleValidateRespBO validateRespBO, long msOfWholeDay, List<ElectricityPriceStrategyBO> priceStrategyBOList) {
         boolean validateResult = false;
         if (CollUtil.isNotEmpty(priceStrategyBOList)) {
@@ -1375,7 +1595,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         //查询绑定关系中涉及到的区域
         // todo 先用getUpdator代替设备所在得区域
         List<String> bindAreaList = electricityPriceEquipmentList.stream()
-                .map(ElectricityPriceEquipment::getUpdator)
+                .map(ElectricityPriceEquipment::getDistrictCodes)
                 .collect(Collectors.toList());
 
         //匹配找到被取消的区域

@@ -39,7 +39,7 @@
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>-->
 
-        <table tableName="city_code" enableCountByExample="false"
+        <table tableName="electricity_price_equipment" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <!-- false 不使用数据表column名，而使用驼峰命名 -->
