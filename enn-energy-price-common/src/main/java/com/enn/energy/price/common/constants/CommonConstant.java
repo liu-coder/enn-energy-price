@@ -143,7 +143,12 @@ public class CommonConstant {
     /**
      * 2022-12-31 11:59:59
      */
-    public static final String DAY_EXAMPLE_NINE = "2022-12-31 11:59:59";
+    public static final String DAY_EXAMPLE_NINE = "2022-12-31 23:59:59";
+
+    /**
+     * 2022-12-31
+     */
+    public static final String DAY_EXAMPLE_FOUR = "2022-12-31 24:00:00";
 
     /**
      * 2022-12-31 11:59:59
@@ -183,7 +188,7 @@ public class CommonConstant {
     /**
      * 2022-12-31 11:59:59
      */
-    public static final String OTHER_CHINA = "其它(元/千瓦时)";
+    public static final String OTHER_CHINA = "其中(元/千瓦时)";
 
     /**
      * 2022-12-31 11:59:59
@@ -258,12 +263,12 @@ public class CommonConstant {
     /**
      * 2022-12-31 11:59:59
      */
-    public static final Integer STRATEGY_TYPE = 1;
+    public static final Integer STRATEGY_TYPE = 2;
 
     /**
      * 2022-12-31 11:59:59
      */
-    public static final Integer VOLTAGELEVEL_TYPE = 2;
+    public static final Integer VOLTAGELEVEL_TYPE = 1;
 
     /**
      * 区域分隔符
@@ -299,6 +304,26 @@ public class CommonConstant {
      * 结束时间
      */
     public static final String START_TIME = "00:00";
+
+    /**
+     * 体系id
+     */
+    public static final String STRUCTURE_ID = "structureId";
+
+    /**
+     * 拼接符
+     */
+    public static final String REDIS_APPEND = "%s:%s:%s";
+
+    /**
+     * 区域分隔符
+     */
+    public static final String STR_BLANK = "";
+
+    /**
+     * 数值正则表达式
+     */
+    public static final String DECIMAL_PATTERN = "^(([1-9]\\d{0,4})|(0))([.]\\d{0,10})?$";
 
     /**
      * redis key

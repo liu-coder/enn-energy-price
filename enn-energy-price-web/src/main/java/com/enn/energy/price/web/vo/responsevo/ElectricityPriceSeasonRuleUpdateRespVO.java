@@ -1,4 +1,4 @@
-package com.enn.energy.price.web.vo.requestvo;
+package com.enn.energy.price.web.vo.responsevo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,7 +21,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ElectricityPriceSeasonRuleUpdateReqVO implements Serializable {
+public class ElectricityPriceSeasonRuleUpdateRespVO implements Serializable {
     private static final long serialVersionUID = 6708324781222848894L;
     @ApiModelProperty(value = "体系规则id,新增的不传id,原有的传id")
     private String structureRuleId;
@@ -38,7 +38,7 @@ public class ElectricityPriceSeasonRuleUpdateReqVO implements Serializable {
     private Integer changeType;
     @ApiModelProperty(value = "季节分时列表")
     @NotEmpty(message = "季节分时列表不能为空")
-    private List<@Valid ElectricityPriceSeasonUpdateReqVO> electricityPriceSeasonUpdateReqVOList;
-    @ApiModelProperty(value = "行号")
-    private String serialNo;
+    @Valid
+    private List<ElectricityPriceSeasonUpdateRespVO> structureRuleSeasonRespVOList;
+
 }

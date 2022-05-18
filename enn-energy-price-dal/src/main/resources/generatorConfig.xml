@@ -39,14 +39,14 @@
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>-->
 
-        <!--<table tableName="city_code" enableCountByExample="false"
+        <table tableName="electricity_price_equipment" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
-            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;
+            <!-- false 不使用数据表column名，而使用驼峰命名 -->
             <property name="useActualColumnNames" value="false"/>
-            &lt;!&ndash; 自增主键列 &ndash;&gt;
+            <!-- 自增主键列 -->
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>-->
+        </table>
 
 <!--        <table tableName="electricity_price_detail" enableCountByExample="false"-->
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
@@ -57,14 +57,14 @@
 <!--            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>-->
 <!--        </table>-->
 
-        <table tableName="electricity_price_equipment" enableCountByExample="false"
+        <!--<table tableName="electricity_price_equipment" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
-            <!-- false 不使用数据表column名，而使用驼峰命名 -->
+            &lt;!&ndash; false 不使用数据表column名，而使用驼峰命名 &ndash;&gt;
             <property name="useActualColumnNames" value="false"/>
-            <!-- 自增主键列 -->
+            &lt;!&ndash; 自增主键列 &ndash;&gt;
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
+        </table>-->
 
 <!--        <table tableName="electricity_price_dictionary" enableCountByExample="false"-->
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->

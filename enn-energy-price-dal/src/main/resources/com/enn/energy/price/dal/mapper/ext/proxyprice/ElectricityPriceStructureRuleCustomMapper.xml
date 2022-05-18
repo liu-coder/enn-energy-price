@@ -16,26 +16,28 @@
     <update id="batchDeleteStructureRuleByIds">
         update electricity_price_structure_rule
         set state=#{state},update_time=#{updateTime}
-        WHERE id IN
+        WHERE structure_rule_id IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>
         and state=0
     </update>
     <update id="updateStructureRule">
-        update electricity_price_structure_rule set
-        <if test="industries!=null">
-            industries=#{industries,jdbcType=VARCHAR},
-        </if>
-        <if test="strategies!=null">
-            strategies=#{strategies,jdbcType=VARCHAR},
-        </if>
-        <if test="voltageLevels!=null">
-            voltage_levels=#{voltageLevels,jdbcType=VARCHAR},
-        </if>
-        <if test="updateTime!=null">
-            update_time=#{updateTime,jdbcType=TIMESTAMP},
-        </if>
+        update electricity_price_structure_rule
+        <set>
+            <if test="industries!=null">
+                industries=#{industries,jdbcType=VARCHAR},
+            </if>
+            <if test="strategies!=null">
+                strategies=#{strategies,jdbcType=VARCHAR},
+            </if>
+            <if test="voltageLevels!=null">
+                voltage_levels=#{voltageLevels,jdbcType=VARCHAR},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
         <where>
             <if test="id!=null">
                 id=#{id}
@@ -53,7 +55,7 @@
             #{id}
         </foreach>
     </select>
-    <select id="queryElectricityPriceRulesByCondition"
+    <select id="queryElectricityPriceRulesByCondition" parameterType="map"
             resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructureRule">
         select
         <include refid="Base_Column_List" />

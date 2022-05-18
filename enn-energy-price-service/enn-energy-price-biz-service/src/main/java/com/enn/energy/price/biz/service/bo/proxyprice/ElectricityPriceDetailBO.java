@@ -30,6 +30,7 @@ public class ElectricityPriceDetailBO implements Serializable {
     private BigDecimal valleyPrice;
     private BigDecimal maxCapacityPrice;
     private BigDecimal transformerCapacityPrice;
+    private BigDecimal consumptionPrice;
     private String structureRuleId;
 
 

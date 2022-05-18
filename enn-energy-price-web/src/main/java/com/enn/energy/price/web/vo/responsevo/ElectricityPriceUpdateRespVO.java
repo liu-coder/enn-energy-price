@@ -1,17 +1,14 @@
-package com.enn.energy.price.web.vo.requestvo;
+package com.enn.energy.price.web.vo.responsevo;
 
 import com.enn.energy.price.web.validator.DecimalValue;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * @author liujin
@@ -22,7 +19,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel("电价价格请求修改vo")
-public class ElectricityPriceUpdateReqVO implements Serializable {
+public class ElectricityPriceUpdateRespVO implements Serializable {
     private static final long serialVersionUID = 758279791811577276L;
     @ApiModelProperty(value = "用电分类",required = true)
     @NotBlank(message = "用电分类不能为空")
@@ -66,6 +63,4 @@ public class ElectricityPriceUpdateReqVO implements Serializable {
     private Long ruleId;
     @ApiModelProperty(value = "变更类型")
     private Integer ruleChangeType;
-    @ApiModelProperty(value = "行号")
-    private String serialNo;
 }

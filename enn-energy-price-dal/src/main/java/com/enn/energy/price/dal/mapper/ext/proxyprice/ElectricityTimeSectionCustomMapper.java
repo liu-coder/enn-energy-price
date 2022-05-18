@@ -39,7 +39,7 @@ public interface ElectricityTimeSectionCustomMapper {
      * @param electricityTimeSectionList
      * @return
      */
-    int batchInsertTimeSection(List<ElectricityTimeSection> electricityTimeSectionList);
+    int batchInsertTimeSection(@Param( "times" ) List<ElectricityTimeSection> electricityTimeSectionList);
 
 
     /**

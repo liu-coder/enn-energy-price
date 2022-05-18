@@ -1,11 +1,14 @@
 package com.enn.energy.price.web.convertMapper;
 
 import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonDetailBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceSeasonUpdateBO;
+import com.enn.energy.price.biz.service.bo.proxyprice.ElectricityPriceStrategyBO;
 import com.enn.energy.price.biz.service.bo.proxyprice.SeasonDateBO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailForCreateRespVO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceSeasonUpdateReqVO;
+import com.enn.energy.price.web.vo.requestvo.ElectricityPriceStrategyReqVO;
+import com.enn.energy.price.web.vo.requestvo.SeasonDateVO;
 import com.enn.energy.price.web.vo.responsevo.ElectricityPriceSeasonDetailRespVO;
 import com.enn.energy.price.web.vo.responsevo.SeansonDateRespVO;
-import com.enn.energy.price.web.vo.responsevo.SeasonDateForCreateRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -30,10 +33,17 @@ public interface ElectricityPriceSeasonConverMapper {
 
     List<SeansonDateRespVO> seansonDateBOListToVOList(List<SeasonDateBO> seasonDateBOS);
 
+    @Mappings( {
+            @Mapping(source = "electricityPriceStrategyReqVOList",target = "electricityPriceStrategyBOList"),
+            @Mapping( source = "seasonDateVO",target = "seasonDateList")
+    } )
+    ElectricityPriceSeasonUpdateBO ElectricityPriceSeasonUpdateReqVOTOBO(ElectricityPriceSeasonUpdateReqVO electricityPriceSeasonUpdateReqVO);
 
-    SeasonDateForCreateRespVO SeansonDateForCreateBOToVO(SeasonDateBO seansonDateBO);
+    List<ElectricityPriceSeasonUpdateBO> electricityPriceSeasonVOListToBOList(List<ElectricityPriceSeasonUpdateReqVO> electricityPriceSeasonUpdateReqVO);
 
-    ElectricityPriceSeasonDetailForCreateRespVO ElectricityPriceSeasonDetailForCreateBOToVO(ElectricityPriceSeasonDetailBO electricityPriceSeasonDetailBO);
+    SeasonDateBO seasonDateVOTOBO(SeasonDateVO seasonDateVO);
 
+    @Mapping( source = "electricityTimeSectionUpdateReqVOList",target = "electricityTimeSectionUpdateBOList")
+    ElectricityPriceStrategyBO ElectricityPriceStrategyReqVOTOBO(ElectricityPriceStrategyReqVO electricityPriceStrategyReqVOTOVO);
 
 }

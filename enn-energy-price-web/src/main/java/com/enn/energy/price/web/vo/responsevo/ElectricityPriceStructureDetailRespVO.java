@@ -23,6 +23,7 @@ public class ElectricityPriceStructureDetailRespVO implements Serializable {
     private String provinceCode;
     private String cityCodes;
     private String districtCodes;
+    private String parentid;
     private List<ElectricityPriceDetailRespVO> priceDetailRespVOList;
     private List<ElectricityPriceStructureRuleDetailRespVO> structureRuleDetailRespVOList;
 }

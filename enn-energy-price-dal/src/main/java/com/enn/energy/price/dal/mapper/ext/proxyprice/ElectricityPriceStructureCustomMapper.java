@@ -28,7 +28,7 @@ public interface ElectricityPriceStructureCustomMapper {
      * @param record 根据id更新体系
      * @return
      */
-    int updateByPrimaryKey(ElectricityPriceStructure record);
+    int updateByStructureId(ElectricityPriceStructure record);
 
     /**
      * 获取代理电价体系
@@ -43,5 +43,5 @@ public interface ElectricityPriceStructureCustomMapper {
      * @param id
      * @return
      */
-    ElectricityPriceStructure selectByPrimaryKey(Long id);
+    ElectricityPriceStructure selectByPrimaryKey(String structureId);
 }

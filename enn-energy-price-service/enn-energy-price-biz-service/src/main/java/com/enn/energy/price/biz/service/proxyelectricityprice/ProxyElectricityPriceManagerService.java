@@ -15,14 +15,6 @@ import java.util.Map;
  **/
 public interface ProxyElectricityPriceManagerService {
 
-    /**
-     * @describtion  新建版本以及版本下的所有体系
-     * @author sunjidong
-     * @date 2022/5/1 9:57
-     * @param priceVersionStructuresCreateBO
-     * @return Boolean
-     */
-    Boolean createPriceVersionStructures(ElectricityPriceVersionStructuresCreateBO priceVersionStructuresCreateBO);
 
     /**
      * params  体系对象

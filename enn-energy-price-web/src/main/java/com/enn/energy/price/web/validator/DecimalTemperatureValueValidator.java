@@ -1,7 +1,6 @@
 package com.enn.energy.price.web.validator;
 
 import cn.hutool.core.util.StrUtil;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
@@ -11,9 +10,9 @@ import java.util.regex.Pattern;
  *
  * @author wanglongab
  */
-public class DecimalTemperatureValueValidator implements ConstraintValidator<DecimalValue, String> {
+public class DecimalTemperatureValueValidator implements ConstraintValidator<DecimalTemperatureValue, String> {
     @Override
-    public void initialize(DecimalValue decimalValue) {
+    public void initialize(DecimalTemperatureValue decimalValue) {
 
     }
 

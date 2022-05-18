@@ -55,6 +55,9 @@
             <if test="id != null">
                 and id = #{id}
             </if>
+            <if test="structureId!=null">
+                and structure_id=#{structureId}
+            </if>
         </where>
 
     </select>
@@ -62,7 +65,7 @@
         select
         <include refid="Base_Column_List" />
         from electricity_price_structure
-        where id = #{id,jdbcType=BIGINT}
+        where structure_id = #{structureId}
         and state = 0
     </select>
 
@@ -89,12 +92,9 @@
         </where>
     </sql>
 
-    <update id="updateByPrimaryKey" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
+    <update id="updateByStructureId" parameterType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         update electricity_price_structure
         <set>
-            <if test="structureId != null">
-                structure_id=#{structureId},
-            </if>
             <if test="structureName != null">
                 structure_name=#{structureName},
             </if>
@@ -105,7 +105,7 @@
                 city_codes=#{cityCodes},
             </if>
             <if test="districtCodes != null">
-                district_codes,
+                district_codes=#{districtCodes},
             </if>
             <if test="state != null">
                 state=#{state},
@@ -129,9 +129,12 @@
                 update_time=#{updateTime},
             </if>
         </set>
-        where state = 0
-        <if test="id!=null">
-            and id = #{id,jdbcType=BIGINT}
-        </if>
+        <where>
+            state = 0
+            <if test="structureId!=null">
+                and structure_id = #{structureId}
+            </if>
+        </where>
+
     </update>
 </mapper>

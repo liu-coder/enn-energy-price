@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.rdfa.framework.concurrent.api.exception.LockFailException;
+import top.rdfa.framework.concurrent.api.lock.RdfaDistributeLockFactory;
 import top.rdfa.framework.concurrent.redis.lock.RedissonRedDisLock;
 
 import java.util.concurrent.TimeUnit;
@@ -18,8 +19,11 @@ public class DisLockService {
     @Autowired
     private RedissonRedDisLock redDisLock;
 
+    @Autowired
+    private RdfaDistributeLockFactory rdfaDistributeLockFactory;
+
     public boolean biz(String lockKey) {
-        Lock lock= null;
+        Lock lock = null;
         // must use try catch finnaly to lock and unlock!
         try {
             lock = redDisLock.lock(lockKey);
@@ -35,13 +39,14 @@ public class DisLockService {
             logger.error(e.getMessage(), e);
             return false;
         } finally {
-             redDisLock.unlock(lock);
+            redDisLock.unlock(lock);
         }
     }
 
 
     /**
      * 获取并发锁
+     *
      * @param lockKey
      * @param timeout
      * @param leaseTime
@@ -68,12 +73,26 @@ public class DisLockService {
         return lock;
     }
 
+
     /**
      * 释放锁
+     *
      * @param lock
      */
     public void unlock(Lock lock) {
         redDisLock.unlock(lock);
     }
+
+    /**
+     * 获取并发锁对象
+     *
+     * @param lockKey
+     * @return lock
+     */
+    public Lock getLock(String lockKey) {
+
+        return rdfaDistributeLockFactory.getLock(lockKey);
+    }
+
 
 }
