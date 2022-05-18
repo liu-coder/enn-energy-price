@@ -15,14 +15,19 @@
         , area_code, date, temp_day, temp_night, create_time, update_time
     </sql>
 
-    <insert id="insertOrUpdate" parameterType="com.enn.energy.price.dal.po.mbg.CityWeather">
+    <insert id="batchInsertOrUpdate" parameterType="com.enn.energy.price.dal.po.mbg.CityWeather">
         insert into city_weather (area_code, date, temp_day, temp_night)
         values (#{areaCode,jdbcType=VARCHAR}, #{date,jdbcType=DATE}, #{tempDay,jdbcType=VARCHAR},
-                #{tempNight,jdbcType=VARCHAR}) ON DUPLICATE KEY
+        #{tempNight,jdbcType=VARCHAR})
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.areaCode,jdbcType=VARCHAR}, #{item.date,jdbcType=DATE}, #{item.tempDay,jdbcType=VARCHAR},
+            #{item.tempNight,jdbcType=VARCHAR})
+        </foreach>
+        ON DUPLICATE KEY
         UPDATE
-            temp_day =
+        temp_day =
         VALUES (temp_day), temp_night =
         VALUES (temp_night),
-            update_time = now()
+        update_time = now()
     </insert>
 </mapper>
