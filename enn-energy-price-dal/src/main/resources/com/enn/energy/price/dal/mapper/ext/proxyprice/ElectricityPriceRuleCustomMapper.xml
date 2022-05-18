@@ -40,7 +40,7 @@
     <select id="selectRulesByRuleIdList" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from electricity_price_rule where rule_id in
+        from electricity_price_rule where id in
         <foreach item="item" collection="list" separator="," close=")" open="(">
             #{item}
         </foreach>
@@ -50,7 +50,7 @@
     <update id="bacthDeletePriceRuleByRuleIds">
         update electricity_price_rule
         set state=#{state}, update_time=#{updateTime}
-        WHERE id IN
+        WHERE rule_id IN
         <foreach collection="ruleIds" item="ruleId" open="(" close=")" separator=",">
             #{ruleId}
         </foreach>
@@ -73,6 +73,9 @@
             <if test="updateTime != null">
                 update_time = #{updateTime},
             </if>
+            <if test="structureRuleId!=null">
+                structure_rule_id=#{structureRuleId},
+            </if>
         </set>
         <where>
             <if test="id!=null">
@@ -80,6 +83,9 @@
             </if>
             <if test="state!=null">
                 and state=#{state}
+            </if>
+            <if test="ruleId!=null">
+                and rule_id=#{ruleId}
             </if>
         </where>
     </update>

@@ -26,16 +26,16 @@ public interface ProxyElectricityPriceManagerBakService {
      * @param priceVersionStructuresCreateBO
      * @return Boolean
      */
-    Boolean createPriceVersionStructures(ElectricityPriceVersionStructuresCreateBO priceVersionStructuresCreateBO);
+    Boolean createPriceVersionStructures(ElectricityPriceVersionUpdateBO versionBO);
 
     /**
      * 校验电价体系以及电价规则
      * @param structureAndRuleValidateBO
      * @return ElectricityPriceStructureAndRuleValidateRespBO
      */
-    ElectricityPriceStructureAndRuleValidateRespBO validateStructureAndRule(ElectricityPriceStructureAndRuleValidateBO structureAndRuleValidateBO);
+    ElectricityPriceStructureAndRuleValidateRespBO validateStructureAndRule(ElectricityPriceVersionUpdateBO structureAndRuleValidateBO);
 
-    ExcelWriter downLoadTemplate();
+    ExcelWriter downLoadTemplate(String provinceCode);
 
     /**
      * @describtion 上传模板
@@ -44,7 +44,16 @@ public interface ProxyElectricityPriceManagerBakService {
      * @param
      * @return
      */
-    List<ElectricityPriceRuleCreateBO> uploadTemplate(ExcelReader reader, List<ElectricityPriceRuleCreateBO> priceRuleCreateBOList);
+    List<ElectricityPriceUpdateBO> uploadTemplate(ExcelReader reader, ElectricityPriceImportDataBO importDataBO);
+
+    /**
+     * @describtion 校验模板合法性
+     * @author sunjidong
+     * @date 2022/5/8 8:11
+     * @param reader
+     * @return ElectricityPriceUpdateBO
+     */
+    ElectricityPriceStructureAndRuleValidateRespBO validateTemplate(String provinceCode, ExcelReader reader);
 
     /**
      * @describtion 校验季节以及分时
@@ -71,7 +80,7 @@ public interface ProxyElectricityPriceManagerBakService {
      * @param
      * @return
      */
-    ElectricityPriceStructureCreateBO validateDeleteArea(String id, String structureId, List<String> districtCodeList);
+    ElectricityPriceStructureCreateBO validateDeleteArea(String structureId, List<String> districtCodeList);
 
     /**
      * @describtion 根据省编码查找版本以及版本下的所有体系详细内容
@@ -80,12 +89,12 @@ public interface ProxyElectricityPriceManagerBakService {
      * @param
      * @return
      */
-    List<ElectricityPriceStructureDetailBO> getLastVersionStructures(String provinceCode);
+    ElectricityPriceStructureListDetailBO getLastVersionStructures(String provinceCode);
 
     /**
      * 获取默认的体系详细内容
      * @author sunjidong
      * @date 2022/5/11 14:57
      */
-    ElectricityPriceDefaultStructureAndRuleBO getDefaultStructureDetail(String type, String provinceCode);
+    ElectricityPriceStructureDetailBO getDefaultStructureDetail(String type, String provinceCode);
 }

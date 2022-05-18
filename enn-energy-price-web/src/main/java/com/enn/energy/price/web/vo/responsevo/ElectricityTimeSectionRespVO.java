@@ -16,7 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ElectricityTimeSectionRespVO implements Serializable {
-    private Integer id;
+    private Long id;
     private String periods;
     private String periodsName;
     private String startTime;

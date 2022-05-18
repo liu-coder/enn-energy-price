@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ElectricityPriceSeasonDetailBO implements Serializable {
     private static final long serialVersionUID = 3493749132121267258L;
-    private Long seasonSectionId;
+    private String seasonSectionId;
     private String seasonName;
     private List<SeasonDateBO> seasonDateList;
     private List<ElectricityPriceStrategyBO> electricityPriceStrategyBOList;

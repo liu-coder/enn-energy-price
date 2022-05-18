@@ -4,6 +4,8 @@ import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO;
 import com.enn.energy.price.dal.po.mbg.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -18,6 +20,9 @@ public interface ElectricityPriceVersionUpdateBOConverMapper {
      * @param electricityPriceStructureUpdateBO
      * @return
      */
+    @Mappings( {
+            @Mapping(source = "id",target = "structureId")
+    } )
     ElectricityPriceStructure electricityPriceStructureBOTOPO(ElectricityPriceStructureUpdateBO electricityPriceStructureUpdateBO);
 
     /**

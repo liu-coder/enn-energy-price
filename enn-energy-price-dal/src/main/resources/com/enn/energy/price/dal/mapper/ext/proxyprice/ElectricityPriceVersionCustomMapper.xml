@@ -52,44 +52,23 @@
             <if test="versionId != null">
                 and version_id = #{versionId,jdbcType=VARCHAR}
             </if>
-            <if test="versionName != null">
-                and  version_name = #{versionName,jdbcType=VARCHAR}
-            </if>
             <if test="provinceCode != null">
                 and  province_code = #{provinceCode,jdbcType=VARCHAR}
-            </if>
-            <if test="province != null">
-                and province = #{province,jdbcType=VARCHAR}
             </if>
             <if test="cityCode != null">
                 and city_code = #{cityCode,jdbcType=VARCHAR}
             </if>
-            <if test="city != null">
-                and city = #{city,jdbcType=VARCHAR}
-            </if>
             <if test="districtCode != null">
                 and district_code = #{districtCode,jdbcType=VARCHAR}
-            </if>
-            <if test="district != null">
-                and district = #{district,jdbcType=VARCHAR}
             </if>
             <if test="tenantId != null">
                 and tenant_id = #{tenantId,jdbcType=VARCHAR}
             </if>
-            <if test="tenantName != null">
-                and tenant_name = #{tenantName,jdbcType=VARCHAR}
-            </if>
             <if test="systemCode != null">
                 and system_code = #{systemCode,jdbcType=VARCHAR}
             </if>
-            <if test="systemName != null">
-                and system_name = #{systemName,jdbcType=VARCHAR}
-            </if>
             <if test="equipmentId != null">
                 and equipment_id = #{equipmentId,jdbcType=VARCHAR}
-            </if>
-            <if test="equipmentName != null">
-                and equipment_name = #{equipmentName,jdbcType=VARCHAR}
             </if>
             <if test="startDate != null">
                 and start_date = #{startDate,jdbcType=DATE}
@@ -105,18 +84,6 @@
             </if>
             <if test="state != null">
                 and state = #{state,jdbcType=INTEGER}
-            </if>
-            <if test="creator != null">
-                and creator = #{creator,jdbcType=VARCHAR}
-            </if>
-            <if test="updator != null">
-                and updator = #{updator,jdbcType=VARCHAR}
-            </if>
-            <if test="createTime != null">
-                and create_time = #{createTime,jdbcType=TIMESTAMP}
-            </if>
-            <if test="updateTime != null">
-                and update_time = #{updateTime,jdbcType=TIMESTAMP}
             </if>
             <if test="lastVersionId != null">
                 and last_version_id = #{lastVersionId,jdbcType=VARCHAR}
@@ -140,11 +107,12 @@
 
     <select id="queryStructuresByCondition" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceStructure">
         select
-        <include refid="Base_Column_List" />
+        s.id, s.structure_id, s.structure_name, s.province_code, s.city_codes, s.district_codes, s.state,
+        s.parentId, s.version_id, s.creator, s.updator, s.create_time, s.update_time
         from electricity_price_structure s
         left join electricity_price_version v
         on s.version_id = v.version_id and v.state = 0
-        where v.province_code = #{provinceCode} and end_date = #{endDate}
+        where v.province_code = #{provinceCode} and end_date = #{endDate,jdbcType=DATE}
         and s.state = 0
     </select>
 

@@ -17,12 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 public class ElectricityPriceStructureUpdateBO implements Serializable {
     private static final long serialVersionUID = 5420388115986723646L;
-    private Long id;
+    private String id;
+    private String structureId;
+    private String parentid;
+    private String versionId;
     private String structureName;
     private String provinceCode;
     private String cityCodes;
     private String districtCodes;
     private Integer changeType;
+    private Byte state;
     private List<ElectricityPriceUpdateBO> electricityPriceUpdateBOList;
     private List<ElectricityPriceStructureRuleUpdateBO> electricityPriceStructureRuleUpdateBOList;
 }

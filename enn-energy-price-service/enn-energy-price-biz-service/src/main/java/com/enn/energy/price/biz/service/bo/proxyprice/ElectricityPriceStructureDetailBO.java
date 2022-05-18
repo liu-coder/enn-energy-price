@@ -19,10 +19,12 @@ import java.util.List;
 public class ElectricityPriceStructureDetailBO implements Serializable {
     private static final long serialVersionUID = 2338373541655608839L;
     private String id;
+    private String structureId;
     private String structureName;
     private String provinceCode;
     private String cityCodes;
     private String districtCodes;
+    private String parentid;
     private List<ElectricityPriceDetailBO> electricityPriceDetailBOList;
     private List<ElectricityPriceStructureRuleDetailBO> electricityPriceStructureRuleDetailBOS;
 }
