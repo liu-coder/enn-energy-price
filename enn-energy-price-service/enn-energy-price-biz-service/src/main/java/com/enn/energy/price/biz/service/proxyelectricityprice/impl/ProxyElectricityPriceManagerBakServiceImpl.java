@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.rdfa.framework.auth.client.UnifyAuthContextHolder;
 import top.rdfa.framework.auth.facade.entity.UserInfo;
+
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
@@ -369,7 +370,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         // todo 后期如果加上权限，就放开这边
 //        priceVersionPO.setCreator(userInfo.getUserId());
         //更新上一个版本
-        if(ObjectUtil.isNotNull(lastPriceVersion)){
+        if (ObjectUtil.isNotNull(lastPriceVersion)) {
             electricityPriceVersionMapper.updateByPrimaryKey(lastPriceVersion);
         }
         //新增版本
@@ -506,7 +507,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
 
         //6、校验电价规则的价格
         ElectricityPriceStructureAndRuleValidateRespBO validatePriceRespBO = doValidatePrice(priceRuleValidateReqVOList);
-        if(ObjectUtil.isNotNull(validatePriceRespBO)){
+        if (ObjectUtil.isNotNull(validatePriceRespBO)) {
             return validatePriceRespBO;
         }
 
@@ -528,7 +529,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         //自定义的
         List<ElectricityPriceStructureRuleUpdateBO> customStructureRuleCreateBOList = priceStructureRulePartitions.get(Boolean.FALSE);
         List<ElectricityPriceStructureRuleUpdateBO> noExistTimeSectionStructureRuleList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(customStructureRuleCreateBOList)) {
+        if (CollUtil.isNotEmpty(customStructureRuleCreateBOList)) {
             //不存在分时区间的季节体系
             noExistTimeSectionStructureRuleList
                     = customStructureRuleCreateBOList.stream().filter(priceStructureRule -> {
@@ -544,7 +545,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             }).collect(Collectors.toList());
         }
         boolean noTimeSection = true;
-        if(CollUtil.isNotEmpty(defaultStructureRuleCreateBOList)){
+        if (CollUtil.isNotEmpty(defaultStructureRuleCreateBOList)) {
             //判断默认的是否配置分时
             noTimeSection = defaultStructureRuleCreateBOList.get(CommonConstant.INDUSTRY_TYPE).getElectricityPriceSeasonUpdateReqVOList().stream()
                     .allMatch(seasonCreateBO -> CollUtil.isEmpty(seasonCreateBO.getElectricityPriceStrategyBOList()));
@@ -677,7 +678,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
     private boolean validateStrategyPrice(ElectricityPriceStructureAndRuleValidateRespBO validateRespBO,
                                           Map<String, List<ElectricityPriceUpdateBO>> priceRuleValidateReqVOListGroupingByStrategy) {
         List<ElectricityPriceUpdateBO> doubleStrategyPriceRuleCreateBOList = priceRuleValidateReqVOListGroupingByStrategy.get(String.valueOf(StrategyEnum.DOUBLESTRATEGY.getCode()));
-        if(CollUtil.isNotEmpty(doubleStrategyPriceRuleCreateBOList)){
+        if (CollUtil.isNotEmpty(doubleStrategyPriceRuleCreateBOList)) {
             List<String> doubleStrategyPriceRuleList = getLackCapacityAndDemandCapacityPriceList(StrategyEnum.DOUBLESTRATEGY.getCode(), doubleStrategyPriceRuleCreateBOList);
             if (CollUtil.isNotEmpty(doubleStrategyPriceRuleList)) {
                 validateRespBO.setLackCapacityAndDemandCapacityPriceList(doubleStrategyPriceRuleList);
@@ -686,7 +687,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         }
         //单一制
         List<ElectricityPriceUpdateBO> singleStrategyPriceRuleCreateBOList = priceRuleValidateReqVOListGroupingByStrategy.get(String.valueOf(StrategyEnum.SINGLESTRATEGY.getCode()));
-        if(CollUtil.isNotEmpty(singleStrategyPriceRuleCreateBOList)){
+        if (CollUtil.isNotEmpty(singleStrategyPriceRuleCreateBOList)) {
             List<String> singleStrategyPriceRuleList = getLackCapacityAndDemandCapacityPriceList(StrategyEnum.SINGLESTRATEGY.getCode(), singleStrategyPriceRuleCreateBOList);
             if (CollUtil.isNotEmpty(singleStrategyPriceRuleList)) {
                 validateRespBO.setNeedLessCapacityAndDemandCapacityPriceList(singleStrategyPriceRuleList);
@@ -915,7 +916,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                 DateTime startTime = DateUtil.parse(timeSectionCreateBO.getStartTime(), DatePattern.NORM_DATETIME_PATTERN);
                 dayMs += DateUtil.between(startTime, endTime, DateUnit.SECOND);
             }
-            if(dayMs == msOfWholeDay){
+            if (dayMs == msOfWholeDay) {
                 return false;
             }
             return true;
@@ -944,7 +945,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             days += DateUtil.betweenDay(startDateTime, endDateTime, true);
         }
         days += allSeasonSectionCreateBOList.size() - 1;
-        if(days == allYearDays){
+        if (days == allYearDays) {
             return false;
         }
         return true;
@@ -1015,19 +1016,19 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         excelWriter.writeCellValue(11, 1, CommonConstant.TRANSFORMER_CAPACITY_CHINA);
 
         //初始化下拉列表
-        if(CollUtil.isNotEmpty(industryList)){
+        if (CollUtil.isNotEmpty(industryList)) {
             List<String> industries = industryList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
             String[] industryArray = industries.toArray(new String[industries.size()]);
-            excelWriter.addSelect(new CellRangeAddressList(2, 500, 0, 0),  industryArray);
+            excelWriter.addSelect(new CellRangeAddressList(2, 500, 0, 0), industryArray);
         }
-        if(CollUtil.isNotEmpty(strategyList)){
+        if (CollUtil.isNotEmpty(strategyList)) {
             List<String> strategies = strategyList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
-            String[] strategyArray = strategies.toArray( new String [strategies.size()] );
+            String[] strategyArray = strategies.toArray(new String[strategies.size()]);
             excelWriter.addSelect(new CellRangeAddressList(2, 500, 1, 1), strategyArray);
         }
-        if(CollUtil.isNotEmpty(voltageLevelList)){
+        if (CollUtil.isNotEmpty(voltageLevelList)) {
             List<String> voltageLevels = voltageLevelList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
-            String[] voltageLevelArray = voltageLevels.toArray( new String [voltageLevels.size()] );
+            String[] voltageLevelArray = voltageLevels.toArray(new String[voltageLevels.size()]);
             excelWriter.addSelect(new CellRangeAddressList(2, 500, 2, 2), voltageLevelArray);
         }
 
@@ -1071,31 +1072,31 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             String strategyName = StrUtil.isBlank((String) rowRecord.get(1)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(1);
             String voltageLevelName = StrUtil.isBlank((String) rowRecord.get(2)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(2);
             String industryCode = CommonConstant.STR_BLANK;
-            if(CollUtil.isNotEmpty(industryList)){
+            if (CollUtil.isNotEmpty(industryList)) {
                 industryCode = industryList.stream().filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(industryName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
             }
             String voltageLevelCode = CommonConstant.STR_BLANK;
-            if(CollUtil.isNotEmpty(voltageLevelList)){
+            if (CollUtil.isNotEmpty(voltageLevelList)) {
                 voltageLevelCode = voltageLevelList.stream()
                         .filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(voltageLevelName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
             }
             String strategyCode = CommonConstant.STR_BLANK;
-            if(CollUtil.isNotEmpty(strategyList)){
+            if (CollUtil.isNotEmpty(strategyList)) {
                 strategyCode = strategyList.stream()
                         .filter(priceDictionaryBO -> priceDictionaryBO.getName().equals(strategyName.trim())).findFirst().orElse(new ElectricityPriceDictionaryBO()).getCode();
             }
             priceRuleCreateBO.setIndustry(industryCode);
             priceRuleCreateBO.setStrategy(strategyCode);
             priceRuleCreateBO.setVoltageLevel(voltageLevelCode);
-            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(10));
-            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(11));
-            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(3));
-            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(4));
-            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(5));
-            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(6));
-            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(7));
-            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(8));
-            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(9));
+            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(10));
+            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(11));
+            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(3));
+            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(4));
+            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(5));
+            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(6));
+            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(7));
+            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(8));
+            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(9));
             return priceRuleCreateBO;
         }).collect(Collectors.toList());
 
@@ -1140,13 +1141,14 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
 
     /**
      * 校验数据的合法性
+     *
      * @author sunjidong
      * @date 2022/5/16 22:19
      */
     @Override
     public ElectricityPriceStructureAndRuleValidateRespBO validateTemplate(String provinceCode, ExcelReader reader) {
         List<List<Object>> records = reader.read(2);
-        if(CollUtil.isEmpty(records)){
+        if (CollUtil.isEmpty(records)) {
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }
 
@@ -1155,19 +1157,19 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         //用电行业
         List<ElectricityPriceDictionaryBO> industryList = priceElectricityDictionaries.get(CommonConstant.INDUSTRY_TYPE);
         List<String> industryNameList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(industryList)){
+        if (CollUtil.isNotEmpty(industryList)) {
             industryNameList = industryList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
         }
         //电价类型
         List<ElectricityPriceDictionaryBO> voltageLevelList = priceElectricityDictionaries.get(CommonConstant.VOLTAGELEVEL_TYPE);
         List<String> voltageLevelNameList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(voltageLevelList)){
+        if (CollUtil.isNotEmpty(voltageLevelList)) {
             voltageLevelNameList = voltageLevelList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
         }
         //两部制、一部制
         List<ElectricityPriceDictionaryBO> strategyList = priceElectricityDictionaries.get(CommonConstant.STRATEGY_TYPE);
         List<String> strategyNameList = new ArrayList<>();
-        if(CollUtil.isNotEmpty(strategyList)){
+        if (CollUtil.isNotEmpty(strategyList)) {
             strategyNameList = strategyList.stream().map(ElectricityPriceDictionaryBO::getName).collect(Collectors.toList());
         }
 
@@ -1193,15 +1195,15 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
             priceRuleCreateBO.setIndustry(industryName);
             priceRuleCreateBO.setStrategy(strategyName);
             priceRuleCreateBO.setVoltageLevel(voltageLevelName);
-            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(10));
-            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(11));
-            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(3));
-            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(4));
-            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(5));
-            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(6));
-            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(7));
-            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(8));
-            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String)rowRecord.get(9));
+            priceRuleCreateBO.setMaxCapacityPrice(StrUtil.isBlank((String) rowRecord.get(10)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(10));
+            priceRuleCreateBO.setTransformerCapacityPrice(StrUtil.isBlank((String) rowRecord.get(11)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(11));
+            priceRuleCreateBO.setConsumptionPrice(StrUtil.isBlank((String) rowRecord.get(3)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(3));
+            priceRuleCreateBO.setDistributionPrice(StrUtil.isBlank((String) rowRecord.get(4)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(4));
+            priceRuleCreateBO.setGovAddPrice(StrUtil.isBlank((String) rowRecord.get(5)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(5));
+            priceRuleCreateBO.setSharpPrice(StrUtil.isBlank((String) rowRecord.get(6)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(6));
+            priceRuleCreateBO.setPeakPrice(StrUtil.isBlank((String) rowRecord.get(7)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(7));
+            priceRuleCreateBO.setLevelPrice(StrUtil.isBlank((String) rowRecord.get(8)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(8));
+            priceRuleCreateBO.setValleyPrice(StrUtil.isBlank((String) rowRecord.get(9)) ? CommonConstant.STR_BLANK : (String) rowRecord.get(9));
             return priceRuleCreateBO;
         }).collect(Collectors.toList());
 
@@ -1209,12 +1211,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
 
         validateRespBO = doValidateCombination(priceRuleRecords, industryNameList, strategyNameList, voltageLevelNameList);
-        if(ObjectUtil.isNotNull(validateRespBO)){
+        if (ObjectUtil.isNotNull(validateRespBO)) {
             return validateRespBO;
         }
 
         validateRespBO = doValidatePrice(priceRuleRecords);
-        if(ObjectUtil.isNotNull(validateRespBO)){
+        if (ObjectUtil.isNotNull(validateRespBO)) {
             return validateRespBO;
         }
         return null;
@@ -1222,6 +1224,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
 
     /**
      * 校验体系的组合是否合法
+     *
      * @author sunjidong
      * @date 2022/5/17 14:33
      */
@@ -1229,7 +1232,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                                                                                  List<String> industryNameList,
                                                                                  List<String> strategyNameList,
                                                                                  List<String> voltageLevelNameList
-                                                                                 ){
+    ) {
         ElectricityPriceStructureAndRuleValidateRespBO validateRespBO;
         List<String> illegalIndustryList = new ArrayList<>();
         List<String> illegalStrategyList = new ArrayList<>();
@@ -1242,7 +1245,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                 illegalIndustryList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalIndustryList)){
+        if (CollUtil.isNotEmpty(illegalIndustryList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalIndustry(illegalIndustryList);
             return validateRespBO;
@@ -1256,7 +1259,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                 illegalStrategyList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalStrategyList)){
+        if (CollUtil.isNotEmpty(illegalStrategyList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalStrategy(illegalStrategyList);
             return validateRespBO;
@@ -1270,7 +1273,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                 illegalVoltageLevelList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalVoltageLevelList)){
+        if (CollUtil.isNotEmpty(illegalVoltageLevelList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalVoltageLevel(illegalVoltageLevelList);
             return validateRespBO;
@@ -1280,10 +1283,11 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
 
     /**
      * 校验电价规则的电价是否合法
+     *
      * @author sunjidong
      * @date 2022/5/17 14:34
      */
-    private ElectricityPriceStructureAndRuleValidateRespBO doValidatePrice(List<ElectricityPriceUpdateBO> priceRuleRecords){
+    private ElectricityPriceStructureAndRuleValidateRespBO doValidatePrice(List<ElectricityPriceUpdateBO> priceRuleRecords) {
         List<String> illegalPeekList = new ArrayList<>();
 
         List<String> illegalSharpList = new ArrayList<>();
@@ -1308,12 +1312,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String consumptionPrice = rowRecord.getConsumptionPrice().trim();
-            if(StrUtil.isNotBlank(consumptionPrice)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, consumptionPrice)){
+            if (StrUtil.isNotBlank(consumptionPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, consumptionPrice)) {
                 illegalConsumptionPriceList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalConsumptionPriceList)){
+        if (CollUtil.isNotEmpty(illegalConsumptionPriceList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalConsumptionPriceList(illegalConsumptionPriceList);
             return validateRespBO;
@@ -1323,12 +1327,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String distributionPrice = rowRecord.getDistributionPrice().trim();
-            if(StrUtil.isNotBlank(distributionPrice)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, distributionPrice)){
+            if (StrUtil.isNotBlank(distributionPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, distributionPrice)) {
                 illegalDistributionPriceList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalDistributionPriceList)){
+        if (CollUtil.isNotEmpty(illegalDistributionPriceList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalDistributionPriceList(illegalDistributionPriceList);
             return validateRespBO;
@@ -1338,12 +1342,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String govAddPrice = rowRecord.getGovAddPrice().trim();
-            if(StrUtil.isNotBlank(govAddPrice)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, govAddPrice)){
+            if (StrUtil.isNotBlank(govAddPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, govAddPrice)) {
                 illegalGovAddPriceList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalGovAddPriceList)){
+        if (CollUtil.isNotEmpty(illegalGovAddPriceList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalGovAddPriceList(illegalGovAddPriceList);
             return validateRespBO;
@@ -1353,12 +1357,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String sharp = rowRecord.getSharpPrice().trim();
-            if(StrUtil.isNotBlank(sharp)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, sharp)){
+            if (StrUtil.isNotBlank(sharp)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, sharp)) {
                 illegalSharpList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalSharpList)){
+        if (CollUtil.isNotEmpty(illegalSharpList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalSharpList(illegalSharpList);
             return validateRespBO;
@@ -1368,12 +1372,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String peek = rowRecord.getPeakPrice().trim();
-            if(StrUtil.isNotBlank(peek)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, peek)){
+            if (StrUtil.isNotBlank(peek)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, peek)) {
                 illegalPeekList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalPeekList)){
+        if (CollUtil.isNotEmpty(illegalPeekList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalPeekList(illegalPeekList);
             return validateRespBO;
@@ -1383,12 +1387,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String level = rowRecord.getLevelPrice().trim();
-            if(StrUtil.isNotBlank(level)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, level)){
+            if (StrUtil.isNotBlank(level)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, level)) {
                 illegalLevelList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalLevelList)){
+        if (CollUtil.isNotEmpty(illegalLevelList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalLevelList(illegalLevelList);
             return validateRespBO;
@@ -1398,12 +1402,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String valley = rowRecord.getValleyPrice().trim();
-            if(StrUtil.isNotBlank(valley)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, valley)){
+            if (StrUtil.isNotBlank(valley)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, valley)) {
                 illegalValleyList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalValleyList)){
+        if (CollUtil.isNotEmpty(illegalValleyList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalValleyList(illegalValleyList);
             return validateRespBO;
@@ -1413,12 +1417,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String maxCapacityPrice = rowRecord.getMaxCapacityPrice().trim();
-            if(StrUtil.isNotBlank(maxCapacityPrice)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, maxCapacityPrice)){
+            if (StrUtil.isNotBlank(maxCapacityPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, maxCapacityPrice)) {
                 illegalMaxCapacityPriceList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalMaxCapacityPriceList)){
+        if (CollUtil.isNotEmpty(illegalMaxCapacityPriceList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalMaxCapacityPriceList(illegalMaxCapacityPriceList);
             return validateRespBO;
@@ -1428,12 +1432,12 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         for (int i = 0; i < priceRuleRecords.size(); i++) {
             ElectricityPriceUpdateBO rowRecord = priceRuleRecords.get(i);
             String transformerCapacityPrice = rowRecord.getTransformerCapacityPrice().trim();
-            if(StrUtil.isNotBlank(transformerCapacityPrice)
-                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, transformerCapacityPrice)){
+            if (StrUtil.isNotBlank(transformerCapacityPrice)
+                    && !ReUtil.isMatch(CommonConstant.DECIMAL_PATTERN, transformerCapacityPrice)) {
                 illegalTransformerCapacityPriceList.add(String.valueOf(i + 3));
             }
         }
-        if(CollUtil.isNotEmpty(illegalTransformerCapacityPriceList)){
+        if (CollUtil.isNotEmpty(illegalTransformerCapacityPriceList)) {
             validateRespBO = new ElectricityPriceStructureAndRuleValidateRespBO();
             validateRespBO.setIllegalTransformerCapacityPriceList(illegalTransformerCapacityPriceList);
             return validateRespBO;
@@ -1552,6 +1556,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
 
     /**
      * 校验季节以及分时的区间
+     *
      * @author sunjidong
      * @date 2022/5/17 13:59
      */
@@ -1563,7 +1568,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
                     .collect(Collectors.partitioningBy(timeSectionCreateBO -> StrUtil.isBlank(timeSectionCreateBO.getTemperature())));
             //默认分时区间集合
             List<ElectricityPriceStrategyBO> defaultTimeSectionCreateBOList = booleanTimeSectionListMap.get(Boolean.TRUE);
-            if(CollUtil.isNotEmpty(defaultTimeSectionCreateBOList)){
+            if (CollUtil.isNotEmpty(defaultTimeSectionCreateBOList)) {
                 validateResult = intersectionOfTime(defaultTimeSectionCreateBOList);
                 if (validateResult) {
                     validateRespBO.setIfExistIntersectionTimeSection(Boolean.TRUE);
@@ -1579,7 +1584,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
 
             //修正策略分时区间集合
             List<ElectricityPriceStrategyBO> amendTimeSectionCreateBOList = booleanTimeSectionListMap.get(Boolean.FALSE);
-            if(CollUtil.isNotEmpty(amendTimeSectionCreateBOList)){
+            if (CollUtil.isNotEmpty(amendTimeSectionCreateBOList)) {
                 validateResult = intersectionOfTime(amendTimeSectionCreateBOList);
                 if (validateResult) {
                     validateRespBO.setIfExistIntersectionTimeSection(Boolean.TRUE);
@@ -1932,7 +1937,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         //组装体系价格列表
         List<ElectricityPriceDetailPO> priceDetailPOList = electricityPriceCustomMapper.getPriceDetailListByStructureId(structuredId);
         List<ElectricityPriceDetailBO> electricityPriceDetailBOs = ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceDetailPOListToBOList(priceDetailPOList);
-        electricityPriceDetailBOs = electricityPriceDetailBOs.stream().peek( priceDetail -> {
+        electricityPriceDetailBOs = electricityPriceDetailBOs.stream().peek(priceDetail -> {
             priceDetail.setPriceId(null);
             priceDetail.setRuleId(null);
         }).collect(Collectors.toList());
@@ -1961,7 +1966,7 @@ public class ProxyElectricityPriceManagerBakServiceImpl implements ProxyElectric
         DateTime endDateOfYear3 = DateUtil.parse("2022-12-31", DatePattern.NORM_DATE_PATTERN);
         //一年经过的天数
         long allYearDays3 = DateUtil.between(firstDateOfYear3, endDateOfYear3, DateUnit.DAY);
-        long l = allYearDays + allYearDays2 +allYearDays3;
+        long l = allYearDays + allYearDays2 + allYearDays3;
         System.out.println(l);
     }
 }
