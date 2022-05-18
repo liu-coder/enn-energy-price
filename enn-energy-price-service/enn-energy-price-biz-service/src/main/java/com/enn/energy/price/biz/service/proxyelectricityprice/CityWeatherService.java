@@ -104,7 +104,7 @@ public class CityWeatherService {
     @Transactional(rollbackFor = Exception.class)
     public void setCityTemperature(String weatherResult, String cityCode, Date date) {
 
-        JSONObject resultObj = null;
+        JSONObject resultObj;
         try {
             resultObj = JSONObject.parseObject(weatherResult);
         } catch (Exception e) {
