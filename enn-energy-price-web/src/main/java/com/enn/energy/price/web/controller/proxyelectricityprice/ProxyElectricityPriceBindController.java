@@ -5,23 +5,19 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceBindService;
+import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceManagerService;
 import com.enn.energy.price.common.constants.CommonConstant;
+import com.enn.energy.price.common.enums.BoolLogic;
 import com.enn.energy.price.common.enums.ChangeTypeEum;
 import com.enn.energy.price.common.enums.ResponseCode;
 import com.enn.energy.price.common.error.ErrorCodeEnum;
 import com.enn.energy.price.common.error.PriceException;
 import com.enn.energy.price.core.service.impl.DisLockService;
 import com.enn.energy.price.web.convertMapper.ElectricityPriceBindConverMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionCreateBOConvertMapper;
-import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionUpdateConverMapper;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceBindDetailQueryReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceBindRemoveReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceBindReqVO;
-import com.enn.energy.price.web.vo.requestvo.ElectricityPriceBindVersionsReqVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceBindDetailRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceBindNodeStatusRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceVersionRespVO;
-import com.enn.energy.price.web.vo.responsevo.ElectricityPriceVersionsByBindAreaRespVO;
+import com.enn.energy.price.web.convertMapper.ElectricityPriceStrutureConverMapper;
+import com.enn.energy.price.web.convertMapper.ElectricityPriceVersionConverMapper;
+import com.enn.energy.price.web.vo.requestvo.*;
+import com.enn.energy.price.web.vo.responsevo.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -50,6 +46,8 @@ public class ProxyElectricityPriceBindController {
 
     @Resource
     private ProxyElectricityPriceBindService proxyElectricityPriceBindService;
+    @Resource
+    private ProxyElectricityPriceManagerService proxyElectricityPriceManagerService;
 
     @Autowired
     private DisLockService disLockService;
@@ -87,7 +85,7 @@ public class ProxyElectricityPriceBindController {
     @ApiOperation("解绑")
     public RdfaResult<String> unBoundPriceRule(@RequestBody @NotNull @Validated ElectricityPriceBindRemoveReqVO electricityPriceBindRemoveReqVO) {
         log.info("解绑代理电价:{}", JSON.toJSONString(electricityPriceBindRemoveReqVO));
-        ElectricityPriceBindRemoveBO electricityPriceBindRemoveBO = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceBindRemoveReqVOToBO(electricityPriceBindRemoveReqVO);
+        ElectricityPriceBindRemoveBO electricityPriceBindRemoveBO = ElectricityPriceBindConverMapper.INSTANCE.priceBindRemoveReqVOToBO(electricityPriceBindRemoveReqVO);
         String lockKey = CommonConstant.LOCK_KEY + CommonConstant.KEY_SPERATOR + CommonConstant.RedisKey.LOCK_PROXY_PRICE_UNBOUND_PREFIX + CommonConstant.KEY_SPERATOR + electricityPriceBindRemoveReqVO.getId();
         Lock lock = null;
         try {
@@ -111,7 +109,7 @@ public class ProxyElectricityPriceBindController {
     /**
      * 根据节点id 查看绑定电价详情 选择节点+当前有效版本的绑定关系（已绑定和已失效的查询）
      *
-     * @param nodeId
+     * @param electricityPriceBindDetailQueryReqVO
      * @return
      */
     @PostMapping(value = "/getPriceBindDetail")
@@ -123,6 +121,22 @@ public class ProxyElectricityPriceBindController {
         return RdfaResult.success(electricityPriceBindDetailRespVO);
     }
 
+    @PostMapping(value = "/getPriceBindDetailByEdit")
+    @ApiOperation("编辑时查看，渲染级联选择")
+    public RdfaResult<ElectricityPriceBindEditDetailRespVO> getPriceBindDetailByEdit(@RequestBody @NotNull @Validated ElectricityPriceBindEditReqVO electricityPriceBindEditReqVO) {
+        //根据节点id查询绑定的规则id，对应的 省市区，版本，体系，以及具体的规则详情
+        ElectricityPriceBindEditBO electricityPriceBindEditBO = ElectricityPriceBindConverMapper.INSTANCE.ElectricityPriceBindEditReqVOTOBO(electricityPriceBindEditReqVO);
+        ElectricityPriceBindEditDetailBO electricityPriceBindDetailBO = proxyElectricityPriceBindService.getPriceBindDetailByEdit(electricityPriceBindEditBO);
+        ElectricityPriceBindEditDetailRespVO electricityPriceBindDetailRespVO = ElectricityPriceBindConverMapper.INSTANCE.ElectricityPriceBindDetailByEditBOTOVO(electricityPriceBindDetailBO);
+        /**
+         * 根据版本id查询体系列表
+         */
+        doStructAndPrice(electricityPriceBindDetailRespVO.getElectricityPriceBindEditDetailItemRespVO());
+        if (BoolLogic.YES.getCode().equals(electricityPriceBindEditBO.getNextChangeFlag())) {
+            doStructAndPrice(electricityPriceBindDetailRespVO.getNextVersionPriceBindVO());
+        }
+        return RdfaResult.success(electricityPriceBindDetailRespVO);
+    }
     //业务树查询，根据企业id查询根节点列表（包含根节点所属的省市区）
 
     /**
@@ -153,18 +167,16 @@ public class ProxyElectricityPriceBindController {
     @PostMapping("/getElectricityPriceVersionByBindArea")
     @ApiOperation("获取版本列表")
     public RdfaResult<ElectricityPriceVersionsByBindAreaRespVO> getElectricityPriceVersionByBindArea(@RequestBody ElectricityPriceBindVersionsReqVO electricityPriceBindVersionsReqVO) {
-        ElectricityPriceBindVersionsBO electricityPriceBindVersionsBO = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.electricityPriceBindVersionsReqVOToBO(electricityPriceBindVersionsReqVO);
+        ElectricityPriceBindVersionsBO electricityPriceBindVersionsBO = ElectricityPriceBindConverMapper.INSTANCE.electricityPriceBindVersionsReqVOToBO(electricityPriceBindVersionsReqVO);
         ElectricityPriceVersionsByBindAreaBO electricityPriceVersionsByBindAreaBO = proxyElectricityPriceBindService.queryElectricityPriceVersionByBindArea(electricityPriceBindVersionsBO);
-        List<ElectricityPriceVersionRespVO> priceVersionRespVOList = ElectricityPriceVersionUpdateConverMapper.INSTANCE.electricityPriceVersionRespBOListToVOList(electricityPriceVersionsByBindAreaBO.getElectricityPriceVersionBOS());
+        List<ElectricityPriceVersionRespVO> priceVersionRespVOList = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionRespBOListToVOList(electricityPriceVersionsByBindAreaBO.getElectricityPriceVersionBOS());
         ElectricityPriceVersionsByBindAreaRespVO electricityPriceVersionsByBindAreaRespVO = ElectricityPriceVersionsByBindAreaRespVO.builder().electricityPriceVersionRespVOList(priceVersionRespVOList).provinceCode(electricityPriceVersionsByBindAreaBO.getProvinceCode()).cityCode(electricityPriceVersionsByBindAreaBO.getCityCode()).districtCode(electricityPriceVersionsByBindAreaBO.getDistrictCode()).build();
         return RdfaResult.success(electricityPriceVersionsByBindAreaRespVO);
     }
 
 
     private RdfaResult<Boolean> doBindPrice(ElectricityPriceBindReqVO electricityPriceBindReqVO, Integer changeType) {
-//        ElectricityPriceBindBO electricityPriceBindBO = BeanUtil.toBean(electricityPriceBindReqVO, ElectricityPriceBindBO.class);
-//        electricityPriceBindBO.setNextVersionStructurePriceBO(BeanUtil.copyProperties(electricityPriceBindReqVO.getNextVersionStructurePrice(), ElectricityPriceBindBO.NextVersionStructurePriceBO.class));
-        ElectricityPriceBindBO electricityPriceBindBO = ElectricityPriceVersionCreateBOConvertMapper.INSTANCE.priceBindReqVOToBO(electricityPriceBindReqVO);
+        ElectricityPriceBindBO electricityPriceBindBO = ElectricityPriceBindConverMapper.INSTANCE.priceBindReqVOToBO(electricityPriceBindReqVO);
         electricityPriceBindBO.setAdjust(electricityPriceBindReqVO.getAdjust().byteValue());
         electricityPriceBindBO.setNextChangeFlag(electricityPriceBindReqVO.getNextChangeFlag().byteValue());
         electricityPriceBindBO.setChangeType(changeType);
@@ -186,6 +198,16 @@ public class ProxyElectricityPriceBindController {
             disLockService.unlock(lock);
         }
         return RdfaResult.fail(ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorCode(), ErrorCodeEnum.REIDS_LOCK_ERROR.getErrorMsg());
+    }
+
+    private void doStructAndPrice(ElectricityPriceBindEditDetailItemRespVO electricityPriceBindEditDetailItemRespVO) {
+        List<ElectricityPriceStructureBO> electricityPriceStructureBOS = proxyElectricityPriceManagerService.queryPriceVersionStructureList(electricityPriceBindEditDetailItemRespVO.getVersionId());
+        List<ElectricityPriceStructureRespVO> electricityPriceStructureRespVOS = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureRespBOListToVOList(electricityPriceStructureBOS);
+        electricityPriceBindEditDetailItemRespVO.setElectricityPriceStructureRespVOList(electricityPriceStructureRespVOS);
+        //体系下价格和季节分时区域等详情
+        ElectricityPriceStructureDetailBO structureDetail = proxyElectricityPriceManagerService.getStructureDetail(electricityPriceBindEditDetailItemRespVO.getStructureId());
+        ElectricityPriceStructureDetailRespVO electricityPriceStructureDetailRespVO = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureDetailBOToVO(structureDetail);
+        electricityPriceBindEditDetailItemRespVO.setElectricityPriceStructureDetailRespVO(electricityPriceStructureDetailRespVO);
     }
 
 }

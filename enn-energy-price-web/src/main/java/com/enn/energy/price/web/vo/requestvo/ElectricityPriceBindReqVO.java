@@ -25,6 +25,14 @@ public class ElectricityPriceBindReqVO implements Serializable {
     @NotBlank(message = "节点Id不能为空")
     private String nodeId;
 
+    @ApiModelProperty(required = true, name = "省code")
+    @NotBlank(message = "省code不能为空")
+    private String provinceCode;
+    @ApiModelProperty(name = "市code")
+    private String cityCode;
+    @ApiModelProperty(name = "区code")
+    private String areaCode;
+
     @ApiModelProperty(required = true, name = "版本ID")
     @NotBlank(message = "版本ID不能为空")
     private String versionId;
@@ -238,6 +246,30 @@ public class ElectricityPriceBindReqVO implements Serializable {
 
     public void setNextVersionStructurePrice(NextVersionStructurePrice nextVersionStructurePrice) {
         this.nextVersionStructurePrice = nextVersionStructurePrice;
+    }
+
+    public String getProvinceCode() {
+        return provinceCode;
+    }
+
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
     }
 
     @Override

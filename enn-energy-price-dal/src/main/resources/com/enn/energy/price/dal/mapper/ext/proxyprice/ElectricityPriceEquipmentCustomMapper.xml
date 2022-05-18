@@ -1,11 +1,46 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceEquipmentCustomMapper">
+    <resultMap id="BaseResultMap" type="com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="equipment_id" jdbcType="VARCHAR" property="equipmentId" />
+        <result column="equipment_name" jdbcType="VARCHAR" property="equipmentName" />
+        <result column="rule_id" jdbcType="VARCHAR" property="ruleId" />
+        <result column="version_id" jdbcType="VARCHAR" property="versionId" />
+        <result column="tenant_id" jdbcType="VARCHAR" property="tenantId" />
+        <result column="tenant_name" jdbcType="VARCHAR" property="tenantName" />
+        <result column="structure_id" jdbcType="VARCHAR" property="structureId" />
+        <result column="structure_rule_id" jdbcType="VARCHAR" property="structureRuleId" />
+        <result column="district_codes" jdbcType="VARCHAR" property="districtCodes" />
+        <result column="system_code" jdbcType="VARCHAR" property="systemCode" />
+        <result column="power_factor" jdbcType="VARCHAR" property="powerFactor" />
+        <result column="adjust" jdbcType="TINYINT" property="adjust" />
+        <result column="next_change_flag" jdbcType="TINYINT" property="nextChangeFlag" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+        <result column="creator" jdbcType="VARCHAR" property="creator" />
+        <result column="updator" jdbcType="VARCHAR" property="updator" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
     <sql id="Base_Column_List">
-        id
-        , equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
-        structure_rule_id, system_code, adjust, state, creator, updator, create_time, update_time
+        id, equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
+        structure_rule_id, district_codes, system_code, power_factor, adjust, next_change_flag,
+        state, creator, updator, create_time, update_time
     </sql>
+    <insert id="batchAddElectricityPriceEquipment">
+        insert into electricity_price_equipment(id, equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
+        structure_rule_id, district_codes, system_code, power_factor, adjust, next_change_flag,
+        state, creator, updator, create_time, update_time) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{equipmentId,jdbcType=VARCHAR}, #{equipmentName,jdbcType=VARCHAR}, #{ruleId,jdbcType=VARCHAR},
+            #{versionId,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, #{tenantName,jdbcType=VARCHAR},
+            #{structureId,jdbcType=VARCHAR}, #{structureRuleId,jdbcType=VARCHAR}, #{districtCodes,jdbcType=VARCHAR},
+            #{systemCode,jdbcType=VARCHAR}, #{powerFactor,jdbcType=VARCHAR}, #{adjust,jdbcType=TINYINT},
+            #{nextChangeFlag,jdbcType=TINYINT}, #{state,jdbcType=INTEGER}, #{creator,jdbcType=VARCHAR},
+            #{updator,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
     <update id="deleteEquipmentBindingByVersionId">
         update electricity_price_equipment
         set state=1
@@ -139,5 +174,65 @@
                 and rule_id=#{ruleId}
             </if>
         </where>
+    </select>
+    <select id="queryExpireEquipmentVersion"
+            resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceEquipmentVersionDto">
+        SELECT epe.id,
+               epe.equipment_id      equipmentId,
+               epe.equipment_name    equipmentName,
+               epe.rule_id           ruleId,
+               epe.version_id        versionId,
+               epe.tenant_id         tenantId,
+               epe.tenant_name       tenantName,
+               epe.structure_id      structureId,
+               epe.structure_rule_id structureRuleId,
+               epe.system_code       systemCode,
+               epe.adjust,
+               epe.state,
+               epe.creator,
+               epe.updator,
+               epe.create_time       createTime,
+               epe.update_time       updateTime,
+               epv.province_code     provinceCode
+        FROM electricity_price_equipment AS epe
+        LEFT JOIN electricity_price_version AS epv ON epe.version_id = epv.version_id
+        WHERE epv.end_date = #{day}
+          AND epe.next_change_flag = 0
+    </select>
+    <select id="queryVersionStructAndRule"
+            resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceVersionRuleDto">
+        SELECT
+            eps.version_id versionId,
+            eps.province_code provinceCode,
+            eps.city_codes cityCodes,
+            eps.district_codes districtCodes,
+            epr.industry,
+            epr.strategy,
+            epr.voltage_level voltagLevel,
+            epr.structure_rule_id structureRuleId
+        FROM
+            electricity_price_structure eps
+        INNER JOIN electricity_price_rule AS epr ON epr.structure_id = eps.structure_id
+        WHERE eps.version_id  IN
+        <foreach collection="versionIds" item="item" index="index" separator="," close=")" open="(">
+            #{item}
+        </foreach>
+        )
+    </select>
+    <select id="queryBindNextVersionPriceEquipment"
+            resultType="com.enn.energy.price.dal.po.ext.ElectricityPriceNextVersionDto">
+        SELECT epe.version_id nextVersionId,epe.equipment_id equipmentId
+        FROM electricity_price_equipment epe
+        WHERE
+        epe.equipment_id IN
+        <foreach collection="list" item="item" index="index" separator="," close=")" open="(">
+            #{item.equipmentId}
+        </foreach>
+        )
+        AND eve.version_id IN (
+        <foreach collection="list" item="item" index="index" separator="," close=")" open="(">
+            #{item.nextVersionId}
+        </foreach>
+        )
     </select>
 </mapper>

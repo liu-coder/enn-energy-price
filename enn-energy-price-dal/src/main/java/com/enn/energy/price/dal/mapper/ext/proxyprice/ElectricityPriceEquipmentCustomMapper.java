@@ -1,10 +1,16 @@
 package com.enn.energy.price.dal.mapper.ext.proxyprice;
 
+import com.enn.energy.price.dal.po.ext.ElectricityPriceEquipmentVersionDto;
+import com.enn.energy.price.dal.po.ext.ElectricityPriceNextVersionDto;
+import com.enn.energy.price.dal.po.ext.ElectricityPriceVersionDto;
+import com.enn.energy.price.dal.po.ext.ElectricityPriceVersionRuleDto;
 import com.enn.energy.price.dal.po.mbg.ElectricityPriceEquipment;
+import com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion;
 import com.enn.energy.price.dal.po.view.ElectricityPriceEquipmentView;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +102,37 @@ public interface ElectricityPriceEquipmentCustomMapper {
      * @return
      */
     List<ElectricityPriceEquipment> getElectricityPriceEquipmentNotExistRule(List<String> ruleIds);
+
+    /**
+     * 根据Map查询价格设备绑定关系
+     *
+     * @param map
+     * @return
+     */
     List<ElectricityPriceEquipment> queryElectricityPriceEquipmentByMap(Map<String,Object> map);
 
+    /**
+     * 查询到day时间过期的并且有设置默认继承的版本
+     *
+     * @param day
+     * @return
+     */
+    List<ElectricityPriceEquipmentVersionDto> queryExpireEquipmentVersion(Date day);
+
+    /**
+     * 获取下一个版本和设备的绑定关系
+     *
+     * @param list
+     * @return
+     */
+    List<ElectricityPriceNextVersionDto> queryBindNextVersionPriceEquipment(List<ElectricityPriceNextVersionDto> list);
+
+    /**
+     * 获取版本对应的体系价格
+     * @param versionIds
+     * @return
+     */
+    List<ElectricityPriceVersionRuleDto> queryVersionStructAndRule(List<String> versionIds);
+
+    void batchAddElectricityPriceEquipment(List<ElectricityPriceEquipment> list);
 }

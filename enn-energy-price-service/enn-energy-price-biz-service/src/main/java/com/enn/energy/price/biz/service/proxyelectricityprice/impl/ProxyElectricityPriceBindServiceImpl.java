@@ -3,8 +3,10 @@ package com.enn.energy.price.biz.service.proxyelectricityprice.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.enn.energy.price.biz.service.bo.proxyprice.*;
 import com.enn.energy.price.biz.service.convertMapper.ElectricityPriceVersionUpdateBOConverMapper;
 import com.enn.energy.price.biz.service.proxyelectricityprice.ProxyElectricityPriceBindService;
@@ -15,7 +17,7 @@ import com.enn.energy.price.dal.mapper.ext.ElectricityPriceRuleExtMapper;
 import com.enn.energy.price.dal.mapper.ext.proxyprice.*;
 import com.enn.energy.price.dal.mapper.mbg.ElectricityPriceEquipmentMapper;
 import com.enn.energy.price.dal.mapper.mbg.SystemTreeMapper;
-import com.enn.energy.price.dal.po.ext.ElectricityPriceDetailPO;
+import com.enn.energy.price.dal.po.ext.*;
 import com.enn.energy.price.dal.po.mbg.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -93,6 +95,7 @@ public class ProxyElectricityPriceBindServiceImpl implements ProxyElectricityPri
         ElectricityPriceEquipment electricityPriceEquipment = buildPriceEquipment(electricityPriceBindBO, systemTree.getNodeName(), electricityPriceRules.get(0).getStructureRuleId());
         if (ChangeTypeEum.ADD.getType().equals(electricityPriceBindBO.getChangeType())) {
             electricityPriceEquipment.setId(null);
+            //TODO 保存企业所属地区 electricityPriceEquipment.set
             addElectricityPriceEquipmentBind(electricityPriceBindBO, electricityPriceVersion, electricityPriceEquipment);
         }
         //修改绑定关系
@@ -255,6 +258,105 @@ public class ProxyElectricityPriceBindServiceImpl implements ProxyElectricityPri
             nextVersionPriceBindBO.setElectricityPriceDetailBO(nextPriceDetailBO);
         }
         return electricityPriceBindDetailBO;
+    }
+
+    @Override
+    public ElectricityPriceBindEditDetailBO getPriceBindDetailByEdit(ElectricityPriceBindEditBO electricityPriceBindEditBO) {
+        ElectricityPriceBindEditDetailBO electricityPriceBindEditDetailBO = new ElectricityPriceBindEditDetailBO();
+        electricityPriceBindEditDetailBO.setNextChangeFlag(electricityPriceBindEditBO.getNextChangeFlag());
+        //查询当前节点绑定关系是否存在
+        ElectricityPriceEquipment electricityPriceEquipment = electricityPriceEquipmentMapper.selectByPrimaryKey(electricityPriceBindEditBO.getId());
+        if (ObjectUtil.isEmpty(electricityPriceEquipment)) {
+            throw new PriceException(ErrorCodeEnum.PROXY_ELECTRICITY_PRICE_EQUIPMENT_BIND_NOT_FOUND.getErrorCode(), ErrorCodeEnum.PROXY_ELECTRICITY_PRICE_EQUIPMENT_BIND_NOT_FOUND.getErrorMsg());
+        }
+        //查询当前绑定详情
+        ElectricityPriceBindEditDetailItemBO electricityPriceBindEditDetailItemBO = buildBindDetailItem(electricityPriceEquipment, electricityPriceBindEditBO.getId());
+        electricityPriceBindEditDetailBO.setElectricityPriceBindEditDetailItemBO(electricityPriceBindEditDetailItemBO);
+        electricityPriceBindEditDetailBO.setNodeId(electricityPriceEquipment.getEquipmentId());
+//        TODO electricityPriceBindEditDetailBO.setProvinceCode(electricityPriceEquipment.);
+        if (BoolLogic.NO.getCode().equals(electricityPriceBindEditBO.getNextChangeFlag())) {
+            return electricityPriceBindEditDetailBO;
+        }
+        //查询下一个版本节点关系
+        ElectricityPriceEquipment nextElectricityPriceEquipment = electricityPriceEquipmentMapper.selectByPrimaryKey(electricityPriceBindEditBO.getNextId());
+        if (ObjectUtil.isEmpty(electricityPriceEquipment)) {
+            throw new PriceException(ErrorCodeEnum.PROXY_ELECTRICITY_PRICE_BIND_NEXT_VERSION_NOT_EXIST.getErrorCode(), ErrorCodeEnum.PROXY_ELECTRICITY_PRICE_BIND_NEXT_VERSION_NOT_EXIST.getErrorMsg());
+        }
+        ElectricityPriceBindEditDetailItemBO nextElectricityPriceBindEditDetailItemBO = buildBindDetailItem(nextElectricityPriceEquipment, electricityPriceBindEditBO.getNextId());
+        electricityPriceBindEditDetailBO.setNextVersionPriceBindDetailItemBO(nextElectricityPriceBindEditDetailItemBO);
+        return electricityPriceBindEditDetailBO;
+    }
+
+    @Override
+    public void doNextVersionPriceEquipmentBind(Date day) {
+        //查询当前节点绑定的即将到期的版本
+        List<ElectricityPriceEquipmentVersionDto> electricityPriceEquipmentVersionDtos = electricityPriceEquipmentCustomMapper.queryExpireEquipmentVersion(day);
+        //获取下个版本
+        List<String> provinceCodes = electricityPriceEquipmentVersionDtos.stream().map(ElectricityPriceEquipmentVersionDto::getProvinceCode).distinct().collect(Collectors.toList());
+        DateTime nextDay = DateUtil.offsetDay(day, 1);
+        List<ElectricityPriceVersionDto> nextVersionDtos = electricityPriceVersionCustomMapper.queryNextPriceVersions(provinceCodes, nextDay);
+        Map<String, String> nextVersionMap = nextVersionDtos.stream().collect(Collectors.toMap(ElectricityPriceVersionDto::getProvinceCode, ElectricityPriceVersionDto::getVersionId));
+        //获取当前节点绑定有默认继承且存在下个版本的 节点-当前版本-下个版本绑定关系
+        List<ElectricityPriceNextVersionDto> nextVersionAndEquipmentList = electricityPriceEquipmentVersionDtos.stream().filter(v -> StrUtil.isNotEmpty(nextVersionMap.get(v.getProvinceCode())))
+                .map(item -> {
+                    ElectricityPriceNextVersionDto electricityPriceNextVersionDto = new ElectricityPriceNextVersionDto();
+                    electricityPriceNextVersionDto.setEquipmentId(item.getEquipmentId());
+                    electricityPriceNextVersionDto.setVersionId(item.getVersionId());
+                    electricityPriceNextVersionDto.setProvinceCode(item.getProvinceCode());
+                    electricityPriceNextVersionDto.setNextVersionId(nextVersionMap.get(item.getProvinceCode()));
+                    return electricityPriceNextVersionDto;
+                }).collect(Collectors.toList());
+
+        //查询出节点+存在下个版本的数据，过滤未生成绑定关系的下个版本
+        List<ElectricityPriceNextVersionDto> bindVersions = electricityPriceEquipmentCustomMapper.queryBindNextVersionPriceEquipment(nextVersionAndEquipmentList);
+        Map<String, String> nextVersionEquipmentMap = bindVersions.stream().collect(Collectors.toMap(ElectricityPriceNextVersionDto::getEquipmentId, ElectricityPriceNextVersionDto::getNextVersionId));
+        List<ElectricityPriceNextVersionDto> unBindPriceEquipments = nextVersionAndEquipmentList.stream().filter(item -> StrUtil.isEmpty(nextVersionEquipmentMap.get(item.getEquipmentId()))).collect(Collectors.toList());
+        //查询这些未绑定价格设备的版本体系和规则
+        List<String> curVersionIds = unBindPriceEquipments.stream().map(ElectricityPriceNextVersionDto::getVersionId).distinct().collect(Collectors.toList());
+        List<ElectricityPriceVersionRuleDto> electricityPriceVersionRuleDtos = electricityPriceEquipmentCustomMapper.queryVersionStructAndRule(curVersionIds);
+        Map<String, ElectricityPriceVersionRuleDto> curVersionStructurePriceMap = electricityPriceVersionRuleDtos.stream().collect(Collectors.toMap(dto -> dto.getVersionId() + dto.getStructureId() + dto.getRuleId(), dto -> dto));
+        //未来版本体系价格信息
+        List<String> nextVersionIds = unBindPriceEquipments.stream().map(ElectricityPriceNextVersionDto::getNextVersionId).distinct().collect(Collectors.toList());
+        List<ElectricityPriceVersionRuleDto> nextElectricityPriceVersionRuleDtos = electricityPriceEquipmentCustomMapper.queryVersionStructAndRule(nextVersionIds);
+        Map<String, ElectricityPriceVersionRuleDto> nextVersionStructurePriceMap = nextElectricityPriceVersionRuleDtos.stream().collect(Collectors.toMap(dto -> dto.getVersionId() + dto.getProvinceCode() + dto.getCityCodes() + dto.getDistrictCodes() + dto.getIndustry() + dto.getStrategy() + dto.getVoltageLevel(), dto -> dto));
+        //当前价格设备绑定map
+        Map<String, ElectricityPriceEquipmentVersionDto> curBindMap = electricityPriceEquipmentVersionDtos.stream().filter(item -> StrUtil.isEmpty(nextVersionEquipmentMap.get(item.getEquipmentId())))
+                .collect(Collectors.toMap(dto -> dto.getEquipmentId() + dto.getVersionId(), dto -> dto));
+        //构建下个版本绑定关系PO
+        List<ElectricityPriceEquipment> electricityPriceEquipments = new ArrayList<>();
+        for (ElectricityPriceNextVersionDto dto : unBindPriceEquipments) {
+            //获取当前版本设备对应的绑定关系
+            ElectricityPriceEquipmentVersionDto curVersionEquipment = curBindMap.get(dto.getEquipmentId() + dto.getVersionId());
+            ElectricityPriceVersionRuleDto curStructurePrice = curVersionStructurePriceMap.get(dto.getVersionId() + curVersionEquipment.getStructureId());
+            ElectricityPriceVersionRuleDto nextStructurePrice = nextVersionStructurePriceMap.get(dto.getNextVersionId() + curStructurePrice.getProvinceCode() + curStructurePrice.getCityCodes() + curStructurePrice.getDistrictCodes() + curStructurePrice.getIndustry() + curStructurePrice.getStrategy() + curStructurePrice.getVoltageLevel());
+            //如果下一版本没有匹配的区域和三要素，则不继承
+            if (ObjectUtil.isEmpty(nextStructurePrice)) {
+                continue;
+            }
+            ElectricityPriceEquipment electricityPriceEquipment = new ElectricityPriceEquipment();
+            BeanUtil.copyProperties(curVersionEquipment, electricityPriceEquipment);
+            electricityPriceEquipment.setRuleId(nextStructurePrice.getRuleId());
+            electricityPriceEquipment.setStructureId(nextStructurePrice.getStructureId());
+            electricityPriceEquipment.setStructureRuleId(nextStructurePrice.getStructureRuleId());
+            electricityPriceEquipment.setVersionId(dto.getNextVersionId());
+            electricityPriceEquipments.add(electricityPriceEquipment);
+        }
+        electricityPriceEquipmentCustomMapper.batchAddElectricityPriceEquipment(electricityPriceEquipments);
+    }
+
+    private ElectricityPriceBindEditDetailItemBO buildBindDetailItem(ElectricityPriceEquipment electricityPriceEquipment, Long id) {
+        ElectricityPriceVersion electricityPriceVersion = electricityPriceVersionCustomMapper.selectElectricityPriceVersionByVersionId(electricityPriceEquipment.getVersionId());
+        if (ObjectUtil.isEmpty(electricityPriceVersion)) {
+            throw new PriceException(ErrorCodeEnum.PROXY_ELECTRICITY_PRICE_BIND_PRICE_VERSION_NOT_EXIST.getErrorCode(), ErrorCodeEnum.PROXY_ELECTRICITY_PRICE_BIND_SYSTEM_TREE_NOT_EXIST.getErrorMsg());
+        }
+        ElectricityPriceBindEditDetailItemBO electricityPriceBindEditDetailItemBO = new ElectricityPriceBindEditDetailItemBO();
+        electricityPriceBindEditDetailItemBO.setId(electricityPriceEquipment.getId());
+        electricityPriceBindEditDetailItemBO.setRuleId(electricityPriceEquipment.getRuleId());
+        electricityPriceBindEditDetailItemBO.setVersionId(electricityPriceEquipment.getVersionId());
+        electricityPriceBindEditDetailItemBO.setStructureId(electricityPriceEquipment.getStructureId());
+        electricityPriceBindEditDetailItemBO.setStartDate(DateUtil.format(electricityPriceVersion.getStartDate(), DatePattern.NORM_DATE_PATTERN));
+        electricityPriceBindEditDetailItemBO.setEndDate(DateUtil.format(electricityPriceVersion.getEndDate(), DatePattern.NORM_DATE_PATTERN));
+        return electricityPriceBindEditDetailItemBO;
     }
 
     /**
