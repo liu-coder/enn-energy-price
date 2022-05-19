@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author liujin
@@ -28,4 +29,17 @@ public class ElectricityPriceStructureRuleUpdateBO implements Serializable {
     private Integer changeType;
     private String serialNo;
     private List<ElectricityPriceSeasonUpdateBO> electricityPriceSeasonUpdateReqVOList;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ElectricityPriceStructureRuleUpdateBO that = (ElectricityPriceStructureRuleUpdateBO) o;
+        return getIndustries().equals(that.getIndustries()) && getStrategies().equals(that.getStrategies()) && getVoltageLevels().equals(that.getVoltageLevels());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIndustries(), getStrategies(), getVoltageLevels());
+    }
 }

@@ -17,7 +17,7 @@
     <update id="batchDeleteSeasonSectionByIds">
         update electricity_season_section
         set state=#{state}, update_time=#{updateTime}
-        where id in
+        where season_section_id in
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id}
         </foreach>

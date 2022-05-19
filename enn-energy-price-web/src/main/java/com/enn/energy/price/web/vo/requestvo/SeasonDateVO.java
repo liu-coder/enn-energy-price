@@ -29,7 +29,7 @@ public class SeasonDateVO implements Serializable {
     @NotBlank(message = "季节结束时间不能为空")
     private String seaEndDate;
     @ApiModelProperty(value = "季节id")
-    private Long seasonId;
+    private String seasonId;
     @ApiModelProperty(value = "变更类型")
     private Integer changeType;
 }

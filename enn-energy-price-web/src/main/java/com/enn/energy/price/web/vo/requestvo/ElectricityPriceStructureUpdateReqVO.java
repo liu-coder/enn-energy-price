@@ -31,12 +31,15 @@ public class ElectricityPriceStructureUpdateReqVO implements Serializable {
     private String structureName;
 
     @ApiModelProperty(value = "省编码",required = true)
+    @NotBlank(message = "省编码不能为空")
     private String provinceCode;
 
     @ApiModelProperty(value = "市编码,多个用,进行拼接",required = true)
+    @NotBlank(message = "市编码不能为空")
     private String cityCodes;
 
     @ApiModelProperty(value = "区县编码不能为空,多个用,拼接",required = true)
+    @NotBlank(message = "区编码不能为空")
     private String districtCodes;
 
     @ApiModelProperty(value = "变更类型,2:修改")

@@ -3,7 +3,7 @@
 <mapper namespace="com.enn.energy.price.dal.mapper.ext.proxyprice.ElectricityPriceEquipmentCustomMapper">
     <sql id="Base_Column_List">
         id, equipment_id, equipment_name, rule_id, version_id, tenant_id, tenant_name, structure_id,
-        structure_rule_id, system_code, adjust, state, creator, updator, create_time, update_time
+        structure_rule_id,district_codes, system_code, adjust, state, creator, updator, create_time, update_time
     </sql>
     <update id="deleteEquipmentBindingByVersionId">
         update electricity_price_equipment set state=1 where version_id=#{versionId} and state=0
@@ -42,7 +42,7 @@
     <select id="countRuleEquipmentBindRecordsById" resultType="java.lang.Long">
         select count(*)
         from electricity_price_equipment
-        where id = #{id}
+        where rule_id = #{ruleId}
           and   state = 0
     </select>
 

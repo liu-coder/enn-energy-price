@@ -10,7 +10,9 @@ import java.util.Arrays;
 public enum CompareEum {
     EQUALS("0","等于"),
     LESS("1","小于"),
-    LARGER("2","大于")
+    LARGER("2","大于"),
+    LESSEQUALS("3","小于等于"),
+    LARGEREQUALS("4","大于等于")
     ;
     String code;
     String desc;

@@ -30,9 +30,10 @@ import java.util.List;
 @NoArgsConstructor
 public class ElectricityPriceSeasonUpdateReqVO implements Serializable {
     private static final long serialVersionUID = 6708324781222848894L;
-    @ApiModelProperty(value = "季节id,新增的不传,修改的需要")
+    @ApiModelProperty(value = "季节uuid,新增的不传,修改的需要")
     private String seasonSectionId;
     @ApiModelProperty(value = "季节名称")
+    @NotBlank(message = "季节名称不能为空")
     private String seasonName;
     @ApiModelProperty(value = "变更类型")
     private Integer changeType;
@@ -41,7 +42,6 @@ public class ElectricityPriceSeasonUpdateReqVO implements Serializable {
     private List<@Valid SeasonDateVO> seasonDateVO;
 
     @ApiModelProperty(value = "修正策略列表")
-    @Valid
     private List<@Valid ElectricityPriceStrategyReqVO> electricityPriceStrategyReqVOList;
 
 }

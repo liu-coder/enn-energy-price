@@ -26,13 +26,13 @@ public class ElectricityPriceSeasonRuleUpdateReqVO implements Serializable {
     @ApiModelProperty(value = "体系规则id,新增的不传id,原有的传id")
     private String structureRuleId;
     @ApiModelProperty(value = "用电行业,多个用电行业用,进行分割",required = true)
-    @NotBlank(message = "用电行业不能为空")
+    @NotBlank(message = "季节分时的用电行业不能为空")
     private String industries;
     @ApiModelProperty(value = "定价类型,多个定价类型用,进行分割",required = true)
-    @NotBlank(message = "定价类型不能为空")
+    @NotBlank(message = "季节分时定价类型不能为空")
     private String strategies;
     @ApiModelProperty(value = "电压等级,多个电压等级用,进行分割",required = true)
-    @NotBlank(message = "电压等级不能为空")
+    @NotBlank(message = "季节分时电压等级不能为空")
     private String voltageLevels;
     @ApiModelProperty(value = "变更类型")
     private Integer changeType;

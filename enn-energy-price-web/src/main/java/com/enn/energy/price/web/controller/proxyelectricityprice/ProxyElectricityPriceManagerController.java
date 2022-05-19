@@ -83,7 +83,7 @@ public class ProxyElectricityPriceManagerController {
     @ApiOperation("创建电价版本")
     public RdfaResult<Boolean> createPriceVersion(@RequestBody @Valid ElectricityPriceVersionUpdateReqVO versionReqVO) {
         String lockKey = String.format(CommonConstant.REDIS_APPEND, CommonConstant.RedisKey.LOCK_PROXY_PRICE_VERSION_CREATE_PREFIX,
-                tenantId, versionReqVO.getTimestamp());
+                versionReqVO.getProvinceCode(), versionReqVO.getTimestamp());
         Lock lock = rdfaDistributeLockFactory.getLock(lockKey);
         boolean acquired = lock.tryLock();
         if (!acquired) {
@@ -309,17 +309,17 @@ public class ProxyElectricityPriceManagerController {
     }
 
     @ApiOperation("删除电价规则时，校验是否绑定了设备")
-    @GetMapping("/validateDeletePriceRule/{id}")
-    public RdfaResult<Boolean> validateDeletePriceRule(@PathVariable("id") @ApiParam(required = true, name = "id", value = "电价规则Id") String id) {
-        if (StrUtil.isBlank(id)) {
+    @GetMapping("/validateDeletePriceRule/{ruleId}")
+    public RdfaResult<Boolean> validateDeletePriceRule(@PathVariable("ruleId") @ApiParam(required = true, name = "ruleId", value = "电价规则Id") String ruleId) {
+        if (StrUtil.isBlank(ruleId)) {
             throw new PriceException(ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorCode(), ErrorCodeEnum.NON_EXISTENT_DATA_EXCEPTION.getErrorMsg());
         }
-        return RdfaResult.success(priceManagerBakService.validateDeletePriceRule(id));
+        return RdfaResult.success(priceManagerBakService.validateDeletePriceRule(ruleId));
     }
 
     @ApiOperation("取消区域时，校验是否绑定了设备")
     @PostMapping("/validateDeleteArea")
-    public RdfaResult<ElectricityPriceStructureCreateBO> validateDeleteArea(@Valid ElectricityPriceDeleteAreaValidateReqVo validateReqVo) {
+    public RdfaResult<ElectricityPriceStructureCreateBO> validateDeleteArea(@RequestBody @Valid ElectricityPriceDeleteAreaValidateReqVo validateReqVo) {
         List<String> districtCodeList = validateReqVo.getDistrictCodeList();
         String structureId = validateReqVo.getStructureId();
         if (CollUtil.isEmpty(districtCodeList) || StrUtil.isEmpty(structureId)) {

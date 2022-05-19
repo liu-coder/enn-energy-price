@@ -42,7 +42,7 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
 
     private List<String> needLessCapacityAndDemandCapacityPriceList;
 
-    private List<String> lackDistributionPriceList;
+    private List<String> lackConsumptionPriceList;
 
     private List<String> lackTimePartPriceList;
 
@@ -128,14 +128,6 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
 
     public void setNeedLessCapacityAndDemandCapacityPriceList(List<String> needLessCapacityAndDemandCapacityPriceList) {
         this.needLessCapacityAndDemandCapacityPriceList = needLessCapacityAndDemandCapacityPriceList;
-    }
-
-    public List<String> getLackDistributionPriceList() {
-        return lackDistributionPriceList;
-    }
-
-    public void setLackDistributionPriceList(List<String> lackDistributionPriceList) {
-        this.lackDistributionPriceList = lackDistributionPriceList;
     }
 
     public List<String> getLackTimePartPriceList() {
@@ -276,6 +268,16 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
         this.ifExistSameTimeSection = ifExistSameTimeSection;
     }
 
+    public List<String> getLackConsumptionPriceList() {
+        return lackConsumptionPriceList;
+    }
+
+    public void setLackConsumptionPriceList(List<String> lackConsumptionPriceList) {
+        this.lackConsumptionPriceList = lackConsumptionPriceList;
+    }
+
+
+
     @Override
     public String toString() {
         return "ElectricityPriceStructureAndRuleValidateRespBO{" +
@@ -293,7 +295,7 @@ public class ElectricityPriceStructureAndRuleValidateRespBO implements Serializa
                 ", illegalVoltageLevel=" + illegalVoltageLevel +
                 ", lackCapacityAndDemandCapacityPriceList=" + lackCapacityAndDemandCapacityPriceList +
                 ", needLessCapacityAndDemandCapacityPriceList=" + needLessCapacityAndDemandCapacityPriceList +
-                ", lackDistributionPriceList=" + lackDistributionPriceList +
+                ", lackConsumptionPriceList=" + lackConsumptionPriceList +
                 ", lackTimePartPriceList=" + lackTimePartPriceList +
                 ", noDeleteBillRulesList=" + noDeleteBillRulesList +
                 ", illegalPeekList=" + illegalPeekList +

@@ -65,5 +65,5 @@ public interface ElectricityPriceEquipmentCustomMapper {
      * @param id
      * @return
      */
-    long countRuleEquipmentBindRecordsById(@Param( "id" ) Long id);
+    long countRuleEquipmentBindRecordsById(@Param( "ruleId" ) String ruleId);
 }
