@@ -57,7 +57,7 @@ public class ElectricityPriceStructureAndRuleValidateRespVO implements Serializa
     private List<String> needLessCapacityAndDemandCapacityPriceList;
 
     @ApiModelProperty(value = "缺少电度电价的序号集合,当全部成功时，此为空集合", dataType = "list")
-    private List<String> lackDistributionPriceList;
+    private List<String> lackConsumptionPriceList;
 
     @ApiModelProperty(value = "缺少分时电价的序号集合,当全部成功时，此为空集合", dataType = "list")
     private List<String> lackTimePartPriceList;
@@ -145,14 +145,6 @@ public class ElectricityPriceStructureAndRuleValidateRespVO implements Serializa
 
     public void setNeedLessCapacityAndDemandCapacityPriceList(List<String> needLessCapacityAndDemandCapacityPriceList) {
         this.needLessCapacityAndDemandCapacityPriceList = needLessCapacityAndDemandCapacityPriceList;
-    }
-
-    public List<String> getLackDistributionPriceList() {
-        return lackDistributionPriceList;
-    }
-
-    public void setLackDistributionPriceList(List<String> lackDistributionPriceList) {
-        this.lackDistributionPriceList = lackDistributionPriceList;
     }
 
     public List<String> getLackTimePartPriceList() {
@@ -284,6 +276,14 @@ public class ElectricityPriceStructureAndRuleValidateRespVO implements Serializa
         this.ifExistSameTimeSection = ifExistSameTimeSection;
     }
 
+    public List<String> getLackConsumptionPriceList() {
+        return lackConsumptionPriceList;
+    }
+
+    public void setLackConsumptionPriceList(List<String> lackConsumptionPriceList) {
+        this.lackConsumptionPriceList = lackConsumptionPriceList;
+    }
+
     @Override
     public String toString() {
         return "ElectricityPriceStructureAndRuleValidateRespVO{" +
@@ -300,7 +300,7 @@ public class ElectricityPriceStructureAndRuleValidateRespVO implements Serializa
                 ", illegalVoltageLevel=" + illegalVoltageLevel +
                 ", lackCapacityAndDemandCapacityPriceList=" + lackCapacityAndDemandCapacityPriceList +
                 ", needLessCapacityAndDemandCapacityPriceList=" + needLessCapacityAndDemandCapacityPriceList +
-                ", lackDistributionPriceList=" + lackDistributionPriceList +
+                ", lackConsumptionPriceList=" + lackConsumptionPriceList +
                 ", lackTimePartPriceList=" + lackTimePartPriceList +
                 ", illegalPeekList=" + illegalPeekList +
                 ", illegalSharpList=" + illegalSharpList +

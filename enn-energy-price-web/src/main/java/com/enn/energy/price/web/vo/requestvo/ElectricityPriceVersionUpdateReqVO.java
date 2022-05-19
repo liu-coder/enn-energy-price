@@ -42,8 +42,8 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     @DateValue(format = DatePattern.NORM_DATE_PATTERN, message = "电价版本结束时间格式有误")
     private String endDate;
     @ApiModelProperty(value = "请求时间(yyyy-MM-dd HH:mm:ss)",required = true)
-    @NotBlank(message = "请求时间不能为空")
-    @DateValue(format = {"yyyy-MM-dd HH:mm:ss"},message = "请求时间戳格式有误")
+    @NotBlank(message = "请求时间戳不能为空")
+    @DateValue(format = DatePattern.NORM_DATETIME_PATTERN, message = "请求时间戳格式有误")
     private String timestamp;
     @ApiModelProperty(value = "父版本id", required = true, dataType = "string")
     private String lastVersionId;
@@ -51,7 +51,7 @@ public class ElectricityPriceVersionUpdateReqVO implements Serializable {
     private String systemCode;
     @ApiModelProperty(value = "系统名称", required = true, dataType = "string")
     private String systemName;
-    @ApiModelProperty(value = "电价类型,0:目录电价;1:自定义电价;3:代购电价", required = true, dataType = "string")
+    @ApiModelProperty(value = "电价类型,0:目录电价;1:自定义电价;2:代购电价", required = true, dataType = "string")
     @NotBlank(message = "电价类型不能为空")
     private String priceType;
     @ApiModelProperty(value = "绑定类型,0:企业;1:设备;2:行政区域", required = true, dataType = "string")

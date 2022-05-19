@@ -288,7 +288,7 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     electricityPriceSeasonDetailBO.setSeasonName(h.getSeasonSectionName());
                     //添加季节区间时间信息
                     SeasonDateBO seasonDateBO = new SeasonDateBO();
-                    seasonDateBO.setSeasonId( h.getId() );
+                    seasonDateBO.setSeasonId( h.getSeasonSectionId() );
                     seasonDateBO.setSeaEndDate( h.getSeaEndDate() );
                     seasonDateBO.setSeaStartDate( h.getSeaStartDate() );
                     seasonDateBOList.add( seasonDateBO );
@@ -550,8 +550,8 @@ public class ProxyElectricityPriceManagerServiceImpl implements ProxyElectricity
                     //electricitySeasonSections 体系规则下的所有季节, 查询当前季节下的所有季节列表
                     List<ElectricitySeasonSection> seasonSections = electricitySeasonSections.stream().filter( m -> m.getSeasonSectionId().equals( n.getSeasonSectionId() ) ).collect( Collectors.toList() );
                     //将数据库中的季节列表匹配现有的季节列表
-                    List<Long> haveDateIds = haveDateIdList.stream().map( SeasonDateBO::getSeasonId ).collect( Collectors.toList() );
-                    List<Long> deleteDateIds = seasonSections.stream().map( ElectricitySeasonSection::getId ).filter( m -> !haveDateIds.contains( m ) ).collect( Collectors.toList() );
+                    List<String> haveDateIds = haveDateIdList.stream().map( SeasonDateBO::getSeasonId ).collect( Collectors.toList() );
+                    List<String> deleteDateIds = seasonSections.stream().map( ElectricitySeasonSection::getSeasonSectionId ).filter( m -> !haveDateIds.contains( m ) ).collect( Collectors.toList() );
                     //删除date_time
                     if(CollectionUtils.isNotEmpty( deleteDateIds )){
                         HashMap<String , Object> timeDeleteMap = new HashMap<>();

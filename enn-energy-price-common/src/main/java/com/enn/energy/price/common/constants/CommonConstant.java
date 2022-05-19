@@ -321,6 +321,11 @@ public class CommonConstant {
     public static final String STR_BLANK = "";
 
     /**
+     * null
+     */
+    public static final String STR_NULL = "null";
+
+    /**
      * 数值正则表达式
      */
     public static final String DECIMAL_PATTERN = "^(([1-9]\\d{0,4})|(0))([.]\\d{0,10})?$";

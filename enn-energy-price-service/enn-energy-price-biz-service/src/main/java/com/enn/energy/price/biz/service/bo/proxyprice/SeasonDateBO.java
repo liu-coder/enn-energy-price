@@ -17,7 +17,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SeasonDateBO implements Serializable {
     private static final long serialVersionUID = 5345018996539374173L;
-    private Long seasonId;
+    private String seasonId;
     private String seaStartDate;
     private String seaEndDate;
     private Integer changeType;
