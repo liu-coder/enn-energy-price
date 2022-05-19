@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 城市天气.
@@ -104,7 +102,7 @@ public class CityWeatherService {
     @Transactional(rollbackFor = Exception.class)
     public void setCityTemperature(String weatherResult, String cityCode, Date date) {
 
-        JSONObject resultObj = null;
+        JSONObject resultObj;
         try {
             resultObj = JSONObject.parseObject(weatherResult);
         } catch (Exception e) {
@@ -124,6 +122,7 @@ public class CityWeatherService {
         JSONArray results = time.getJSONArray("result");
         int num = 0;
         Map<String, String> cache = new HashMap<>();
+        List<CityWeather> dbList = new ArrayList<>();
         for (int i = 0; i < results.size(); i++) {
             JSONObject result = results.getJSONObject(i);
             CityWeather cityWeather = new CityWeather();
@@ -134,7 +133,7 @@ public class CityWeatherService {
             String dateStr = PriceDateUtils.dayDateToStr(result.getDate("date"));
 
             if (PriceDateUtils.dayDateToStr(date).equals(dateStr) || PriceDateUtils.dayDateToStr(PriceDateUtils.getDeltaDay(date, 1)).equals(dateStr)) {
-                cityWeatherExtMapper.insertOrUpdate(cityWeather);
+                dbList.add(cityWeather);
                 cache.put(cityCode + CommonConstant.KEY_SPERATOR + dateStr, cityWeather.getTempDay());
                 num++;
             }
@@ -142,7 +141,7 @@ public class CityWeatherService {
                 break;
             }
         }
-
+        cityWeatherExtMapper.batchInsertOrUpdate(dbList);
         //添加缓存
         cache.forEach((key, value) -> priceCacheClientImpl.vSetWithTimeOut(key, CommonConstant.ELECTRICITY_PRICE, value, Long.parseLong(timeOut)));
     }
