@@ -30,5 +30,5 @@ public class ElectricityPriceVersionsByBindAreaRespVO implements Serializable {
     @ApiModelProperty(name = "区code")
     private String districtCode;
 
-    List<ElectricityPriceVersionRespVO> electricityPriceVersionRespVOList;
+    List<ElectricityPriceVersionStructureRespVO> electricityPriceVersionStructureRespVOS;
 }

@@ -30,7 +30,9 @@ import top.rdfa.framework.biz.ro.RdfaResult;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
+import java.util.stream.Collectors;
 
 /**
  * @description: 电价绑定相关
@@ -169,8 +171,13 @@ public class ProxyElectricityPriceBindController {
     public RdfaResult<ElectricityPriceVersionsByBindAreaRespVO> getElectricityPriceVersionByBindArea(@RequestBody ElectricityPriceBindVersionsReqVO electricityPriceBindVersionsReqVO) {
         ElectricityPriceBindVersionsBO electricityPriceBindVersionsBO = ElectricityPriceBindConverMapper.INSTANCE.electricityPriceBindVersionsReqVOToBO(electricityPriceBindVersionsReqVO);
         ElectricityPriceVersionsByBindAreaBO electricityPriceVersionsByBindAreaBO = proxyElectricityPriceBindService.queryElectricityPriceVersionByBindArea(electricityPriceBindVersionsBO);
-        List<ElectricityPriceVersionRespVO> priceVersionRespVOList = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionRespBOListToVOList(electricityPriceVersionsByBindAreaBO.getElectricityPriceVersionBOS());
-        ElectricityPriceVersionsByBindAreaRespVO electricityPriceVersionsByBindAreaRespVO = ElectricityPriceVersionsByBindAreaRespVO.builder().electricityPriceVersionRespVOList(priceVersionRespVOList).provinceCode(electricityPriceVersionsByBindAreaBO.getProvinceCode()).cityCode(electricityPriceVersionsByBindAreaBO.getCityCode()).districtCode(electricityPriceVersionsByBindAreaBO.getDistrictCode()).build();
+        List<ElectricityPriceVersionStructureRespVO> priceVersionStructureRespVOS = ElectricityPriceVersionConverMapper.INSTANCE.electricityPriceVersionStructureRespBOListToVOList(electricityPriceVersionsByBindAreaBO.getElectricityPriceVersionBOS());
+        Map<String, List<ElectricityPriceStructureBO>> electricityPriceStructureBOMap = electricityPriceVersionsByBindAreaBO.getElectricityPriceVersionBOS().stream().collect(Collectors.toMap(ElectricityPriceVersionStructureBO::getVersionId, ElectricityPriceVersionStructureBO::getElectricityPriceStructureBOS));
+        priceVersionStructureRespVOS.stream().forEach(item -> {
+            List<ElectricityPriceStructureRespVO> electricityPriceStructureRespVOS = ElectricityPriceStrutureConverMapper.INSTANCE.ElectricityPriceStructureRespBOListToVOList(electricityPriceStructureBOMap.get(item.getVersionId()));
+            item.setElectricityPriceStructureRespVOList(electricityPriceStructureRespVOS);
+        });
+        ElectricityPriceVersionsByBindAreaRespVO electricityPriceVersionsByBindAreaRespVO = ElectricityPriceVersionsByBindAreaRespVO.builder().electricityPriceVersionStructureRespVOS(priceVersionStructureRespVOS).provinceCode(electricityPriceVersionsByBindAreaBO.getProvinceCode()).cityCode(electricityPriceVersionsByBindAreaBO.getCityCode()).districtCode(electricityPriceVersionsByBindAreaBO.getDistrictCode()).build();
         return RdfaResult.success(electricityPriceVersionsByBindAreaRespVO);
     }
 

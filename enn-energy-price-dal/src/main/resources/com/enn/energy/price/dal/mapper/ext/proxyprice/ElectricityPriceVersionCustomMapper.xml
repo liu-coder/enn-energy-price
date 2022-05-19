@@ -152,6 +152,8 @@
                 order by create_time asc
     </select>
 
+
+
     <select id="queryNextPriceVersion" resultType="com.enn.energy.price.dal.po.mbg.ElectricityPriceVersion">
         select
         <include refid="Base_Column_List" />
@@ -177,7 +179,7 @@
             <!-- and city_code = #{cityCode}
             and district_code = #{districtCode} -->
         and state = 0
-        and start_date  <![CDATA[>=]]> #{endDate}
+        and start_date  <![CDATA[>]]> #{endDate}
         order by start_date asc limit 1
     </select>
     <select id="queryNextPriceVersions"

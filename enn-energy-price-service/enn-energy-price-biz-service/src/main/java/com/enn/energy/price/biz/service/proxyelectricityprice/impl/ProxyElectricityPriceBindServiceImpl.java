@@ -120,35 +120,52 @@ public class ProxyElectricityPriceBindServiceImpl implements ProxyElectricityPri
 
     @Override
     public ElectricityPriceVersionsByBindAreaBO queryElectricityPriceVersionByBindArea(ElectricityPriceBindVersionsBO electricityPriceBindVersionsBO) {
-        ElectricityPriceVersionsByBindAreaBO electricityPriceVersionsByBindAreaBO = new ElectricityPriceVersionsByBindAreaBO();
-        //根据省市区进行查询有效的版本
-        List<ElectricityPriceVersion> electricityPriceVersionsToDistrict = electricityPriceVersionCustomMapper.queryPriceVersionList(new HashMap<String, Object>() {{
+        //根据省进行查询有效版本,若无则暂无数据
+        List<ElectricityPriceVersion> electricityPriceVersionsToProvince = electricityPriceVersionCustomMapper.queryPriceVersionByCondition(new HashMap<String, Object>() {{
             put("provinceCode", electricityPriceBindVersionsBO.getProvinceCode());
-            put("cityCode", electricityPriceBindVersionsBO.getCityCode());
-            put("districtCode", electricityPriceBindVersionsBO.getDistrictCode());
             put("isCurEffectFlag", BoolLogic.YES.getCode());
         }});
-        if (CollUtil.isNotEmpty(electricityPriceVersionsToDistrict)) {
-            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(electricityPriceBindVersionsBO.getCityCode()).districtCode(electricityPriceBindVersionsBO.getDistrictCode()).electricityPriceVersionBOS(ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceVersionListPOToBO(electricityPriceVersionsToDistrict)).build();
+        if (CollUtil.isEmpty(electricityPriceVersionsToProvince)) {
+            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(null).cityCode(null).districtCode(null).electricityPriceVersionBOS(null).build();
+        }
+        List<String> versionIds = electricityPriceVersionsToProvince.stream().map(item -> item.getVersionId()).collect(Collectors.toList());
+        List<ElectricityPriceStructure> electricityPriceStructures = electricityPriceStructureCustomMapper.queryListByConditions(new HashMap<String, Object>() {{
+            put("versionIds", versionIds);
+            put("state", BoolLogic.NO.getCode());
+        }});
+        if (CollUtil.isEmpty(electricityPriceStructures)) {
+            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(null).districtCode(null).electricityPriceVersionBOS(null).build();
+        }
+        //查看当前区下是否有版本，若有则版本+体系精确到区
+        List<ElectricityPriceStructure> districtStructures = electricityPriceStructures.stream().filter(item -> item.getDistrictCodes().contains(electricityPriceBindVersionsBO.getDistrictCode())).collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(districtStructures)) {
+            Map<String, List<ElectricityPriceStructure>> districtVersionStructureMap = districtStructures.stream().collect(Collectors.groupingBy(ElectricityPriceStructure::getVersionId));
+            List<ElectricityPriceVersionStructureBO> electricityPriceVersionStructureBOS = buildPriceVersions(districtVersionStructureMap, electricityPriceVersionsToProvince);
+            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(electricityPriceBindVersionsBO.getCityCode()).districtCode(electricityPriceBindVersionsBO.getDistrictCode()).electricityPriceVersionBOS(electricityPriceVersionStructureBOS).build();
         }
         //根据省市进行查询有效版本
-        List<ElectricityPriceVersion> electricityPriceVersionsToCity = electricityPriceVersionCustomMapper.queryPriceVersionList(new HashMap<String, Object>() {{
-            put("provinceCode", electricityPriceBindVersionsBO.getProvinceCode());
-            put("cityCode", electricityPriceBindVersionsBO.getCityCode());
-            put("isCurEffectFlag", BoolLogic.YES.getCode());
-        }});
-        if (CollUtil.isNotEmpty(electricityPriceVersionsToDistrict)) {
-            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(electricityPriceBindVersionsBO.getCityCode()).districtCode(null).electricityPriceVersionBOS(ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceVersionListPOToBO(electricityPriceVersionsToDistrict)).build();
+        List<ElectricityPriceStructure> cityStructures = electricityPriceStructures.stream().filter(item -> item.getCityCodes().contains(electricityPriceBindVersionsBO.getCityCode())).collect(Collectors.toList());
+        if (CollUtil.isNotEmpty(cityStructures)) {
+            Map<String, List<ElectricityPriceStructure>> cityVersionStructureMap = cityStructures.stream().collect(Collectors.groupingBy(ElectricityPriceStructure::getVersionId));
+            List<ElectricityPriceVersionStructureBO> electricityPriceVersionStructureBOS = buildPriceVersions(cityVersionStructureMap, electricityPriceVersionsToProvince);
+            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(electricityPriceBindVersionsBO.getCityCode()).districtCode(null).electricityPriceVersionBOS(electricityPriceVersionStructureBOS).build();
         }
-        //根据省进行查询有效版本
-        List<ElectricityPriceVersion> electricityPriceVersionsToProvince = electricityPriceVersionCustomMapper.queryPriceVersionList(new HashMap<String, Object>() {{
-            put("provinceCode", electricityPriceBindVersionsBO.getProvinceCode());
-            put("isCurEffectFlag", BoolLogic.YES.getCode());
-        }});
-        if (CollUtil.isNotEmpty(electricityPriceVersionsToDistrict)) {
-            return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(null).districtCode(null).electricityPriceVersionBOS(ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceVersionListPOToBO(electricityPriceVersionsToDistrict)).build();
-        }
-        return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).electricityPriceVersionBOS(null).build();
+        //默认省级
+        Map<String, List<ElectricityPriceStructure>> provinceVersionStructureMap = electricityPriceStructures.stream().collect(Collectors.groupingBy(ElectricityPriceStructure::getVersionId));
+        List<ElectricityPriceVersionStructureBO> electricityPriceVersionStructureBOS = buildPriceVersions(provinceVersionStructureMap, electricityPriceVersionsToProvince);
+        return ElectricityPriceVersionsByBindAreaBO.builder().provinceCode(electricityPriceBindVersionsBO.getProvinceCode()).cityCode(null).districtCode(null).electricityPriceVersionBOS(electricityPriceVersionStructureBOS).build();
+    }
+
+    private List<ElectricityPriceVersionStructureBO> buildPriceVersions(Map<String, List<ElectricityPriceStructure>> versionStructureMap, List<ElectricityPriceVersion> electricityPriceVersionsToProvince) {
+        List<ElectricityPriceVersionStructureBO> electricityPriceVersionBOS = electricityPriceVersionsToProvince.stream().filter(item -> ObjectUtil.isNotEmpty(versionStructureMap.get(item.getVersionId())))
+                .map(bo -> {
+                    ElectricityPriceVersionStructureBO electricityPriceVersionStructureBO = new ElectricityPriceVersionStructureBO();
+                    electricityPriceVersionStructureBO.setVersionId(bo.getVersionId());
+                    electricityPriceVersionStructureBO.setVersionName(bo.getVersionName());
+                    electricityPriceVersionStructureBO.setElectricityPriceStructureBOS(ElectricityPriceVersionUpdateBOConverMapper.INSTANCE.electricityPriceStructurePOListToBOList(versionStructureMap.get(bo.getVersionId())));
+                    return electricityPriceVersionStructureBO;
+                }).collect(Collectors.toList());
+        return electricityPriceVersionBOS;
     }
 
     @Override
@@ -169,7 +186,7 @@ public class ProxyElectricityPriceBindServiceImpl implements ProxyElectricityPri
         //根据绑定的价格ruleIds查找，如果未找到对应规则则失效（按当前设计，不可能出现失效除非脏数据）
         List<String> ruleIds = electricityPriceEquipments.stream().map(item -> item.getRuleId()).collect(Collectors.toList());
         List<ElectricityPriceEquipment> electricityPriceEuipmentNotExistRule = electricityPriceEquipmentCustomMapper.getElectricityPriceEquipmentNotExistRule(ruleIds);
-        Map<String, ElectricityPriceEquipment> electricityPriceEuipmentNotExistRuleMap = electricityPriceEquipments.stream().collect(Collectors.toMap(ElectricityPriceEquipment::getEquipmentId, item -> item));
+        Map<String, ElectricityPriceEquipment> electricityPriceEuipmentNotExistRuleMap = electricityPriceEuipmentNotExistRule.stream().collect(Collectors.toMap(ElectricityPriceEquipment::getEquipmentId, item -> item));
         List<ElectricityPriceBindNodeStatusBO.NodeBindStatus> collect = systemTreeList.stream().map(item -> {
             ElectricityPriceBindNodeStatusBO.NodeBindStatus nodeBindStatus = new ElectricityPriceBindNodeStatusBO.NodeBindStatus();
             nodeBindStatus.setNodeId(item.getNodeId().toString());
@@ -177,10 +194,13 @@ public class ProxyElectricityPriceBindServiceImpl implements ProxyElectricityPri
             nodeBindStatus.setStatus(BindStatusEum.UNBOUND.getName());
             if (ObjectUtil.isNotEmpty(electricityPriceEuipmentNotExistRuleMap.get(item.getNodeId()))) {
                 nodeBindStatus.setStatus(BindStatusEum.INVALID.getName());
-            } else if (ObjectUtil.isNotEmpty(electricityPriceEuipmentNotExistRuleMap.get(item.getNodeId()))) {
+                return nodeBindStatus;
+            }
+            if (ObjectUtil.isNotEmpty(electricityPriceEquipmentMap.get(item.getNodeId()))) {
                 nodeBindStatus.setStatus(BindStatusEum.BIND.getName());
             }
             return nodeBindStatus;
+
         }).collect(Collectors.toList());
         return ElectricityPriceBindNodeStatusBO.builder().nodeBindStatusList(collect).build();
     }

@@ -18,7 +18,7 @@ import java.io.Serializable;
 @ApiModel(description = "代理电价绑定/修改 请求对象")
 public class ElectricityPriceBindReqVO implements Serializable {
 
-    @ApiModelProperty(required = true, name = "设备绑定id，编辑室不为空")
+    @ApiModelProperty(name = "设备绑定id，编辑室不为空")
     private Long id;
 
     @ApiModelProperty(required = true, name = "节点Id")
@@ -45,16 +45,16 @@ public class ElectricityPriceBindReqVO implements Serializable {
     @NotBlank(message = "规则Id不能为空")
     private String ruleId;
 
-    @ApiModelProperty(value = "考核功率调整是否开启", example = "0:解绑，1:绑定")
+    @ApiModelProperty(value = "考核功率调整是否开启", example = "0:不开启，1:开启")
     @NotBlank(message = "考核功率调整是否开启必填")
-    @Max(value = 1, message = "考核功率调整是否开启参数只能为0:解绑，1:绑定")
-    @Min(value = 0, message = "考核功率调整是否开启参数只能为0:解绑，1:绑定")
+    @Max(value = 1, message = "考核功率调整是否开启参数只能为0:不开启，1:开启")
+    @Min(value = 0, message = "考核功率调整是否开启参数只能为0:不开启，1:开启")
     private Integer adjust;
 
     @ApiModelProperty(value = "是否要自定义下一版本体系", example = "0:否 默认继承，1:是 自定义")
     @NotBlank(message = "是否要自定义下一版本体系标识必填")
-    @Max(value = 1, message = "是否要自定义下一版本体系参数只能为0:否 默认继承，1:是 自定义")
     @Min(value = 0, message = "是否要自定义下一版本体系参数只能为0:否 默认继承，1:是 自定义")
+    @Max(value = 1, message = "是否要自定义下一版本体系参数只能为0:否 默认继承，1:是 自定义")
     private Integer nextChangeFlag;
 
     @ApiModelProperty(value = "功率因数", required = true)

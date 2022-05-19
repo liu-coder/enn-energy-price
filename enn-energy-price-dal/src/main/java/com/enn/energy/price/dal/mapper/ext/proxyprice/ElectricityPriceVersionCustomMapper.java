@@ -55,6 +55,14 @@ public interface ElectricityPriceVersionCustomMapper {
     List<ElectricityPriceVersion> queryPriceVersionList(Map<String, Object> map);
 
     /**
+     * 根据条件获取版本列表
+     *
+     * @param map
+     * @return
+     */
+    List<ElectricityPriceVersion> queryPriceVersionByCondition(Map<String, Object> map);
+
+    /**
      * 根据条件查询价格体系列表
      *
      * @param priceVersion

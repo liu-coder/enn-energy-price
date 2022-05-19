@@ -24,5 +24,5 @@ public class ElectricityPriceVersionsByBindAreaBO implements Serializable {
 
     private String districtCode;
 
-    private List<ElectricityPriceVersionBO> electricityPriceVersionBOS;
+    private List<ElectricityPriceVersionStructureBO> electricityPriceVersionBOS;
 }

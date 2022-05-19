@@ -58,6 +58,12 @@
             <if test="structureId!=null">
                 and structure_id=#{structureId}
             </if>
+            <if test="versionIds!=null">
+                and version_id in
+                <foreach collection="versionIds" separator="," open="(" close=")" index="index" item="versionId">
+                    #{versionId}
+                </foreach>
+            </if>
         </where>
 
     </select>
